@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="da" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Chat</title>
+
+  <!-- Meta Description for SEO -->
+  <meta name="description" content="Support Chat - Live Chat with our support team.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome for Icons -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+  <style>
+    /* No additional custom CSS, just using TailwindCSS */
+  </style>
+</head>
+
+<body class="font-inter bg-gray-900 text-gray-200">
+
+  <!-- Chat Button -->
+  <button id="chatButton" class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg text-2xl hover:bg-blue-700 focus:outline-none transition-all duration-300 ease-in-out transform hover:scale-105">
+    <i class="fas fa-comment"></i>
+  </button>
+
+  <!-- Chat Popup UI -->
+  <div id="chatPopup" class="fixed bottom-0 right-0 w-[320px] max-h-[500px] bg-white rounded-lg shadow-lg transform scale-95 opacity-0 transition-all duration-300 ease-out z-50">
+    <div class="bg-blue-600 text-white p-3 rounded-t-lg flex justify-between items-center">
+      <h3 class="font-semibold text-lg">Support Chat</h3>
+      <button id="closeChat" class="text-white text-xl font-bold">&times;</button>
+    </div>
+    <div id="chatBody" class="p-4 space-y-4 max-h-[300px] overflow-y-auto bg-gray-50">
+      <!-- Welcome message -->
+      <div class="chat-message bot text-sm bg-gray-300 p-2 rounded-md">
+        <p>Hej! Vælg venligst et emne for at starte samtalen.</p>
+      </div>
+      <div id="topicSelection" class="flex space-x-4">
+        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Billet Support</button>
+        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Teknisk Support</button>
+        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Generel Forespørgsel</button>
+      </div>
+    </div>
+    <div id="chatFooter" class="hidden p-3 bg-gray-200 rounded-b-lg flex items-center space-x-3">
+      <input id="chatInput" type="text" class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Skriv din besked..." aria-label="Chat input">
+      <button id="sendMessageButton" class="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatButton = document.getElementById('chatButton');
+      const chatPopup = document.getElementById('chatPopup');
+      const closeChat = document.getElementById('closeChat');
+      const sendMessageButton = document.getElementById('sendMessageButton');
+      const chatInput = document.getElementById('chatInput');
+      const chatBody = document.getElementById('chatBody');
+      const topicSelection = document.getElementById('topicSelection');
+      const chatFooter = document.getElementById('chatFooter');
+      
+      let selectedTopic = '';
+
+      // Toggle chat popup visibility with animation
+      chatButton.addEventListener('click', () => {
+        chatPopup.classList.remove('scale-95', 'opacity-0');
+        chatPopup.classList.add('scale-100', 'opacity-100');
+      });
+
+      // Close the chat popup with animation
+      closeChat.addEventListener('click', () => {
+        chatPopup.classList.remove('scale-100', 'opacity-100');
+        chatPopup.classList.add('scale-95', 'opacity-0');
+      });
+
+      // Handle topic selection
+      const topicButtons = document.querySelectorAll('.topic-button');
+      topicButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          selectedTopic = button.textContent.trim();
+          topicSelection.classList.add('hidden');
+          chatFooter.classList.remove('hidden');
+          appendMessage('user', `Jeg har valgt emnet: ${selectedTopic}`);
+          setTimeout(() => {
+            appendMessage('bot', `Tak for at vælge emnet: ${selectedTopic}. Hvordan kan jeg hjælpe dig videre?`);
+          }, 1000);
+        });
+      });
+
+      // Send message on button click
+      sendMessageButton.addEventListener('click', () => {
+        const userMessage = chatInput.value.trim();
+        if (userMessage) {
+          appendMessage('user', userMessage);
+          chatInput.value = '';
+
+          // Simulate bot response (you can replace this with actual logic)
+          setTimeout(() => {
+            const botResponse = `Bot siger: ${userMessage}`;
+            appendMessage('bot', botResponse);
+          }, 1000);
+        }
+      });
+
+      // Append message to the chat
+      function appendMessage(sender, message) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', sender, 'text-sm', 'p-2', 'rounded-md');
+        messageElement.textContent = message;
+        chatBody.appendChild(messageElement);
+
+        // Scroll to the bottom of the chat body
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      // Optionally, handle 'Enter' key press to send message
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessageButton.click();
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

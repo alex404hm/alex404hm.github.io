@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate IT Support Mastery: Your Modern Guide to Troubleshooting & Best Practices</title>
+
+    <!-- Meta Description for SEO -->
+    <meta name="description" content="Expert guide to IT support, troubleshooting techniques, network management, and cybersecurity best practices for professionals and businesses. Stay ahead in the IT world with cutting-edge insights.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#3b82f6',
+                        dark: '#0f172a',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous">
+
+    <!-- Custom Styles -->
+    <style>
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        .chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-100 font-sans antialiased">
+    <div class="flex flex-col min-h-screen">
+        <!-- Header Section -->
+        <header id="header-section" class="relative bg-cover bg-center h-[400px] md:h-[500px] flex items-center justify-center">
+            <div class="text-center max-w-3xl px-6 relative z-10">
+                <h1 id="article-title" class="text-5xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-lg">Guide Title</h1>
+                <p id="article-subtitle" class="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto">Guide Subtitle</p>
+            </div>
+        </header>
+
+        <!-- Author Section -->
+        <section id="author-section" class="container mx-auto px-4 -mt-16 relative z-20">
+            <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
+                <div class="flex flex-col md:flex-row items-center justify-between border-b border-gray-700 pb-6 mb-6">
+                    <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                        <img id="author-photo" class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-gray-600 object-cover" alt="Author Photo" src="https://example.com/default-author.jpg">
+                        <div>
+                            <h2 id="author-name" class="text-3xl font-bold text-white">Author Name</h2>
+                            <p id="author-title" class="text-gray-400">Author Title</p>
+                            <div class="mt-2 text-sm text-gray-500">
+                                Published: <span id="publish-date">Publish Date</span> | <span id="reading-time"></span> min read
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="btn btn-ghost text-gray-400 hover:text-white" onclick="saveArticle()">
+                            <i class="fas fa-bookmark mr-2"></i>Save
+                        </button>
+                        <button class="btn btn-ghost text-gray-400 hover:text-white" onclick="shareArticle()">
+                            <i class="fas fa-share-alt mr-2"></i>Share
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <p id="author-quote" class="text-gray-300 italic">Author Quote</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-500 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Section -->
+        <main id="main-content" class="container mx-auto px-4 mt-8 flex-grow">
+            <article id="article-content" class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 prose prose-invert max-w-none">
+                Article content goes here.
+            </article>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="bg-gray-800 text-gray-400 py-8 mt-12">
+            <div class="container mx-auto px-4 text-center">
+                <p>&copy; 2024 IT Support Guide. All Rights Reserved.</p>
+                <p>Stay connected: <a href="#" class="text-primary hover:text-secondary">Subscribe to our newsletter</a> for the latest IT support insights.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Chatbot Button -->
+    <button class="chatbot-button" onclick="openChatbot()">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- JavaScript Enhancements -->
+    <script>
+        // Fetch article data using an API
+        async function fetchArticleData() {
+            try {
+                // Extract article _id from URL parameters
+                const params = new URLSearchParams(window.location.search);
+                const articleId = params.get('_id');
+
+                if (!articleId) {
+                    console.error('No article ID provided in URL. Please provide a valid article ID.');
+                    alert('Unable to load the article. Please provide a valid article ID in the URL.');
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:3001/api/guides/${articleId}`);
+                if (!response.ok) throw new Error("Network response was not ok");
+
+                const data = await response.json();
+
+                // Set header content
+                document.getElementById('article-title').textContent = data.title;
+                document.getElementById('article-subtitle').textContent = data.subtitle;
+
+                // Set header background image from API
+                const headerSection = document.getElementById('header-section');
+                if (data.bannerImage) {
+                    headerSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${data.bannerImage}')`;
+                }
+
+                // Set author section content
+                if (data.author) {
+                    document.getElementById('author-photo').src = data.author.photo;
+                    document.getElementById('author-name').textContent = data.author.name;
+                    document.getElementById('author-title').textContent = data.author.title;
+                    document.getElementById('author-quote').textContent = data.author.quote;
+                }
+                document.getElementById('publish-date').textContent = data.publishDate;
+
+                // Set main article content
+                document.getElementById('article-content').innerHTML = data.content;
+
+                // Calculate reading time
+                calculateReadingTime();
+            } catch (error) {
+                console.error('Error fetching article data:', error);
+                alert('Unable to load the article. Please try again later.');
+            }
+        }
+
+        // Reading time calculator
+        function calculateReadingTime() {
+            const wordsPerMinute = 200;
+            const textContent = document.getElementById('article-content').innerText;
+            const wordCount = textContent.trim().split(/\s+/).length;
+            const readingTime = Math.ceil(wordCount / wordsPerMinute);
+            document.getElementById('reading-time').innerText = `${readingTime} min read`;
+        }
+
+        // Save Article
+        function saveArticle() {
+            alert('Article saved for later reading!');
+        }
+
+        // Share Article
+        function shareArticle() {
+            alert('Share functionality coming soon!');
+        }
+
+        // Open chatbot
+        function openChatbot() {
+            alert('Chatbot feature coming soon!');
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchArticleData);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Support - Support Pro</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#2563EB',
+                        secondaryGray: '#E5E7EB',
+                        darkBlack: '#1E293B',
+                        lightBlack: '#334155',
+                        accentGreen: '#16A34A',
+                        accentRed: '#DC2626',
+                        hoverBlue: '#1E40AF',
+                        pendingYellow: '#F59E0B',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'hover': '0 12px 20px -4px rgba(0, 0, 0, 0.2)',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
+
+    <!-- Navbar Section -->
+    <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Home</a>
+                <a href="/profile" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Profile</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                    <i id="theme-icon" class="fas fa-sun dark:fa-moon" aria-hidden="true"></i>
+                </button>
+                <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="pt-36 container mx-auto px-6 mb-16">
+        <!-- Page Title -->
+        <section class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray">Windows Guides</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mt-4">Find the best guides and solutions for Windows issues.</p>
+        </section>
+
+        <!-- Search Bar Section -->
+        <div class="relative max-w-3xl mx-auto mb-8">
+            <input id="searchInput" type="text" placeholder="Search for help..." class="w-full py-4 pl-14 pr-4 text-lg rounded-full shadow-md focus:outline-none focus:ring-4 focus:ring-primaryBlue transition-all duration-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+            <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-200"></i>
+            <div id="searchSuggestions" class="absolute w-full bg-white dark:bg-gray-800 rounded-lg shadow-md mt-2 p-2 hidden">
+                <!-- Suggestions will appear here -->
+            </div>
+        </div>
+
+        <!-- Most Popular Guides Section -->
+        <section id="mostPopularGuides" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">Most Popular Guides</h2>
+            <div id="popularGuidesContainer" class="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Most popular guides will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- Search Results Section -->
+        <section id="searchResults" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8">Search Results</h2>
+            <div id="resultsContainer" class="space-y-8">
+                <!-- Search results will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript for Dark Mode and Data Fetching -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check local storage for dark mode
+            const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
+            }
+
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('theme-toggle');
+            darkModeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('dark-mode', isDark);
+                const themeIcon = document.getElementById('theme-icon');
+                themeIcon.classList.toggle('fa-sun');
+                themeIcon.classList.toggle('fa-moon');
+            });
+
+            // Fetch and display the most popular guides
+            fetch('http://localhost:3001/api/guides/popular?category=Windows&limit=6')
+                .then(response => response.json())
+                .then(data => {
+                    displayPopularGuides(data.guides);
+                })
+                .catch(error => console.error('Error fetching popular guides:', error));
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                const suggestionsBox = document.getElementById('searchSuggestions');
+                const mostPopularGuides = document.getElementById('mostPopularGuides');
+                const searchResultsSection = document.getElementById('searchResults');
+
+                if (query === '') {
+                    suggestionsBox.classList.add('hidden');
+                    mostPopularGuides.classList.remove('hidden');
+                    searchResultsSection.classList.add('hidden');
+                } else {
+                    mostPopularGuides.classList.add('hidden');
+                    fetch(`http://localhost:3001/api/guides/search?q=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displaySuggestions(data.guides);
+                            displaySearchResults(data.guides);
+                        })
+                        .catch(error => console.error('Error fetching suggestions:', error));
+                }
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (event) => {
+                const searchInputElement = document.getElementById('searchInput');
+                const suggestionsBox = document.getElementById('searchSuggestions');
+                if (!searchInputElement.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                    suggestionsBox.classList.add('hidden');
+                }
+            });
+
+            // Display popular guides
+            function displayPopularGuides(guides) {
+                const popularGuidesContainer = document.getElementById('popularGuidesContainer');
+                popularGuidesContainer.innerHTML = '';
+
+                guides.forEach(guide => {
+                    const guideCard = createGuideCard(guide);
+                    popularGuidesContainer.appendChild(guideCard);
+                });
+            }
+
+            // Display search suggestions
+            function displaySuggestions(suggestions) {
+                const suggestionsBox = document.getElementById('searchSuggestions');
+                suggestionsBox.innerHTML = '';
+
+                if (suggestions.length > 0) {
+                    suggestions.forEach(guide => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer';
+                        suggestionItem.textContent = guide.title;
+                        suggestionsBox.appendChild(suggestionItem);
+
+                        suggestionItem.addEventListener('click', () => {
+                            document.getElementById('searchInput').value = guide.title;
+                            suggestionsBox.classList.add('hidden');
+                            displaySearchResults([guide]);
+                        });
+                    });
+                    suggestionsBox.classList.remove('hidden');
+                } else {
+                    suggestionsBox.classList.add('hidden');
+                }
+            }
+
+            // Display search results in a single-column format
+            function displaySearchResults(results) {
+                const resultsContainer = document.getElementById('resultsContainer');
+                resultsContainer.innerHTML = '';
+                const searchResultsSection = document.getElementById('searchResults');
+
+                if (results.length > 0) {
+                    results.forEach(guide => {
+                        const guideCard = createSearchResultCard(guide);
+                        resultsContainer.appendChild(guideCard);
+                    });
+                    searchResultsSection.classList.remove('hidden');
+                } else {
+                    searchResultsSection.classList.add('hidden');
+                }
+            }
+
+            // Helper function to create a search result card element with image preview
+            function createSearchResultCard(guide) {
+                const guideCard = document.createElement('div');
+                guideCard.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 transition-transform duration-300 hover:shadow-xl hover:scale-105 cursor-pointer';
+                guideCard.innerHTML = `
+                    <a href="/guide.html?id=${guide._id}" class="flex items-start space-x-4">
+                        <img src="https://via.placeholder.com/150" alt="${guide.title} Image" class="w-32 h-32 rounded-lg object-cover">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${guide.title}</h2>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">${guide.summary}</p>
+                        </div>
+                    </a>
+                `;
+                return guideCard;
+            }
+
+            // Helper function to create a popular guide card
+            function createGuideCard(guide) {
+                const guideCard = document.createElement('div');
+                guideCard.className = 'bg-white dark:bg-darkBlack rounded-2xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer';
+                guideCard.innerHTML = `
+                    <a href="/guide.html?id=${guide._id}" class="block text-center">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${guide.title}</h2>
+                        <p class="mt-4 text-gray-600 dark:text-gray-400">${guide.summary}</p>
+                    </a>
+                `;
+                return guideCard;
+            }
+        });
+    </script>
+</body>
+
+</html>

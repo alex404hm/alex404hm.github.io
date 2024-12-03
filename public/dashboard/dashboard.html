@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Existing head content -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Support Pro</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#2563EB',
+                        secondaryGray: '#E5E7EB',
+                        darkBlack: '#1E293B',
+                        lightBlack: '#334155',
+                        accentGreen: '#16A34A',
+                        accentRed: '#DC2626',
+                        hoverBlue: '#1E40AF',
+                        pendingYellow: '#F59E0B',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center bg-black/75 backdrop-blur-md z-50 transition-opacity duration-500 hidden">
+        <i id="loadingIcon" class="fas fa-tools text-4xl text-white animate-pulse"></i>
+    </div>
+
+    <!-- Modern Navbar for Dashboard -->
+    <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                    Home
+                </a>
+                <div class="relative dropdown group">
+                    <button class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                        OS Options
+                    </button>
+                    <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Windows -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The most popular OS for PC users, providing a wide range of features.</p>
+                                </div>
+                            </div>
+                            <!-- macOS -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Known for its sleek design and high-quality hardware integration.</p>
+                                </div>
+                            </div>
+                            <!-- Linux -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A flexible and open-source OS favored by developers and power users.</p>
+                                </div>
+                            </div>
+                            <!-- iOS -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The operating system for Apple's mobile devices like iPhones and iPads.</p>
+                                </div>
+                            </div>
+                            <!-- Android -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A highly customizable OS widely used across many smartphones and tablets.</p>
+                                </div>
+                            </div>
+                            <!-- ChromeOS -->
+                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A lightweight OS optimized for Chromebooks, focusing on simplicity.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="/profile" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                    Profile
+                </a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                    <i id="theme-icon" class="fas fa-sun dark:fa-moon" aria-hidden="true"></i>
+                </button>
+                <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main id="mainContent" class="pt-36 container mx-auto px-6 mb-16 hidden">
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray mb-6">Welcome to Support Pro</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">Select your operating system to continue</p>
+        </header>
+        <!-- Grid OS Selection -->
+        <div id="os-grid" class="grid gap-10 grid-cols-1 md:grid-cols-3">
+            <!-- Windows Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="windows.html" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/windows-10.png" alt="Windows Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Windows</h2>
+                </a>
+            </div>
+
+            <!-- macOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="macos.html" class="block text-center">
+                    <img src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
+                </a>
+            </div>
+
+            <!-- Linux Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="linux.html" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/linux.png" alt="Linux Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Linux</h2>
+                </a>
+            </div>
+
+            <!-- iOS/iPadOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="ios.html" class="block text-center">
+                    <img src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
+                </a>
+            </div>
+
+            <!-- AndroidOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="android.html" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/android-os.png" alt="Android Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h2>
+                </a>
+            </div>
+
+            <!-- ChromeOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="chromeos.html" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/chrome.png" alt="ChromeOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h2>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Verification Overlay -->
+    <div id="verification-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Email Verification Required</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Please verify your email address to access all dashboard features.</p>
+            <button id="resend-verification-btn" class="px-4 py-2 bg-primaryBlue text-white rounded-md hover:bg-hoverBlue transition-colors duration-300">Resend Verification Email</button>
+        </div>
+    </div>
+
+    <!-- Link to Main JavaScript File -->
+    <script src="test.js"></script>
+
+    <!-- JavaScript to Handle Email Verification Overlay and Loading Screen -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Elements
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('verification-overlay');
+
+            // Fetch user info
+            fetch('/api/user-info', {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.user.isVerified) {
+                    // User is verified
+                    // Show loading screen
+                    loadingScreen.classList.remove('hidden');
+                    // Simulate loading time
+                    setTimeout(() => {
+                        // Hide loading screen
+                        loadingScreen.classList.add('hidden');
+                        // Show main content
+                        mainContent.classList.remove('hidden');
+                    }, 2000); // Adjust loading time as needed
+                } else {
+                    // User is not verified
+                    // Show main content
+                    mainContent.classList.remove('hidden');
+                    // Show verification overlay
+                    overlay.classList.remove('hidden');
+
+                    const resendButton = document.getElementById('resend-verification-btn');
+                    resendButton.addEventListener('click', function () {
+                        fetch('/api/send-verification-email', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message);
+                        })
+                        .catch(error => {
+                            console.error('Error sending verification email:', error);
+                            alert('An error occurred while sending the verification email.');
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user info:', error);
+                // Optionally redirect to login page if not authenticated
+                // window.location.href = '/auth/login';
+            });
+        });
+    </script>
+</body>
+
+</html>

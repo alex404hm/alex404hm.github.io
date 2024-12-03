@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Pro - Admin Dashboard</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- External CSS -->
+
+  <!-- FontAwesome for Icons -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+  <!-- Custom Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            roboto: ['Roboto', 'sans-serif'],
+          },
+          colors: {
+            primaryBlue: '#2563EB',
+            secondaryGray: '#E5E7EB',
+            darkBlack: '#1E293B',
+            lightBlack: '#334155',
+            accentGreen: '#16A34A',
+            accentRed: '#DC2626',
+            hoverBlue: '#1E40AF',
+            pendingYellow: '#F59E0B',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="relative bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+  <!-- Floating Blobs for Background -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Dashboard Layout -->
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+      <div>
+        <!-- Logo -->
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-primaryBlue flex items-center justify-center">
+            <i class="fas fa-user-cog mr-2" aria-hidden="true"></i>
+            Support Pro - Admin
+          </h2>
+        </div>
+        <!-- Navigation -->
+        <nav class="space-y-4" aria-label="Sidebar Navigation">
+          <a href="admin.html" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all">
+            <i class="fas fa-tachometer-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Dashboard
+          </a>
+          <a href="tickets.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+            <i class="fas fa-ticket-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Tickets
+          </a>
+          <a href="guides.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+            <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Guides
+          </a>
+          <a href="users.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+            <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Brugere
+          </a>
+          <a href="#logout" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+            <i class="fas fa-sign-out-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Log ud
+          </a>
+        </nav>
+      </div>
+      <!-- Footer Section -->
+      <div class="mt-10 flex items-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin Avatar" class="w-10 h-10 rounded-full mr-3">
+        <div class="font-roboto text-left">
+          <p>Admin Bruger</p>
+          <p class="text-xs">Administrator</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col ml-0 lg:ml-72 transition-all duration-300">
+      <!-- Top Toolbar -->
+      <header class="flex items-center justify-between p-4 bg-lightBlack dark:bg-darkBlack text-secondaryGray dark:text-white shadow-md rounded-b-2xl">
+        <!-- Hamburger Menu for Mobile -->
+        <button id="menu-button" class="lg:hidden focus:outline-none" aria-label="Toggle Sidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+        <!-- Search Bar -->
+        <div class="relative flex-1 mx-4">
+          <input type="text" placeholder="Søg..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
+          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors"></i>
+        </div>
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle" class="ml-4 focus:outline-none" aria-label="Toggle Dark Mode">
+          <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
+        </button>
+      </header>
+
+      <!-- Main Dashboard Content -->
+      <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6">
+        <h1 class="text-3xl font-semibold mb-6 text-darkBlack dark:text-white">Admin Dashboard</h1>
+        <!-- Overview Cards Section -->
+        <section id="overview" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <!-- Total Users Card -->
+          <div id="total-users" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-4 bg-primaryBlue rounded-lg">
+              <i class="fas fa-users text-white text-2xl" aria-hidden="true"></i>
+            </div>
+            <div class="ml-4">
+              <p id="total-users-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-sm text-gray-700 dark:text-gray-400">Samlede Brugere</p>
+            </div>
+          </div>
+          <!-- Open Tickets Card -->
+          <div id="open-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-4 bg-accentGreen rounded-lg">
+              <i class="fas fa-ticket-alt text-white text-2xl" aria-hidden="true"></i>
+            </div>
+            <div class="ml-4">
+              <p id="open-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-sm text-gray-700 dark:text-gray-400">Åbne Tickets</p>
+            </div>
+          </div>
+          <!-- Pending Tickets Card -->
+          <div id="pending-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-4 bg-pendingYellow rounded-lg">
+              <i class="fas fa-hourglass-half text-white text-2xl" aria-hidden="true"></i>
+            </div>
+            <div class="ml-4">
+              <p id="pending-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">0</p>
+              <p class="text-sm text-gray-700 dark:text-gray-400">Ventende Tickets</p>
+            </div>
+          </div>
+          <!-- Closed Tickets Card -->
+          <div id="closed-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-4 bg-accentRed rounded-lg">
+              <i class="fas fa-check-circle text-white text-2xl" aria-hidden="true"></i>
+            </div>
+            <div class="ml-4">
+              <p id="closed-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-sm text-gray-700 dark:text-gray-400">Lukkede Tickets</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Activities Section -->
+        <section id="recent-activities" class="mb-12">
+          <h2 class="text-2xl font-medium text-darkBlack dark:text-white mb-6">Seneste Aktiviteter</h2>
+          <ul id="recent-activities-list" class="space-y-6">
+            <li class="text-secondaryGray">Loading recent activities...</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- External JavaScript -->
+
+  <!-- Custom JavaScript -->
+  <script>
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Set theme based on localStorage
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Sidebar Toggle for Mobile
+    const menuButton = document.getElementById('menu-button');
+    const sidebar = document.getElementById('sidebar');
+    menuButton.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // Fetch data from API and update UI
+    async function fetchData() {
+      try {
+        const response = await fetch('http://localhost:3000/api/dashboard-data');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        // Update total users
+        document.getElementById('total-users-count').textContent = data.totalUsers;
+        // Update open tickets
+        document.getElementById('open-tickets-count').textContent = data.openTickets;
+        // Update pending tickets
+        document.getElementById('pending-tickets-count').textContent = data.pendingTickets || 0;
+        // Update closed tickets
+        document.getElementById('closed-tickets-count').textContent = data.closedTickets;
+        // Update recent activities
+        const recentActivitiesList = document.getElementById('recent-activities-list');
+        recentActivitiesList.innerHTML = '';
+        data.recentActivities.forEach(activity => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('bg-secondaryGray', 'dark:bg-lightBlack', 'p-5', 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'hover:shadow-lg', 'transition-shadow', 'duration-300');
+          listItem.innerHTML = `
+            <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
+            <div>
+              <p class="text-darkBlack dark:text-white">${activity.description}</p>
+              <p class="text-gray-700 dark:text-gray-300 text-sm">${activity.timestamp}</p>
+            </div>
+          `;
+          recentActivitiesList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', fetchData);
+  </script>
+</body>
+
+</html>

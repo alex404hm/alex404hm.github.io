@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Pro</title>
+    <meta name="description" content="Få hjælp til dine tekniske udfordringer med Support Pro, uanset hvor du er.">
+    <!-- Preconnect to optimize font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Use link instead of @import for better performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"> 
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+    <main class="flex w-full">
+        <!-- Left Section -->
+        <section class="flex-1 bg-[#0b0b33] text-[#e6e6fa] p-12 flex flex-col justify-center">
+            <h1 class="text-4xl font-bold">Support Pro</h1>
+            <p class="text-3xl mt-6 font-semibold">
+                Få hjælp til dine tekniske udfordringer<br>
+                med Support Pro, uanset hvor du er
+            </p>
+        </section>
+        <!-- Right Section -->
+        <section class="flex-1 bg-black p-12 flex flex-col justify-center items-center">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold mb-8 text-white">Kom i gang</h2>
+                <div class="flex space-x-4">
+                    <a href="/auth/login" class="bg-blue-600 text-white px-8 py-3 text-lg font-semibold rounded-full transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600">Log ind</a>
+                    <a href="/auth/signup" class="bg-blue-600 text-white px-8 py-3 text-lg font-semibold rounded-full transition duration-200 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600">Tilmeld dig her</a>
+                </div>
+                <div class="mt-12 text-gray-400 text-xs">
+                    <a href="#" class="underline hover:text-gray-200 focus:text-gray-200 focus:outline-none">Vilkår for brug</a>
+                    <span class="mx-2">|</span>
+                    <a href="#" class="underline hover:text-gray-200 focus:text-gray-200 focus:outline-none">Privatlivspolitik</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
