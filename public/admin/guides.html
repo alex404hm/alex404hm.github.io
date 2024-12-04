@@ -85,7 +85,7 @@
                         <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Brugere
                     </a>
-                    <a href="#logout" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+                    <a href="#logout" id="logout-button" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
                         <i class="fas fa-sign-out-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Log ud
                     </a>
@@ -141,7 +141,7 @@
                     <div id="loading-indicator" class="flex justify-center items-center mt-4 hidden">
                         <svg class="animate-spin h-8 w-8 text-primaryBlue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a 8 8 0 018-8v8H4z"></path>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                         </svg>
                     </div>
                     <!-- Error Message -->
@@ -182,17 +182,6 @@
                         <option value="ChromeOS">ChromeOS</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label for="guide-banner" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Upload Banner Billede</label>
-                    <div class="flex items-center space-x-4">
-                        <input type="file" id="guide-banner" class="hidden" accept="image/*">
-                        <label for="guide-banner" class="px-4 py-2 bg-primaryBlue text-white rounded-lg cursor-pointer hover:bg-hoverBlue transition-all focus:outline-none">Vælg Billede</label>
-                        <div id="banner-preview" class="w-40 h-24 rounded-lg overflow-hidden border-2 border-secondaryGray dark:border-lightBlack hidden">
-                            <img id="banner-preview-img" src="#" alt="Preview" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="flex justify-end space-x-4">
                     <button type="button" id="cancel-button" class="px-6 py-3 bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white rounded-lg shadow-md hover:bg-hoverBlue hover:text-white transition-all focus:outline-none">Annuller</button>
                     <button type="submit" id="save-button" class="px-6 py-3 bg-primaryBlue text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Gem Guide</button>
@@ -204,7 +193,7 @@
     <!-- JavaScript for CRUD Operations -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const API_BASE_URL = 'http://localhost:3001';
+            const API_BASE_URL = 'http://localhost:3000';
             let currentGuideId = null;
 
             const themeToggle = document.getElementById('theme-toggle');
@@ -218,74 +207,101 @@
             const guideForm = document.getElementById('guide-form');
             const modalTitle = document.getElementById('modal-title');
             const cancelButton = document.getElementById('cancel-button');
-            const guideBannerInput = document.getElementById('guide-banner');
-            const bannerPreview = document.getElementById('banner-preview');
-            const bannerPreviewImg = document.getElementById('banner-preview-img');
+            const logoutButton = document.getElementById('logout-button');
 
+            // Initialize Theme
             const initializeTheme = () => {
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark') {
                     document.documentElement.classList.add('dark');
                 }
             };
-
             initializeTheme();
 
+            // Theme Toggle
             themeToggle.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
             });
 
+            // Sidebar Toggle for Mobile
             menuButton.addEventListener('click', () => {
                 sidebar.classList.toggle('-translate-x-full');
             });
 
+            // Open Create Guide Modal
             createGuideButton.addEventListener('click', () => {
                 currentGuideId = null;
                 modalTitle.textContent = 'Opret Ny Guide';
                 guideForm.reset();
-                bannerPreview.classList.add('hidden');
                 openModal();
             });
 
+            // Open and Close Modal Functions
             const openModal = () => guideModal.classList.remove('hidden');
             const closeModal = () => guideModal.classList.add('hidden');
-
             cancelButton.addEventListener('click', closeModal);
 
-            guideBannerInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        bannerPreviewImg.src = event.target.result;
-                        bannerPreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    bannerPreview.classList.add('hidden');
+            // Logout Functionality
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/logout`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
+                    if (response.ok) {
+                        window.location.href = '/auth/login';
+                    } else {
+                        alert('Kunne ikke logge ud. Prøv igen.');
+                    }
+                } catch (error) {
+                    console.error('Logout Error:', error);
                 }
             });
 
+            // Function to get the JWT token from cookies
+            const getToken = () => {
+                const name = 'token=';
+                const decodedCookie = decodeURIComponent(document.cookie);
+                const ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i].trim();
+                    if (c.indexOf(name) === 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return '';
+            };
+
+            // Fetch Guides from API
             const fetchGuides = async () => {
                 showLoadingIndicator();
                 guidesTableBody.innerHTML = '';
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/guides`);
+                    const response = await fetch(`${API_BASE_URL}/api/guides`, {
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
                     if (!response.ok) throw new Error('Could not fetch guides.');
                     const { guides } = await response.json();
                     if (guides.length === 0) {
-                        guidesTableBody.innerHTML = `<tr><td colspan="6" class="py-4 px-6 text-center text-gray-500">No guides found.</td></tr>`;
+                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500">Ingen guider fundet.</td></tr>`;
                     } else {
                         guides.forEach(guide => appendGuideToTable(guide));
                     }
                 } catch (error) {
-                    displayErrorMessage('Could not fetch guides. Try again later.');
+                    displayErrorMessage('Kunne ikke hente guider. Prøv igen senere.');
                 } finally {
                     hideLoadingIndicator();
                 }
             };
 
+            // Append Guide to Table
             const appendGuideToTable = (guide) => {
                 const row = document.createElement('tr');
                 row.classList.add('border-b', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-lightBlack', 'hover:bg-opacity-20', 'transition-all', 'duration-200');
@@ -309,6 +325,7 @@
                 row.querySelector('.delete-guide-btn').addEventListener('click', () => deleteGuide(guide._id));
             };
 
+            // Edit Guide Function
             const editGuide = (guide) => {
                 currentGuideId = guide._id;
                 modalTitle.textContent = 'Rediger Guide';
@@ -316,68 +333,103 @@
                 document.getElementById('guide-subtitle').value = guide.subtitle || '';
                 document.getElementById('guide-content').value = guide.content;
                 document.getElementById('guide-category').value = guide.category;
-                if (guide.bannerImage) {
-                    bannerPreviewImg.src = guide.bannerImage;
-                    bannerPreview.classList.remove('hidden');
-                } else {
-                    bannerPreview.classList.add('hidden');
-                }
                 openModal();
             };
 
+            // Delete Guide Function
             const deleteGuide = async (guideId) => {
+                if (!confirm('Er du sikker på, at du vil slette denne guide?')) return;
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/guides/${guideId}`, { method: 'DELETE' });
-                    if (!response.ok) throw new Error('Failed to delete guide.');
+                    const response = await fetch(`${API_BASE_URL}/api/guides/id/${guideId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to delete guide.');
+                    }
                     fetchGuides();
                 } catch (error) {
-                    alert(`Could not delete guide: ${error.message}`);
+                    alert(`Kunne ikke slette guide: ${error.message}`);
                 }
             };
 
+            // Show and Hide Loading Indicator
             const showLoadingIndicator = () => loadingIndicator.classList.remove('hidden');
             const hideLoadingIndicator = () => loadingIndicator.classList.add('hidden');
 
+            // Display Error Message
             const displayErrorMessage = (message) => {
                 errorMessage.textContent = message;
                 errorMessage.classList.remove('hidden');
             };
 
+            // Guide Form Submission Handler
             guideForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const guideData = {
                     title: document.getElementById('guide-title').value.trim(),
                     subtitle: document.getElementById('guide-subtitle').value.trim(),
                     content: document.getElementById('guide-content').value.trim(),
                     category: document.getElementById('guide-category').value,
-                    publishDate: new Date().toLocaleDateString()
                 };
 
                 try {
                     let response;
                     if (currentGuideId) {
-                        response = await fetch(`${API_BASE_URL}/api/guides/${currentGuideId}`, {
+                        response = await fetch(`${API_BASE_URL}/api/guides/id/${currentGuideId}`, {
                             method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}`,
+                            },
+                            credentials: 'include',
                             body: JSON.stringify(guideData),
                         });
                     } else {
                         response = await fetch(`${API_BASE_URL}/api/guides`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}`,
+                            },
+                            credentials: 'include',
                             body: JSON.stringify(guideData),
                         });
                     }
 
-                    if (!response.ok) throw new Error(currentGuideId ? 'Failed to update guide.' : 'Failed to create guide.');
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to save guide.');
+                    }
+
                     fetchGuides();
                     closeModal();
                 } catch (error) {
-                    alert(`Could not save guide: ${error.message}`);
+                    alert(`Kunne ikke gemme guide: ${error.message}`);
                 }
             });
 
+            // Search Functionality
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = guidesTableBody.getElementsByTagName('tr');
+                Array.from(rows).forEach(row => {
+                    const title = row.cells[1].textContent.toLowerCase();
+                    const category = row.cells[2].textContent.toLowerCase();
+                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Fetch Guides on Page Load
             fetchGuides();
         });
     </script>

@@ -1,271 +1,210 @@
-import express from 'express';
-import cors from 'cors';
-import http from 'http';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import { Server } from 'socket.io';
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const http = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const nodemailer = require('nodemailer');
+const MongoStore = require('connect-mongo');
 
-dotenv.config(); // Load environment variables from .env file
-
-// Express App and Server Configurations
+// Initialize Express app
 const app = express();
-const PORT = process.env.PORT1 || 3001; // Set port from env or default to 3001
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/support_pro';
 
-// Middleware
-app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
-app.use(express.json());
+// Middleware setup
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-// Create HTTP server and wrap the express app
-const server = http.createServer(app);
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'supportpro-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions'
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
+}));
 
-// Connect to MongoDB using Mongoose
-mongoose.connect(MONGODB_URI, {
+// Set public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// MongoDB setup
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-  .then(() => console.log('✅ MongoDB Connected successfully...'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
-
-// Define Mongoose Schema and Model
-const guideSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  subtitle: String,
-  summary: String,
-  content: { type: String, required: true },
-  tags: [String],
-  category: { type: String, required: true },
-  bannerImage: String,
-  author: {
-    name: String,
-    title: String,
-    photo: String,
-    quote: String,
-  },
-  publishDate: String,
-  views: { type: Number, default: 0 },
-}, { timestamps: true });
-
-guideSchema.index({ title: 1, category: 1 }, { unique: true }); // Ensure unique title-category combination
-
-const Guide = mongoose.model('Guide', guideSchema);
-
-// Socket.IO for Real-time Chat
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch(err => {
+  console.error('Failed to connect to MongoDB', err);
 });
 
-let chatSessions = {};
+// Example: Define schema for User to track admins
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+  isAdmin: Boolean,
+  isVerified: Boolean,
+});
+const User = mongoose.model('User', userSchema);
 
-// Socket.IO Connections for Real-time Chat
+// Socket.IO setup
+const server = http.createServer(app);
+const io = new Server(server);
+
 io.on('connection', (socket) => {
-  console.log(`🟢 User connected: ${socket.id}`);
-
-  socket.on('join_chat', ({ ticketId, userName }) => {
-    socket.join(ticketId);
-    chatSessions[ticketId] = chatSessions[ticketId] || [];
-    socket.emit('chat_history', chatSessions[ticketId]);
-    console.log(`📬 ${userName} joined chat for ticket ${ticketId}`);
+  console.log('User connected');
+  
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
   });
-
-  socket.on('send_message', ({ ticketId, userName, message }) => {
-    const chatMessage = { user: userName, message, timestamp: new Date().toISOString() };
-    chatSessions[ticketId] = chatSessions[ticketId] || [];
-    chatSessions[ticketId].push(chatMessage);
-    io.to(ticketId).emit('receive_message', chatMessage);
-  });
-
+  
   socket.on('disconnect', () => {
-    console.log(`🔴 User disconnected: ${socket.id}`);
+    console.log('User disconnected');
   });
 });
 
-// Middleware to simulate user authentication for author data
-const mockUserMiddleware = (req, res, next) => {
-  req.user = {
-    name: 'John Doe',
-    title: 'IT Specialist',
-    photo: 'https://example.com/johndoe.jpg',
-    quote: 'Always here to help.',
-  };
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+// Middleware to check authentication for dashboard and admin routes
+function verifyAuth(req, res, next) {
+  if (!req.session.isLoggedIn) {
+    if (req.originalUrl.startsWith('/admin')) {
+      return res.redirect('/admin/login');
+    } else if (req.originalUrl.startsWith('/dashboard')) {
+      return res.redirect('/dashboard/login');
+    }
+  }
   next();
-};
+}
 
-app.use(mockUserMiddleware);
-
-// API Endpoints
-
-/**
- * Fetch a single guide by ID.
- */
-app.get('/api/guides/:id', async (req, res) => {
-  try {
-    const guide = await Guide.findById(req.params.id);
-    if (!guide) {
-      return res.status(404).json({ error: 'Guide not found.' });
-    }
-    res.json(guide);
-  } catch (error) {
-    console.error('❌ Error fetching guide:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+function verifyAdmin(req, res, next) {
+  const currentUser = req.session.user;
+  if (!currentUser) {
+    return res.redirect('/admin/login');
   }
+
+  User.findOne({ _id: currentUser.id, isAdmin: true }, (err, user) => {
+    if (err || !user) {
+      return res.status(403).send('Access denied. Admins only.');
+    }
+    next();
+  });
+}
+
+// Verification middleware for dashboard access
+function verifyEmail(req, res, next) {
+  if (req.session.user && !req.session.user.isVerified) {
+    return res.sendFile(path.join(__dirname, 'public', 'verify.html'));
+  }
+  next();
+}
+
+// Routes
+// Landing and start pages (updated as per your request)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // The landing page can be customized further as needed.
 });
 
-/**
- * Fetch all guides, with optional filtering by category, tag, or search.
- */
-app.get('/api/guides', async (req, res) => {
-  try {
-    const { category, tag, search } = req.query;
-    let query = {};
-
-    if (category) query.category = new RegExp(category, 'i');
-    if (tag) query.tags = new RegExp(tag, 'i');
-    if (search) query.$or = [
-      { title: new RegExp(search, 'i') },
-      { summary: new RegExp(search, 'i') },
-      { content: new RegExp(search, 'i') }
-    ];
-
-    const guides = await Guide.find(query);
-    res.json({ guides });
-  } catch (error) {
-    console.error('❌ Error fetching guides:', error);
-    res.status(500).json({ error: 'Error fetching guides.' });
-  }
+// Authentication page
+app.get('/auth', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth', 'auth.html'));
 });
 
-/**
- * Create a new guide.
- */
-app.post('/api/guides', async (req, res) => {
-  try {
-    console.log('Received request body:', req.body); // Log the received request body
-    const { title, subtitle, summary, content, tags, category, bannerImage } = req.body;
+// Dashboard routes
+app.use('/dashboard', verifyAuth, verifyEmail);
+app.get('/dashboard/windows', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'windows.html'));
+});
+app.get('/dashboard/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'profile.html'));
+});
 
-    // Basic validation checks without Joi
-    if (!title || typeof title !== 'string') {
-      console.error('❌ Validation Error: Invalid title');
-      return res.status(400).json({ error: 'Title must be a non-empty string.' });
-    }
-    if (!content || typeof content !== 'string') {
-      console.error('❌ Validation Error: Invalid content');
-      return res.status(400).json({ error: 'Content must be a non-empty string.' });
-    }
-    if (!category || typeof category !== 'string') {
-      console.error('❌ Validation Error: Invalid category');
-      return res.status(400).json({ error: 'Category must be a valid non-empty string.' });
-    }
+// Admin routes
+app.use('/admin', verifyAuth, verifyAdmin);
+app.get('/admin/tickets', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'tickets.html'));
+});
+app.get('/admin/guides', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'guides.html'));
+});
+app.get('/admin/users', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'users.html'));
+});
 
-    const newGuide = new Guide({
-      title,
-      subtitle: subtitle || '',
-      summary: summary || '',
-      content,
-      tags: Array.isArray(tags) ? tags : [],
-      category,
-      bannerImage: bannerImage || '',
-      author: req.user, // Use user information from middleware
-      publishDate: new Date().toLocaleDateString(),
-    });
+// Search API for guides
+app.get('/api/guides/search', async (req, res) => {
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter is required' });
+  }
 
-    const savedGuide = await newGuide.save();
-    res.status(201).json(savedGuide);
-  } catch (error) {
-    if (error.code === 11000) {
-      console.error('❌ Duplicate key error:', error);
-      res.status(400).json({ error: 'A guide with the same title and category already exists.' });
+  // Replace with actual database lookup in MongoDB (example collection: Guides)
+  const guides = [
+    { id: 1, title: 'Guide 1', content: 'Content of guide 1' },
+    { id: 2, title: 'Guide 2', content: 'Content of guide 2' },
+  ];
+
+  const results = guides.filter(guide =>
+    guide.title.toLowerCase().includes(query.toLowerCase()) ||
+    guide.content.toLowerCase().includes(query.toLowerCase())
+  );
+
+  res.json(results);
+});
+
+// Email verification endpoint
+app.post('/send-verification-email', (req, res) => {
+  const email = req.session.user?.email;
+
+  if (!email) {
+    return res.status(400).send('User not logged in or email missing.');
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Please verify your email',
+    text: 'Click the link to verify your email: <verification_link>',
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending verification email:', error);
+      return res.redirect('/auth/error.html');
     } else {
-      console.error('❌ Error creating guide:', error);
-      res.status(500).json({ error: 'Error creating guide.' });
+      console.log('Verification email sent: ' + info.response);
+      res.send('Verification email sent.');
     }
-  }
+  });
 });
 
-/**
- * Update an existing guide.
- */
-app.put('/api/guides/:id', async (req, res) => {
-  try {
-    console.log('Received update request body:', req.body); // Log the received request body
-    const { title, content, category } = req.body;
-
-    // Optional validation checks before updating
-    if (title && typeof title !== 'string') {
-      console.error('❌ Validation Error: Invalid title during update');
-      return res.status(400).json({ error: 'Title must be a non-empty string.' });
-    }
-    if (content && typeof content !== 'string') {
-      console.error('❌ Validation Error: Invalid content during update');
-      return res.status(400).json({ error: 'Content must be a non-empty string.' });
-    }
-    if (category && typeof category !== 'string') {
-      console.error('❌ Validation Error: Invalid category during update');
-      return res.status(400).json({ error: 'Category must be a valid non-empty string.' });
-    }
-
-    const updatedGuide = await Guide.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedGuide) {
-      return res.status(404).json({ error: 'Guide not found.' });
-    }
-    res.json(updatedGuide);
-  } catch (error) {
-    console.error('❌ Error updating guide:', error);
-    res.status(500).json({ error: 'Error updating guide.' });
-  }
-});
-
-/**
- * Delete a guide by ID.
- */
-app.delete('/api/guides/:id', async (req, res) => {
-  try {
-    const deletedGuide = await Guide.findByIdAndDelete(req.params.id);
-    if (!deletedGuide) {
-      return res.status(404).json({ error: 'Guide not found.' });
-    }
-    res.json({ message: 'Guide deleted successfully.' });
-  } catch (error) {
-    console.error('❌ Error deleting guide:', error);
-    res.status(500).json({ error: 'Error deleting guide.' });
-  }
-});
-
-/**
- * Get popular guides sorted by views.
- */
-app.get('/api/guides/popular', async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit) || 6;
-    const popularGuides = await Guide.find().sort({ views: -1 }).limit(limit);
-    res.json({ guides: popularGuides });
-  } catch (error) {
-    console.error('❌ Error fetching popular guides:', error);
-    res.status(500).json({ error: 'Error fetching popular guides.' });
-  }
-});
-
-/**
- * Fetch a guide by category and title.
- */
-app.get('/api/guides/:category/:title', async (req, res) => {
-  try {
-    const { category, title } = req.params;
-    const guide = await Guide.findOne({ category: new RegExp(category, 'i'), title: new RegExp(title, 'i') });
-    if (!guide) {
-      return res.status(404).json({ error: 'Guide not found.' });
-    }
-    res.json(guide);
-  } catch (error) {
-    console.error('❌ Error fetching guide by category and title:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong! Please try again later.');
 });
 
 // Start the server
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

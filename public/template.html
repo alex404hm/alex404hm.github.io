@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate IT Support Mastery: Your Modern Guide to Troubleshooting & Best Practices</title>
+    <title>Guide Title</title>
 
     <!-- Meta Description for SEO -->
-    <meta name="description" content="Expert guide to IT support, troubleshooting techniques, network management, and cybersecurity best practices for professionals and businesses. Stay ahead in the IT world with cutting-edge insights.">
+    <meta name="description" content="Guide Description">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -100,7 +100,7 @@
                             <h2 id="author-name" class="text-3xl font-bold text-white">Author Name</h2>
                             <p id="author-title" class="text-gray-400">Author Title</p>
                             <div class="mt-2 text-sm text-gray-500">
-                                Published: <span id="publish-date">Publish Date</span> | <span id="reading-time"></span> min read
+                                Published: <span id="publish-date">Publish Date</span> | <span id="reading-time">0</span> min read
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
         <!-- Main Content Section -->
         <main id="main-content" class="container mx-auto px-4 mt-8 flex-grow">
             <article id="article-content" class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 prose prose-invert max-w-none">
-                Article content goes here.
+                Loading content...
             </article>
         </main>
 
@@ -157,45 +157,55 @@
         // Fetch article data using an API
         async function fetchArticleData() {
             try {
-                // Extract article _id from URL parameters
-                const params = new URLSearchParams(window.location.search);
-                const articleId = params.get('_id');
+                // Extract category and slug from URL path
+                const pathParts = window.location.pathname.split('/');
+                const category = pathParts[2];
+                const slug = pathParts[3];
 
-                if (!articleId) {
-                    console.error('No article ID provided in URL. Please provide a valid article ID.');
-                    alert('Unable to load the article. Please provide a valid article ID in the URL.');
+                if (!category || !slug) {
+                    console.error('Category or slug not found in URL.');
+                    alert('Unable to load the article. Please check the URL.');
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3001/api/guides/${articleId}`);
+                const response = await fetch(`/api/guides/${category}/${slug}`);
                 if (!response.ok) throw new Error("Network response was not ok");
 
                 const data = await response.json();
 
+                // Set page title and meta description
+                document.title = data.title;
+                document.querySelector('meta[name="description"]').setAttribute('content', data.summary || data.subtitle || '');
+
                 // Set header content
                 document.getElementById('article-title').textContent = data.title;
-                document.getElementById('article-subtitle').textContent = data.subtitle;
+                document.getElementById('article-subtitle').textContent = data.subtitle || '';
 
                 // Set header background image from API
                 const headerSection = document.getElementById('header-section');
                 if (data.bannerImage) {
                     headerSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${data.bannerImage}')`;
+                } else {
+                    headerSection.style.backgroundColor = '#1e3a8a';
                 }
 
                 // Set author section content
                 if (data.author) {
-                    document.getElementById('author-photo').src = data.author.photo;
-                    document.getElementById('author-name').textContent = data.author.name;
-                    document.getElementById('author-title').textContent = data.author.title;
-                    document.getElementById('author-quote').textContent = data.author.quote;
+                    // If you have author photo and quote in your data, include them here
+                    // For now, we'll use placeholders
+                    document.getElementById('author-photo').src = data.author.photo || 'https://example.com/default-author.jpg';
+                    document.getElementById('author-name').textContent = data.author.name || 'Unknown Author';
+                    document.getElementById('author-title').textContent = data.author.title || '';
+                    document.getElementById('author-quote').textContent = data.author.quote || '';
                 }
-                document.getElementById('publish-date').textContent = data.publishDate;
+                document.getElementById('publish-date').textContent = data.publishDate || '';
 
                 // Set main article content
                 document.getElementById('article-content').innerHTML = data.content;
 
                 // Calculate reading time
                 calculateReadingTime();
+
             } catch (error) {
                 console.error('Error fetching article data:', error);
                 alert('Unable to load the article. Please try again later.');
@@ -208,7 +218,7 @@
             const textContent = document.getElementById('article-content').innerText;
             const wordCount = textContent.trim().split(/\s+/).length;
             const readingTime = Math.ceil(wordCount / wordsPerMinute);
-            document.getElementById('reading-time').innerText = `${readingTime} min read`;
+            document.getElementById('reading-time').innerText = `${readingTime}`;
         }
 
         // Save Article
@@ -218,7 +228,19 @@
 
         // Share Article
         function shareArticle() {
-            alert('Share functionality coming soon!');
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: url
+                }).then(() => {
+                    console.log('Thanks for sharing!');
+                })
+                .catch(console.error);
+            } else {
+                // Fallback
+                prompt('Copy this link to share:', url);
+            }
         }
 
         // Open chatbot

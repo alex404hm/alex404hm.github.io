@@ -43,6 +43,29 @@
             },
         };
     </script>
+
+    <style>
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
@@ -50,19 +73,75 @@
     <!-- Navbar Section -->
     <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
         <div class="container mx-auto px-6 flex items-center justify-between">
-            <!-- Logo -->
             <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
-
-            <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-6">
-                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Home</a>
-                <a href="/profile" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Profile</a>
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                    Home
+                </a>
+                <div class="relative group">
+                    <button class="flex items-center nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                        <i class="fas fa-chevron-down dropdown-icon mr-2"></i> OS Options
+                    </button>
+                    <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Windows -->
+                            <a href="/dashboard/windows.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The most popular OS for PC users, providing a wide range of features.</p>
+                                </div>
+                            </a>
+                            <!-- macOS -->
+                            <a href="/dashboard/macos.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img id="macos-icon" src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Known for its sleek design and high-quality hardware integration.</p>
+                                </div>
+                            </a>
+                            <!-- Linux -->
+                            <a href="/dashboard/linux.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A flexible and open-source OS favored by developers and power users.</p>
+                                </div>
+                            </a>
+                            <!-- iOS -->
+                            <a href="/dashboard/ios.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img id="ios-icon" src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The operating system for Apple's mobile devices like iPhones and iPads.</p>
+                                </div>
+                            </a>
+                            <!-- Android -->
+                            <a href="/dashboard/android.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A highly customizable OS widely used across many smartphones and tablets.</p>
+                                </div>
+                            </a>
+                            <!-- ChromeOS -->
+                            <a href="/dashboard/chromeos.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A lightweight OS optimized for Chromebooks, focusing on simplicity.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="/profile" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                    Profile
+                </a>
             </nav>
-
-            <!-- Actions -->
             <div class="flex items-center space-x-4">
                 <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
-                    <i id="theme-icon" class="fas fa-sun dark:fa-moon" aria-hidden="true"></i>
+                    <i id="theme-icon" class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
             </div>
@@ -106,144 +185,134 @@
     <!-- JavaScript for Dark Mode and Data Fetching -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Check local storage for dark mode
-            const isDarkMode = localStorage.getItem('dark-mode') === 'true';
-            if (isDarkMode) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
-            }
-
-            // Dark mode toggle
-            const darkModeToggle = document.getElementById('theme-toggle');
-            darkModeToggle.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                const isDark = document.documentElement.classList.contains('dark');
-                localStorage.setItem('dark-mode', isDark);
-                const themeIcon = document.getElementById('theme-icon');
-                themeIcon.classList.toggle('fa-sun');
-                themeIcon.classList.toggle('fa-moon');
-            });
+            // Dark mode setup
+            initializeDarkMode();
 
             // Fetch and display the most popular guides
-            fetch('http://localhost:3001/api/guides/popular?category=Windows&limit=6')
-                .then(response => response.json())
-                .then(data => {
-                    displayPopularGuides(data.guides);
-                })
-                .catch(error => console.error('Error fetching popular guides:', error));
+            fetchGuides('http://localhost:3000/api/guides?category=Windows&limit=6', displayPopularGuides);
 
             // Search functionality
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.trim();
-                const suggestionsBox = document.getElementById('searchSuggestions');
-                const mostPopularGuides = document.getElementById('mostPopularGuides');
-                const searchResultsSection = document.getElementById('searchResults');
+            initializeSearch();
 
-                if (query === '') {
-                    suggestionsBox.classList.add('hidden');
-                    mostPopularGuides.classList.remove('hidden');
-                    searchResultsSection.classList.add('hidden');
-                } else {
-                    mostPopularGuides.classList.add('hidden');
-                    fetch(`http://localhost:3001/api/guides/search?q=${query}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            displaySuggestions(data.guides);
-                            displaySearchResults(data.guides);
-                        })
-                        .catch(error => console.error('Error fetching suggestions:', error));
+            // Dark Mode Initialization
+            function initializeDarkMode() {
+                const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                    updateThemeIcon('dark');
+                    updateLogoColors('dark');
                 }
-            });
 
-            // Hide suggestions when clicking outside
-            document.addEventListener('click', (event) => {
-                const searchInputElement = document.getElementById('searchInput');
-                const suggestionsBox = document.getElementById('searchSuggestions');
-                if (!searchInputElement.contains(event.target) && !suggestionsBox.contains(event.target)) {
-                    suggestionsBox.classList.add('hidden');
-                }
-            });
-
-            // Display popular guides
-            function displayPopularGuides(guides) {
-                const popularGuidesContainer = document.getElementById('popularGuidesContainer');
-                popularGuidesContainer.innerHTML = '';
-
-                guides.forEach(guide => {
-                    const guideCard = createGuideCard(guide);
-                    popularGuidesContainer.appendChild(guideCard);
+                document.getElementById('theme-toggle').addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('dark-mode', isDark);
+                    updateThemeIcon(isDark ? 'dark' : 'light');
+                    updateLogoColors(isDark ? 'dark' : 'light');
                 });
             }
 
-            // Display search suggestions
-            function displaySuggestions(suggestions) {
-                const suggestionsBox = document.getElementById('searchSuggestions');
-                suggestionsBox.innerHTML = '';
-
-                if (suggestions.length > 0) {
-                    suggestions.forEach(guide => {
-                        const suggestionItem = document.createElement('div');
-                        suggestionItem.className = 'py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer';
-                        suggestionItem.textContent = guide.title;
-                        suggestionsBox.appendChild(suggestionItem);
-
-                        suggestionItem.addEventListener('click', () => {
-                            document.getElementById('searchInput').value = guide.title;
-                            suggestionsBox.classList.add('hidden');
-                            displaySearchResults([guide]);
-                        });
-                    });
-                    suggestionsBox.classList.remove('hidden');
+            function updateThemeIcon(mode) {
+                const themeIcon = document.getElementById('theme-icon');
+                if (mode === 'dark') {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
                 } else {
-                    suggestionsBox.classList.add('hidden');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
                 }
             }
 
-            // Display search results in a single-column format
-            function displaySearchResults(results) {
+            function updateLogoColors(mode) {
+                const macosIcon = document.getElementById('macos-icon');
+                const iosIcon = document.getElementById('ios-icon');
+                if (mode === 'dark') {
+                    macosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/mac-os.png";
+                    iosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/ios-logo.png";
+                } else {
+                    macosIcon.src = "https://img.icons8.com/ios-filled/48/000000/mac-os.png";
+                    iosIcon.src = "https://img.icons8.com/ios-filled/48/000000/ios-logo.png";
+                }
+            }
+
+            // Fetch Guides from API
+            function fetchGuides(apiUrl, callback) {
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.guides) {
+                            callback(data.guides);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching guides:', error));
+            }
+
+            // Search Initialization
+            function initializeSearch() {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        fetchGuides(`http://localhost:3000/api/guides/search?q=${query}`, displaySearchResults);
+                    } else {
+                        toggleVisibility('mostPopularGuides', true);
+                        toggleVisibility('searchResults', false);
+                    }
+                });
+            }
+
+            // Display Popular Guides
+            function displayPopularGuides(guides) {
+                const container = document.getElementById('popularGuidesContainer');
+                container.innerHTML = guides.map(createGuideCard).join('');
+            }
+
+            // Display Search Results
+            function displaySearchResults(guides) {
                 const resultsContainer = document.getElementById('resultsContainer');
-                resultsContainer.innerHTML = '';
-                const searchResultsSection = document.getElementById('searchResults');
-
-                if (results.length > 0) {
-                    results.forEach(guide => {
-                        const guideCard = createSearchResultCard(guide);
-                        resultsContainer.appendChild(guideCard);
-                    });
-                    searchResultsSection.classList.remove('hidden');
-                } else {
-                    searchResultsSection.classList.add('hidden');
-                }
+                resultsContainer.innerHTML = guides.map(createSearchResultCard).join('');
+                toggleVisibility('searchResults', guides.length > 0);
             }
 
-            // Helper function to create a search result card element with image preview
-            function createSearchResultCard(guide) {
-                const guideCard = document.createElement('div');
-                guideCard.className = 'bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 transition-transform duration-300 hover:shadow-xl hover:scale-105 cursor-pointer';
-                guideCard.innerHTML = `
-                    <a href="/guide.html?id=${guide._id}" class="flex items-start space-x-4">
-                        <img src="https://via.placeholder.com/150" alt="${guide.title} Image" class="w-32 h-32 rounded-lg object-cover">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${guide.title}</h2>
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">${guide.summary}</p>
-                        </div>
-                    </a>
-                `;
-                return guideCard;
+            // Helper to toggle section visibility
+            function toggleVisibility(sectionId, visible) {
+                document.getElementById(sectionId).classList.toggle('hidden', !visible);
             }
 
-            // Helper function to create a popular guide card
+            // Helper function to create a guide card
             function createGuideCard(guide) {
-                const guideCard = document.createElement('div');
-                guideCard.className = 'bg-white dark:bg-darkBlack rounded-2xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer';
-                guideCard.innerHTML = `
-                    <a href="/guide.html?id=${guide._id}" class="block text-center">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${guide.title}</h2>
-                        <p class="mt-4 text-gray-600 dark:text-gray-400">${guide.summary}</p>
-                    </a>
-                `;
-                return guideCard;
+                const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                return `
+                    <a href="/articles/${category.toLowerCase()}/${slug}" class="block bg-white dark:bg-darkBlack rounded-2xl shadow-md p-6 transition-transform duration-300 hover:shadow-lg hover:scale-105">
+                        <img src="${imageUrl}" alt="${title} Image" class="w-full h-40 object-cover rounded-lg mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                        <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">${summary}</p>
+                        <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                            <p>Author: ${author.name}</p>
+                            <p>Published on: ${publishDate}</p>
+                        </div>
+                    </a>`;
+            }
+
+            // Helper function to create a search result card
+            function createSearchResultCard(guide) {
+                const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                return `
+                    <a href="/articles/${category.toLowerCase()}/${slug}" class="block bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-transform duration-300 hover:shadow-xl hover:scale-105">
+                        <div class="flex items-start space-x-4">
+                            <img src="${imageUrl}" alt="${title} Image" class="w-32 h-32 rounded-lg object-cover">
+                            <div>
+                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                                <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400">${summary}</p>
+                                <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <p>Author: ${author.name}</p>
+                                    <p>Published on: ${publishDate}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>`;
             }
         });
     </script>

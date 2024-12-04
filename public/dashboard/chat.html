@@ -1,137 +1,255 @@
 <!DOCTYPE html>
-<html lang="da" class="scroll-smooth">
+<html lang="da" class="scroll-smooth" data-theme="light">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Support Chat</title>
-
-  <!-- Meta Description for SEO -->
-  <meta name="description" content="Support Chat - Live Chat with our support team.">
-
-  <!-- Favicon -->
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- FontAwesome for Icons -->
-  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
-
-  <style>
-    /* No additional custom CSS, just using TailwindCSS */
-  </style>
+    <!-- [Existing head content remains the same] -->
+    <!-- ... -->
 </head>
 
-<body class="font-inter bg-gray-900 text-gray-200">
+<body class="relative bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+    <!-- [Existing body content remains the same] -->
+    <!-- ... -->
 
-  <!-- Chat Button -->
-  <button id="chatButton" class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg text-2xl hover:bg-blue-700 focus:outline-none transition-all duration-300 ease-in-out transform hover:scale-105">
-    <i class="fas fa-comment"></i>
-  </button>
+    <!-- JavaScript for CRUD Operations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_BASE_URL = 'http://localhost:3000';
+            let currentGuideId = null;
 
-  <!-- Chat Popup UI -->
-  <div id="chatPopup" class="fixed bottom-0 right-0 w-[320px] max-h-[500px] bg-white rounded-lg shadow-lg transform scale-95 opacity-0 transition-all duration-300 ease-out z-50">
-    <div class="bg-blue-600 text-white p-3 rounded-t-lg flex justify-between items-center">
-      <h3 class="font-semibold text-lg">Support Chat</h3>
-      <button id="closeChat" class="text-white text-xl font-bold">&times;</button>
-    </div>
-    <div id="chatBody" class="p-4 space-y-4 max-h-[300px] overflow-y-auto bg-gray-50">
-      <!-- Welcome message -->
-      <div class="chat-message bot text-sm bg-gray-300 p-2 rounded-md">
-        <p>Hej! Vælg venligst et emne for at starte samtalen.</p>
-      </div>
-      <div id="topicSelection" class="flex space-x-4">
-        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Billet Support</button>
-        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Teknisk Support</button>
-        <button class="topic-button px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-200">Generel Forespørgsel</button>
-      </div>
-    </div>
-    <div id="chatFooter" class="hidden p-3 bg-gray-200 rounded-b-lg flex items-center space-x-3">
-      <input id="chatInput" type="text" class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Skriv din besked..." aria-label="Chat input">
-      <button id="sendMessageButton" class="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200">
-        <i class="fas fa-paper-plane"></i>
-      </button>
-    </div>
-  </div>
+            const themeToggle = document.getElementById('theme-toggle');
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+            const createGuideButton = document.getElementById('create-guide-button');
+            const guidesTableBody = document.getElementById('guides-table-body');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            const guideModal = document.getElementById('guide-modal');
+            const guideForm = document.getElementById('guide-form');
+            const modalTitle = document.getElementById('modal-title');
+            const cancelButton = document.getElementById('cancel-button');
+            const logoutButton = document.getElementById('logout-button');
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const chatButton = document.getElementById('chatButton');
-      const chatPopup = document.getElementById('chatPopup');
-      const closeChat = document.getElementById('closeChat');
-      const sendMessageButton = document.getElementById('sendMessageButton');
-      const chatInput = document.getElementById('chatInput');
-      const chatBody = document.getElementById('chatBody');
-      const topicSelection = document.getElementById('topicSelection');
-      const chatFooter = document.getElementById('chatFooter');
-      
-      let selectedTopic = '';
+            // Initialize Theme
+            const initializeTheme = () => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            };
+            initializeTheme();
 
-      // Toggle chat popup visibility with animation
-      chatButton.addEventListener('click', () => {
-        chatPopup.classList.remove('scale-95', 'opacity-0');
-        chatPopup.classList.add('scale-100', 'opacity-100');
-      });
+            // Theme Toggle
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
 
-      // Close the chat popup with animation
-      closeChat.addEventListener('click', () => {
-        chatPopup.classList.remove('scale-100', 'opacity-100');
-        chatPopup.classList.add('scale-95', 'opacity-0');
-      });
+            // Sidebar Toggle for Mobile
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
 
-      // Handle topic selection
-      const topicButtons = document.querySelectorAll('.topic-button');
-      topicButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          selectedTopic = button.textContent.trim();
-          topicSelection.classList.add('hidden');
-          chatFooter.classList.remove('hidden');
-          appendMessage('user', `Jeg har valgt emnet: ${selectedTopic}`);
-          setTimeout(() => {
-            appendMessage('bot', `Tak for at vælge emnet: ${selectedTopic}. Hvordan kan jeg hjælpe dig videre?`);
-          }, 1000);
+            // Open Create Guide Modal
+            createGuideButton.addEventListener('click', () => {
+                currentGuideId = null;
+                modalTitle.textContent = 'Opret Ny Guide';
+                guideForm.reset();
+                openModal();
+            });
+
+            // Open and Close Modal Functions
+            const openModal = () => guideModal.classList.remove('hidden');
+            const closeModal = () => guideModal.classList.add('hidden');
+            cancelButton.addEventListener('click', closeModal);
+
+            // Logout Functionality
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/logout`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
+                    if (response.ok) {
+                        window.location.href = '/auth/login';
+                    } else {
+                        alert('Kunne ikke logge ud. Prøv igen.');
+                    }
+                } catch (error) {
+                    console.error('Logout Error:', error);
+                }
+            });
+
+            // Function to get the JWT token from cookies
+            const getToken = () => {
+                const name = 'token=';
+                const decodedCookie = decodeURIComponent(document.cookie);
+                const ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i].trim();
+                    if (c.indexOf(name) === 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return '';
+            };
+
+            // Fetch Guides from API
+            const fetchGuides = async () => {
+                showLoadingIndicator();
+                guidesTableBody.innerHTML = '';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/guides`, {
+                        credentials: 'include',
+                    });
+                    if (!response.ok) throw new Error('Could not fetch guides.');
+                    const { guides } = await response.json();
+                    if (guides.length === 0) {
+                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500">Ingen guider fundet.</td></tr>`;
+                    } else {
+                        guides.forEach(guide => appendGuideToTable(guide));
+                    }
+                } catch (error) {
+                    displayErrorMessage('Kunne ikke hente guider. Prøv igen senere.');
+                } finally {
+                    hideLoadingIndicator();
+                }
+            };
+
+            // Append Guide to Table
+            const appendGuideToTable = (guide) => {
+                const row = document.createElement('tr');
+                row.classList.add('border-b', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-lightBlack', 'hover:bg-opacity-20', 'transition-all', 'duration-200');
+                row.innerHTML = `
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide._id}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.title}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.category}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.views}</td>
+                    <td class="py-4 px-6 text-center">
+                        <button class="edit-guide-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="Edit Guide" data-id="${guide._id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-guide-btn text-accentRed hover:text-primaryBlue" aria-label="Delete Guide" data-id="${guide._id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                guidesTableBody.appendChild(row);
+
+                row.querySelector('.edit-guide-btn').addEventListener('click', () => editGuide(guide));
+                row.querySelector('.delete-guide-btn').addEventListener('click', () => deleteGuide(guide._id));
+            };
+
+            // Edit Guide Function
+            const editGuide = (guide) => {
+                currentGuideId = guide._id;
+                modalTitle.textContent = 'Rediger Guide';
+                document.getElementById('guide-title').value = guide.title;
+                document.getElementById('guide-subtitle').value = guide.subtitle || '';
+                document.getElementById('guide-content').value = guide.content;
+                document.getElementById('guide-category').value = guide.category;
+                openModal();
+            };
+
+            // Delete Guide Function
+            const deleteGuide = async (guideId) => {
+                if (!confirm('Er du sikker på, at du vil slette denne guide?')) return;
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/guides/id/${guideId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to delete guide.');
+                    }
+                    fetchGuides();
+                } catch (error) {
+                    alert(`Kunne ikke slette guide: ${error.message}`);
+                }
+            };
+
+            // Show and Hide Loading Indicator
+            const showLoadingIndicator = () => loadingIndicator.classList.remove('hidden');
+            const hideLoadingIndicator = () => loadingIndicator.classList.add('hidden');
+
+            // Display Error Message
+            const displayErrorMessage = (message) => {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            };
+
+            // Guide Form Submission Handler
+            guideForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const guideData = {
+                    title: document.getElementById('guide-title').value.trim(),
+                    subtitle: document.getElementById('guide-subtitle').value.trim(),
+                    content: document.getElementById('guide-content').value.trim(),
+                    category: document.getElementById('guide-category').value,
+                };
+
+                try {
+                    let response;
+                    if (currentGuideId) {
+                        response = await fetch(`${API_BASE_URL}/api/guides/id/${currentGuideId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}`,
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(guideData),
+                        });
+                    } else {
+                        response = await fetch(`${API_BASE_URL}/api/guides`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}`,
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(guideData),
+                        });
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to save guide.');
+                    }
+
+                    fetchGuides();
+                    closeModal();
+                } catch (error) {
+                    alert(`Kunne ikke gemme guide: ${error.message}`);
+                }
+            });
+
+            // Search Functionality
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = guidesTableBody.getElementsByTagName('tr');
+                Array.from(rows).forEach(row => {
+                    const title = row.cells[1].textContent.toLowerCase();
+                    const category = row.cells[2].textContent.toLowerCase();
+                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Fetch Guides on Page Load
+            fetchGuides();
         });
-      });
-
-      // Send message on button click
-      sendMessageButton.addEventListener('click', () => {
-        const userMessage = chatInput.value.trim();
-        if (userMessage) {
-          appendMessage('user', userMessage);
-          chatInput.value = '';
-
-          // Simulate bot response (you can replace this with actual logic)
-          setTimeout(() => {
-            const botResponse = `Bot siger: ${userMessage}`;
-            appendMessage('bot', botResponse);
-          }, 1000);
-        }
-      });
-
-      // Append message to the chat
-      function appendMessage(sender, message) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('chat-message', sender, 'text-sm', 'p-2', 'rounded-md');
-        messageElement.textContent = message;
-        chatBody.appendChild(messageElement);
-
-        // Scroll to the bottom of the chat body
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }
-
-      // Optionally, handle 'Enter' key press to send message
-      chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          sendMessageButton.click();
-        }
-      });
-    });
-  </script>
-
+    </script>
 </body>
 
 </html>

@@ -43,72 +43,95 @@
             },
         };
     </script>
+
+    <style>
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
 
-    <!-- Modern Navbar for ChromeOS Support Page -->
+    <!-- Navbar Section -->
     <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
         <div class="container mx-auto px-6 flex items-center justify-between">
             <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
             <nav class="hidden md:flex items-center space-x-6">
-                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
                     Home
                 </a>
-                <div class="relative dropdown group">
-                    <button class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                        OS Options
+                <div class="relative group">
+                    <button class="flex items-center nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                        <i class="fas fa-chevron-down dropdown-icon mr-2"></i> OS Options
                     </button>
                     <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Windows -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/windows.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
                                 <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">The most popular OS for PC users, providing a wide range of features.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- macOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
-                                <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                            <a href="/dashboard/macos.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img id="macos-icon" src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Known for its sleek design and high-quality hardware integration.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- Linux -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/linux.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
                                 <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A flexible and open-source OS favored by developers and power users.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- iOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
-                                <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                            <a href="/dashboard/ios.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                                <img id="ios-icon" src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">The operating system for Apple's mobile devices like iPhones and iPads.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- Android -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/android.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
                                 <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A highly customizable OS widely used across many smartphones and tablets.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- ChromeOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/chromeos.html" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
                                 <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A lightweight OS optimized for Chromebooks, focusing on simplicity.</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -118,102 +141,178 @@
             </nav>
             <div class="flex items-center space-x-4">
                 <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
-                    <i id="theme-icon" class="fas fa-sun dark:fa-moon" aria-hidden="true"></i>
+                    <i id="theme-icon" class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
             </div>
         </div>
     </header>
 
-    <!-- Search Bar Section -->
-    <div class="container mx-auto px-6 mt-32 md:mt-40 mb-16">
-        <div class="text-center mb-8">
-            <h1 class="text-6xl font-extrabold text-darkBlack dark:text-secondaryGray">ChromeOS Support</h1>
-            <p class="text-2xl text-gray-600 dark:text-gray-300 mt-4">Welcome to the ChromeOS Help Center. Find answers to your questions and solutions to your issues.</p>
-        </div>
-        <div class="relative max-w-3xl mx-auto">
-            <input type="text" placeholder="Search for help..." class="w-full py-4 pl-14 pr-4 text-lg rounded-full shadow-lg focus:outline-none focus:ring-4 focus:ring-primaryBlue transition-all duration-300">
-            <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-        </div>
-    </div>
-
-    <!-- Most Popular Guides Section -->
-    <section class="container mx-auto px-6 mb-16">
-        <header class="text-center mb-12">
-            <h3 class="text-4xl font-bold text-darkBlack dark:text-secondaryGray">Most Popular ChromeOS Guides</h3>
+    <!-- Main Content Section -->
+    <main class="pt-36 container mx-auto px-6 mb-16">
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray mb-6">ChromeOS Support</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">Find answers to your questions and solutions to your ChromeOS issues.</p>
         </header>
-        <div class="grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <!-- Popular Guides Articles -->
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-tools text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">Troubleshooting Guide</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Step-by-step instructions to fix common ChromeOS issues.</p>
-                </a>
-            </div>
 
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-download text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">Software Updates</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Download and install the latest updates for your ChromeOS device.</p>
-                </a>
-            </div>
-
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-laptop-house text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">Remote Assistance</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Connect with our support team for hands-on help.</p>
-                </a>
-            </div>
-
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-question-circle text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">FAQs</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Find answers to frequently asked questions about ChromeOS.</p>
-                </a>
-            </div>
-
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-shield-alt text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">Security Tips</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Learn how to keep your ChromeOS device secure.</p>
-                </a>
-            </div>
-
-            <div class="support-article bg-white dark:bg-darkBlack rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-500 hover:-translate-y-2 group transform cursor-pointer">
-                <a href="#" class="block p-10 text-center">
-                    <i class="fas fa-sync-alt text-5xl text-primaryBlue mb-6 group-hover:text-accentRed"></i>
-                    <h2 class="text-3xl font-semibold text-gray-800 dark:text-white group-hover:text-primaryBlue">System Recovery</h2>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400">Restore your ChromeOS device to a previous state.</p>
-                </a>
+        <!-- Search Bar Section -->
+        <div class="relative max-w-3xl mx-auto mb-12">
+            <input id="searchInput" type="text" placeholder="Search for help..." class="w-full py-4 pl-14 pr-4 text-lg rounded-full shadow-md focus:outline-none focus:ring-4 focus:ring-primaryBlue transition-all duration-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+            <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-200"></i>
+            <div id="searchSuggestions" class="absolute w-full bg-white dark:bg-gray-800 rounded-lg shadow-md mt-2 p-2 hidden">
+                <!-- Suggestions will appear here -->
             </div>
         </div>
-    </section>
 
-    <!-- Dark Mode Toggle Script -->
+        <!-- Popular Guides Section -->
+        <section id="mostPopularGuides" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">Most Popular ChromeOS Guides</h2>
+            <div id="popularGuidesContainer" class="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Most popular guides will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- Search Results Section -->
+        <section id="searchResults" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8">Search Results</h2>
+            <div id="resultsContainer" class="space-y-8">
+                <!-- Search results will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript for Dark Mode and Data Fetching -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('theme-toggle');
-            const darkModeIcon = document.getElementById('theme-icon');
+            // Dark mode setup
+            initializeDarkMode();
 
-            // Set theme based on localStorage
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-                darkModeIcon.classList.replace('fa-sun', 'fa-moon');
+            // Fetch and display the most popular guides
+            fetchGuides('http://localhost:3000/api/guides?category=ChromeOS&limit=6', displayPopularGuides);
+
+            // Search functionality
+            initializeSearch();
+
+            // Dark Mode Initialization
+            function initializeDarkMode() {
+                const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                    updateThemeIcon('dark');
+                    updateLogoColors('dark');
+                }
+
+                document.getElementById('theme-toggle').addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('dark-mode', isDark);
+                    updateThemeIcon(isDark ? 'dark' : 'light');
+                    updateLogoColors(isDark ? 'dark' : 'light');
+                });
             }
 
-            // Theme toggle button
-            themeToggle.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                const isDark = document.documentElement.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                darkModeIcon.classList.toggle('fa-sun');
-                darkModeIcon.classList.toggle('fa-moon');
-            });
+            function updateThemeIcon(mode) {
+                const themeIcon = document.getElementById('theme-icon');
+                if (mode === 'dark') {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                } else {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                }
+            }
+
+            function updateLogoColors(mode) {
+                const macosIcon = document.getElementById('macos-icon');
+                const iosIcon = document.getElementById('ios-icon');
+                if (mode === 'dark') {
+                    macosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/mac-os.png";
+                    iosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/ios-logo.png";
+                } else {
+                    macosIcon.src = "https://img.icons8.com/ios-filled/48/000000/mac-os.png";
+                    iosIcon.src = "https://img.icons8.com/ios-filled/48/000000/ios-logo.png";
+                }
+            }
+
+            // Fetch Guides from API
+            function fetchGuides(apiUrl, callback) {
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.guides) {
+                            callback(data.guides);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching guides:', error));
+            }
+
+            // Search Initialization
+            function initializeSearch() {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        fetchGuides(`http://localhost:3000/api/guides/search?q=${query}`, displaySearchResults);
+                    } else {
+                        toggleVisibility('mostPopularGuides', true);
+                        toggleVisibility('searchResults', false);
+                    }
+                });
+            }
+
+            // Display Popular Guides
+            function displayPopularGuides(guides) {
+                const container = document.getElementById('popularGuidesContainer');
+                container.innerHTML = guides.map(createGuideCard).join('');
+            }
+
+            // Display Search Results
+            function displaySearchResults(guides) {
+                const resultsContainer = document.getElementById('resultsContainer');
+                resultsContainer.innerHTML = guides.map(createSearchResultCard).join('');
+                toggleVisibility('searchResults', guides.length > 0);
+            }
+
+            // Helper to toggle section visibility
+            function toggleVisibility(sectionId, visible) {
+                document.getElementById(sectionId).classList.toggle('hidden', !visible);
+            }
+
+            // Helper function to create a guide card
+            function createGuideCard(guide) {
+                const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                return `
+                    <a href="/articles/${category.toLowerCase()}/${slug}" class="block bg-white dark:bg-darkBlack rounded-2xl shadow-md p-6 transition-transform duration-300 hover:shadow-lg hover:scale-105">
+                        <img src="${imageUrl}" alt="${title} Image" class="w-full h-40 object-cover rounded-lg mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                        <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">${summary}</p>
+                        <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                            <p>Author: ${author.name}</p>
+                            <p>Published on: ${publishDate}</p>
+                        </div>
+                    </a>`;
+            }
+
+            // Helper function to create a search result card
+            function createSearchResultCard(guide) {
+                const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                return `
+                    <a href="/articles/${category.toLowerCase()}/${slug}" class="block bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-transform duration-300 hover:shadow-xl hover:scale-105">
+                        <div class="flex items-start space-x-4">
+                            <img src="${imageUrl}" alt="${title} Image" class="w-32 h-32 rounded-lg object-cover">
+                            <div>
+                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                                <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                                <p class="mt-2 text-gray-600 dark:text-gray-400">${summary}</p>
+                                <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <p>Author: ${author.name}</p>
+                                    <p>Published on: ${publishDate}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>`;
+            }
         });
     </script>
 </body>

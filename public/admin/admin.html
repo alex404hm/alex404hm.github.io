@@ -15,11 +15,6 @@
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- External CSS -->
-
-  <!-- FontAwesome for Icons -->
-  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
-
   <!-- Custom Tailwind Configuration -->
   <script>
     tailwind.config = {
@@ -44,13 +39,12 @@
       },
     };
   </script>
+
+  <!-- FontAwesome for Icons -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 </head>
 
 <body class="relative bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
-  <!-- Floating Blobs for Background -->
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
   <!-- Dashboard Layout -->
   <div class="flex min-h-screen">
     <!-- Sidebar -->
@@ -81,7 +75,7 @@
             <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Brugere
           </a>
-          <a href="#logout" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+          <a href="#logout" id="logout-button" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
             <i class="fas fa-sign-out-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Log ud
           </a>
@@ -174,68 +168,122 @@
     </div>
   </div>
 
-  <!-- External JavaScript -->
-
-  <!-- Custom JavaScript -->
+  <!-- JavaScript for Functionality -->
   <script>
-    // Dark Mode Toggle
-    const themeToggle = document.getElementById('theme-toggle');
-    themeToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE_URL = 'http://localhost:3000';
 
-    // Set theme based on localStorage
-    if (localStorage.getItem('theme') === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
+      const themeToggle = document.getElementById('theme-toggle');
+      const menuButton = document.getElementById('menu-button');
+      const sidebar = document.getElementById('sidebar');
+      const logoutButton = document.getElementById('logout-button');
 
-    // Sidebar Toggle for Mobile
-    const menuButton = document.getElementById('menu-button');
-    const sidebar = document.getElementById('sidebar');
-    menuButton.addEventListener('click', () => {
-      sidebar.classList.toggle('-translate-x-full');
-    });
-
-    // Fetch data from API and update UI
-    async function fetchData() {
-      try {
-        const response = await fetch('http://localhost:3000/api/dashboard-data');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+      // Initialize Theme
+      const initializeTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
         }
-        const data = await response.json();
+      };
+      initializeTheme();
 
-        // Update total users
-        document.getElementById('total-users-count').textContent = data.totalUsers;
-        // Update open tickets
-        document.getElementById('open-tickets-count').textContent = data.openTickets;
-        // Update pending tickets
-        document.getElementById('pending-tickets-count').textContent = data.pendingTickets || 0;
-        // Update closed tickets
-        document.getElementById('closed-tickets-count').textContent = data.closedTickets;
-        // Update recent activities
-        const recentActivitiesList = document.getElementById('recent-activities-list');
-        recentActivitiesList.innerHTML = '';
-        data.recentActivities.forEach(activity => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('bg-secondaryGray', 'dark:bg-lightBlack', 'p-5', 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'hover:shadow-lg', 'transition-shadow', 'duration-300');
-          listItem.innerHTML = `
-            <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
-            <div>
-              <p class="text-darkBlack dark:text-white">${activity.description}</p>
-              <p class="text-gray-700 dark:text-gray-300 text-sm">${activity.timestamp}</p>
-            </div>
-          `;
-          recentActivitiesList.appendChild(listItem);
-        });
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+      // Theme Toggle
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+
+      // Sidebar Toggle for Mobile
+      menuButton.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+      });
+
+      // Function to get the JWT token from cookies
+      const getToken = () => {
+        const name = 'token=';
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i].trim();
+          if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return '';
+      };
+
+      // Logout Functionality
+      logoutButton.addEventListener('click', async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/logout`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${getToken()}`,
+            },
+          });
+          if (response.ok) {
+            window.location.href = '/auth/login';
+          } else {
+            alert('Kunne ikke logge ud. Prøv igen.');
+          }
+        } catch (error) {
+          console.error('Logout Error:', error);
+        }
+      });
+
+      // Fetch data from API and update UI
+      async function fetchData() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/dashboard-data`, {
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${getToken()}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+
+          // Update total users
+          document.getElementById('total-users-count').textContent = data.totalUsers;
+          // Update open tickets
+          document.getElementById('open-tickets-count').textContent = data.openTickets;
+          // Update pending tickets
+          document.getElementById('pending-tickets-count').textContent = data.pendingTickets || 0;
+          // Update closed tickets
+          document.getElementById('closed-tickets-count').textContent = data.closedTickets;
+          // Update recent activities
+          const recentActivitiesList = document.getElementById('recent-activities-list');
+          recentActivitiesList.innerHTML = '';
+          if (data.recentActivities && data.recentActivities.length > 0) {
+            data.recentActivities.forEach(activity => {
+              const listItem = document.createElement('li');
+              listItem.classList.add('bg-secondaryGray', 'dark:bg-lightBlack', 'p-5', 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'hover:shadow-lg', 'transition-shadow', 'duration-300');
+              listItem.innerHTML = `
+                <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
+                <div>
+                  <p class="text-darkBlack dark:text-white">${activity.description}</p>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm">${activity.timestamp}</p>
+                </div>
+              `;
+              recentActivitiesList.appendChild(listItem);
+            });
+          } else {
+            recentActivitiesList.innerHTML = '<li class="text-secondaryGray">Ingen seneste aktiviteter.</li>';
+          }
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error);
+          // Display error message to user
+          const recentActivitiesList = document.getElementById('recent-activities-list');
+          recentActivitiesList.innerHTML = '<li class="text-red-500">Kunne ikke hente data. Prøv igen senere.</li>';
+        }
       }
-    }
 
-    // Load data on page load
-    document.addEventListener('DOMContentLoaded', fetchData);
+      // Load data on page load
+      fetchData();
+    });
   </script>
 </body>
 

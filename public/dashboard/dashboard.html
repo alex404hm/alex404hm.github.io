@@ -48,7 +48,8 @@
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
 
     <!-- Loading Screen -->
-    <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center bg-black/75 backdrop-blur-md z-50 transition-opacity duration-500 hidden">
+    <!-- Removed 'hidden' to display the loading screen initially -->
+    <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center bg-black/75 backdrop-blur-md z-50 transition-opacity duration-500">
         <i id="loadingIcon" class="fas fa-tools text-4xl text-white animate-pulse"></i>
     </div>
 
@@ -60,7 +61,7 @@
                 <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
                     Home
                 </a>
-                <div class="relative dropdown group">
+                <div class="relative dropdown group" onclick="toggleDropdown(this)">
                     <button class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
                         OS Options
                     </button>
@@ -123,7 +124,8 @@
             </nav>
             <div class="flex items-center space-x-4">
                 <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
-                    <i id="theme-icon" class="fas fa-sun dark:fa-moon" aria-hidden="true"></i>
+                    <!-- Removed 'dark:fa-moon' and set initial icon to sun -->
+                    <i id="theme-icon" class="fas fa-sun" aria-hidden="true"></i>
                 </button>
                 <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
             </div>
@@ -131,7 +133,8 @@
     </header>
 
     <!-- Main Content Section -->
-    <main id="mainContent" class="pt-36 container mx-auto px-6 mb-16 hidden">
+    <!-- Added 'hidden' to hide main content initially -->
+    <main id="mainContent" class="hidden pt-36 container mx-auto px-6 mb-16">
         <header class="text-center mb-16">
             <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray mb-6">Welcome to Support Pro</h1>
             <p class="text-lg text-gray-700 dark:text-gray-300">Select your operating system to continue</p>
@@ -149,7 +152,8 @@
             <!-- macOS Tile -->
             <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
                 <a href="macos.html" class="block text-center">
-                    <img src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
+                    <!-- Added ID for JavaScript manipulation -->
+                    <img id="macos-logo" src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
                     <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
                 </a>
             </div>
@@ -165,7 +169,8 @@
             <!-- iOS/iPadOS Tile -->
             <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
                 <a href="ios.html" class="block text-center">
-                    <img src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
+                    <!-- Added ID for JavaScript manipulation -->
+                    <img id="ios-logo" src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
                     <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
                 </a>
             </div>
@@ -198,71 +203,98 @@
     </div>
 
     <!-- Link to Main JavaScript File -->
-    <script src="test.js"></script>
-
-    <!-- JavaScript to Handle Email Verification Overlay and Loading Screen -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Elements
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            const overlay = document.getElementById('verification-overlay');
-
-            // Fetch user info
-            fetch('/api/user-info', {
-                credentials: 'include'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define and cache elements to prevent multiple DOM queries
+            const elements = {
+                loadingScreen: document.getElementById('loadingScreen'),
+                mainContent: document.getElementById('mainContent'),
+                themeToggle: document.getElementById('theme-toggle'),
+                darkModeIcon: document.getElementById('theme-icon'), // Updated selector
+                logos: {
+                    macos: document.getElementById('macos-logo'),
+                    ios: document.getElementById('ios-logo')
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.user.isVerified) {
-                    // User is verified
-                    // Show loading screen
-                    loadingScreen.classList.remove('hidden');
-                    // Simulate loading time
-                    setTimeout(() => {
-                        // Hide loading screen
-                        loadingScreen.classList.add('hidden');
-                        // Show main content
-                        mainContent.classList.remove('hidden');
-                    }, 2000); // Adjust loading time as needed
+            };
+
+            // Define logo URLs for different themes
+            const logoUrls = {
+                macos: {
+                    light: 'https://img.icons8.com/ios-filled/96/000000/mac-os.png', // Black logo in light mode
+                    dark: 'https://img.icons8.com/ios-filled/96/ffffff/mac-os.png'  // White logo in dark mode
+                },
+                ios: {
+                    light: 'https://img.icons8.com/ios-filled/96/000000/ios-logo.png', // Black logo in light mode
+                    dark: 'https://img.icons8.com/ios-filled/96/ffffff/ios-logo.png'  // White logo in dark mode
+                }
+            };
+
+            // Function to hide the loading screen after a short delay and show the main content
+            const hideLoadingScreen = () => {
+                setTimeout(() => {
+                    if (elements.loadingScreen) {
+                        elements.loadingScreen.classList.add('hidden');
+                    }
+                    if (elements.mainContent) {
+                        elements.mainContent.classList.remove('hidden');
+                    }
+                }, 2000); // Adjust loading time as needed
+            };
+
+            // Function to update theme-related elements (icons, logos)
+            const updateThemeElements = (isDark) => {
+                // Update dark mode icon
+                elements.darkModeIcon.classList.remove('fa-sun', 'fa-moon');
+                elements.darkModeIcon.classList.add(isDark ? 'fa-moon' : 'fa-sun');
+
+                // Set the correct logo sources based on the theme
+                if (elements.logos.macos) {
+                    elements.logos.macos.src = isDark ? logoUrls.macos.dark : logoUrls.macos.light;
+                }
+                if (elements.logos.ios) {
+                    elements.logos.ios.src = isDark ? logoUrls.ios.dark : logoUrls.ios.light;
+                }
+            };
+
+            // Function to initialize theme based on the saved preference in localStorage
+            const initializeTheme = () => {
+                const isDark = localStorage.getItem('theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
                 } else {
-                    // User is not verified
-                    // Show main content
-                    mainContent.classList.remove('hidden');
-                    // Show verification overlay
-                    overlay.classList.remove('hidden');
-
-                    const resendButton = document.getElementById('resend-verification-btn');
-                    resendButton.addEventListener('click', function () {
-                        fetch('/api/send-verification-email', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            credentials: 'include'
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            alert(data.message);
-                        })
-                        .catch(error => {
-                            console.error('Error sending verification email:', error);
-                            alert('An error occurred while sending the verification email.');
-                        });
-                    });
+                    document.documentElement.classList.remove('dark');
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching user info:', error);
-                // Optionally redirect to login page if not authenticated
-                // window.location.href = '/auth/login';
-            });
+                updateThemeElements(isDark);
+            };
+
+            // Function to toggle theme and update elements
+            const toggleTheme = () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeElements(isDark);
+            };
+
+            // Add event listener to the theme toggle button
+            if (elements.themeToggle) {
+                elements.themeToggle.addEventListener('click', toggleTheme);
+            }
+
+            // Show loading screen initially is handled by HTML (no need to manipulate here)
+
+            // Initial setup calls
+            hideLoadingScreen();
+            initializeTheme();
         });
+
+        // Function to toggle dropdown visibility
+        function toggleDropdown(element) {
+            const dropdownContent = element.querySelector('.dropdown-content');
+            if (dropdownContent) {
+                dropdownContent.classList.toggle('invisible');
+                dropdownContent.classList.toggle('opacity-0');
+                dropdownContent.classList.toggle('opacity-100');
+            }
+        }
     </script>
 </body>
 
