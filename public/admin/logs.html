@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Support Pro - Admin Users</title>
+  <title>Support Pro - Admin Logs</title>
 
   <!-- Meta Description for SEO -->
-  <meta name="description" content="Support Pro Admin Users giver dig mulighed for at administrere brugere effektivt og hurtigt.">
+  <meta name="description" content="Support Pro Admin Logs giver dig mulighed for at overvåge og analysere systemets aktiviteter effektivt.">
 
   <!-- Open Graph Meta Tags for Social Sharing -->
-  <meta property="og:title" content="Support Pro - Admin Users">
-  <meta property="og:description" content="Administrer brugere hurtigt og effektivt med vores avancerede Admin Dashboard.">
+  <meta property="og:title" content="Support Pro - Admin Logs">
+  <meta property="og:description" content="Overvåg og analysér systemets aktiviteter med vores avancerede Admin Dashboard.">
   <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
-  <meta property="og:url" content="https://yourwebsite.com/users">
+  <meta property="og:url" content="https://yourwebsite.com/logs">
   <meta property="og:type" content="website">
 
   <!-- Favicon -->
@@ -55,9 +55,6 @@
   <!-- FontAwesome for Icons -->
   <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 
-  <!-- Chart.js for Graphs (if needed) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <!-- Loader Styles -->
   <style>
     .loader {
@@ -70,10 +67,42 @@
         transform: rotate(360deg);
       }
     }
+
+    /* Notification Styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      padding: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .notification.show {
+      opacity: 1;
+    }
+
+    .notification.success {
+      background-color: #D1FAE5;
+      color: #065F46;
+    }
+
+    .notification.error {
+      background-color: #FEE2E2;
+      color: #991B1B;
+    }
   </style>
 </head>
 
 <body class="bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+
+  <!-- Notification Container -->
+  <div id="notification" class="notification" role="alert" aria-live="assertive"></div>
 
   <!-- Dashboard Layout -->
   <div class="flex min-h-screen">
@@ -101,11 +130,11 @@
             <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Guides
           </a>
-          <a href="logs" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Logs">
+          <a href="logs" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Logs">
             <i class="fas fa-file-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Logs
           </a>
-          <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Brugere">
+          <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
             <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Brugere
           </a>
@@ -133,7 +162,7 @@
         </button>
         <!-- Search Bar -->
         <div class="relative flex-1 mx-4">
-          <input type="text" id="search-input" placeholder="Søg i brugere..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
+          <input type="text" id="search-input" placeholder="Søg i logs..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
           <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors" aria-hidden="true"></i>
         </div>
         <!-- Dark Mode Toggle and Profile Dropdown -->
@@ -159,8 +188,9 @@
       <!-- Main Content Area -->
       <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6 overflow-auto">
         <div class="flex items-center justify-between mb-6">
-          <h1 class="text-4xl font-bold text-darkBlack dark:text-white">Brugeradministration</h1>
-          <button id="create-user-button" class="px-6 py-3 bg-primaryBlue text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Opret Ny Bruger</button>
+          <h1 class="text-4xl font-bold text-darkBlack dark:text-white">System Logs</h1>
+          <!-- Optional: Add a button for exporting logs -->
+          <!-- <button id="export-logs-button" class="px-6 py-3 bg-primaryBlue text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Eksporter Logs</button> -->
         </div>
 
         <!-- Loader -->
@@ -168,22 +198,45 @@
           <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
         </div>
 
-        <!-- Users Table Section -->
-        <section id="users" class="mb-8">
+        <!-- Manual Log Entry Section -->
+        <section id="manual-log-entry" class="mb-8">
+          <h2 class="text-2xl font-semibold mb-4 text-darkBlack dark:text-white">Manuel Log Indtastning</h2>
+          <form id="manual-log-form" class="bg-secondaryGray dark:bg-lightBlack p-6 rounded-lg shadow-md">
+            <div class="mb-4">
+              <label for="manual-log-action" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Handling</label>
+              <input type="text" id="manual-log-action" class="w-full px-4 py-3 rounded-lg bg-white dark:bg-darkBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" placeholder="Beskrivelse af handling" required>
+            </div>
+            <div class="mb-4">
+              <label for="manual-log-user" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Bruger</label>
+              <input type="text" id="manual-log-user" class="w-full px-4 py-3 rounded-lg bg-white dark:bg-darkBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" placeholder="Navn eller ID på bruger" required>
+            </div>
+            <div class="mb-4">
+              <label for="manual-log-details" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Detaljer</label>
+              <textarea id="manual-log-details" rows="4" class="w-full px-4 py-3 rounded-lg bg-white dark:bg-darkBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" placeholder="Yderligere detaljer om loggen" required></textarea>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="px-6 py-3 bg-accentGreen text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Indsend Log</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Logs Table Section -->
+        <section id="logs" class="mb-8">
+          <h2 class="text-2xl font-semibold mb-4 text-darkBlack dark:text-white">Alle System Logs</h2>
           <div class="overflow-x-auto">
             <table class="min-w-full bg-secondaryGray dark:bg-lightBlack rounded-lg shadow-lg">
               <thead>
                 <tr class="bg-primaryBlue text-white">
-                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Bruger ID</th>
-                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Navn</th>
-                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Email</th>
-                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Rolle</th>
-                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Status</th>
+                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Log ID</th>
+                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Handling</th>
+                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Bruger</th>
+                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Dato</th>
+                  <th class="py-3 px-6 text-left text-xs font-medium uppercase tracking-wider">Detaljer</th>
                   <th class="py-3 px-6 text-center text-xs font-medium uppercase tracking-wider">Handlinger</th>
                 </tr>
               </thead>
-              <tbody id="users-table-body" class="text-sm divide-y divide-gray-200 dark:divide-gray-700">
-                <!-- Dynamic User Rows Will Be Injected Here -->
+              <tbody id="logs-table-body" class="text-sm divide-y divide-gray-200 dark:divide-gray-700">
+                <!-- Dynamic Log Rows Will Be Injected Here -->
               </tbody>
             </table>
           </div>
@@ -194,46 +247,26 @@
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
           </div>
+
           <!-- Error Message -->
           <div id="error-message" class="text-center text-red-500 dark:text-red-400 mt-4 hidden">
-            Kunne ikke hente brugere. Prøv igen senere.
+            Kunne ikke hente logs. Prøv igen senere.
           </div>
         </section>
       </main>
     </div>
   </div>
 
-  <!-- Modal for Creating/Editing Users -->
-  <div id="user-modal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center z-50">
+  <!-- Modal for Viewing Log Details -->
+  <div id="log-modal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="log-modal-title">
     <div class="bg-white dark:bg-darkBlack rounded-lg shadow-lg p-8 w-3/4 lg:w-1/2">
-      <h2 id="modal-title" class="text-2xl font-bold mb-4 text-darkBlack dark:text-white">Opret Ny Bruger</h2>
-      <form id="user-form">
-        <div class="mb-4">
-          <label for="user-name" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Navn</label>
-          <input type="text" id="user-name" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
-        </div>
-        <div class="mb-4">
-          <label for="user-email" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Email</label>
-          <input type="email" id="user-email" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
-        </div>
-        <div class="mb-4">
-          <label for="user-role" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Rolle</label>
-          <select id="user-role" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
-            <option value="" disabled selected>Vælg en rolle</option>
-            <option value="admin">Administrator</option>
-            <option value="supporter">Supporter</option>
-            <option value="bruger">Bruger</option>
-          </select>
-        </div>
-        <div class="mb-4">
-          <label for="user-password" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Kodeord</label>
-          <input type="password" id="user-password" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
-        </div>
-        <div class="flex justify-end space-x-4">
-          <button type="button" id="cancel-button" class="px-6 py-3 bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white rounded-lg shadow-md hover:bg-hoverBlue hover:text-white transition-all focus:outline-none">Annuller</button>
-          <button type="submit" id="save-button" class="px-6 py-3 bg-primaryBlue text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Gem Bruger</button>
-        </div>
-      </form>
+      <h2 id="log-modal-title" class="text-2xl font-bold mb-4 text-darkBlack dark:text-white">Log Detaljer</h2>
+      <div id="log-details" class="space-y-4 overflow-auto max-h-80">
+        <!-- Log details will be injected here -->
+      </div>
+      <div class="flex justify-end mt-6">
+        <button type="button" id="close-log-modal" class="px-6 py-3 bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white rounded-lg shadow-md hover:bg-hoverBlue hover:text-white transition-all focus:outline-none">Luk</button>
+      </div>
     </div>
   </div>
 
@@ -241,27 +274,27 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual API base URL
-      let currentUserId = null;
-      let usersData = [];
+      let logsData = [];
+      let currentLog = null;
 
       // Elements
       const themeToggle = document.getElementById('theme-toggle');
       const menuButton = document.getElementById('menu-button');
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('overlay');
-      const createUserButton = document.getElementById('create-user-button');
-      const usersTableBody = document.getElementById('users-table-body');
+      const logsTableBody = document.getElementById('logs-table-body');
       const loadingIndicator = document.getElementById('loading-indicator');
       const errorMessage = document.getElementById('error-message');
       const logoutButton = document.getElementById('logout-button');
       const searchInput = document.getElementById('search-input');
-      const userModal = document.getElementById('user-modal');
-      const userForm = document.getElementById('user-form');
-      const modalTitle = document.getElementById('modal-title');
-      const cancelButton = document.getElementById('cancel-button');
+      const logModal = document.getElementById('log-modal');
+      const logDetails = document.getElementById('log-details');
+      const closeLogModalButton = document.getElementById('close-log-modal');
       const loader = document.getElementById('loader');
       const profileMenuButton = document.getElementById('profile-menu-button');
       const profileDropdown = document.getElementById('profile-dropdown');
+      const manualLogForm = document.getElementById('manual-log-form');
+      const notification = document.getElementById('notification');
 
       // Initialize Theme
       const initializeTheme = () => {
@@ -328,37 +361,51 @@
           if (response.ok) {
             window.location.href = '/auth/login';
           } else {
-            alert('Kunne ikke logge ud. Prøv igen.');
+            showNotification('Kunne ikke logge ud. Prøv igen.', 'error');
           }
         } catch (error) {
           console.error('Logout Error:', error);
-          alert('Der opstod en fejl under log ud. Prøv igen senere.');
+          showNotification('Der opstod en fejl under log ud. Prøv igen senere.', 'error');
         }
       };
 
       logoutButton.addEventListener('click', logout);
 
-      // Open Create User Modal
-      createUserButton.addEventListener('click', () => {
-        currentUserId = null;
-        modalTitle.textContent = 'Opret Ny Bruger';
-        userForm.reset();
-        openModal();
+      // Open Log Modal
+      const openLogModal = (log) => {
+        currentLog = log;
+        document.getElementById('log-modal-title').textContent = `Log Detaljer - ID: ${sanitizeHTML(log._id)}`;
+        logDetails.innerHTML = `
+          <div>
+            <strong>Handling:</strong> ${sanitizeHTML(log.action)}
+          </div>
+          <div>
+            <strong>Bruger:</strong> ${sanitizeHTML(log.user.name)} (${sanitizeHTML(log.user.email)})
+          </div>
+          <div>
+            <strong>Dato:</strong> ${new Date(log.date).toLocaleString('da-DK')}
+          </div>
+          <div>
+            <strong>Detaljer:</strong>
+            <pre class="bg-secondaryGray dark:bg-lightBlack p-2 rounded overflow-auto">${sanitizeHTML(JSON.stringify(log.details, null, 2))}</pre>
+          </div>
+        `;
+        logModal.classList.remove('hidden');
+      };
+
+      // Close Log Modal
+      closeLogModalButton.addEventListener('click', () => {
+        logModal.classList.add('hidden');
       });
 
-      // Open and Close Modal Functions
-      const openModal = () => userModal.classList.remove('hidden');
-      const closeModal = () => userModal.classList.add('hidden');
-      cancelButton.addEventListener('click', closeModal);
-
-      // Fetch and Populate Users
-      const fetchUsers = async () => {
+      // Fetch and Populate Logs
+      const fetchLogs = async () => {
         showLoader();
         hideErrorMessage();
-        usersTableBody.innerHTML = '';
+        logsTableBody.innerHTML = '';
 
         try {
-          const response = await fetch(`${API_BASE_URL}/api/users`, {
+          const response = await fetch(`${API_BASE_URL}/api/logs`, {
             credentials: 'include',
             headers: {
               'Authorization': `Bearer ${getToken()}`,
@@ -367,101 +414,64 @@
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Kunne ikke hente brugere.');
+            throw new Error(errorData.error || 'Kunne ikke hente logs.');
           }
 
           const data = await response.json();
-          usersData = data.users || [];
+          logsData = data.logs || [];
 
-          if (usersData.length === 0) {
-            usersTableBody.innerHTML = `
+          if (logsData.length === 0) {
+            logsTableBody.innerHTML = `
               <tr>
-                <td colspan="6" class="py-4 px-6 text-center text-gray-500">Ingen brugere fundet.</td>
+                <td colspan="6" class="py-4 px-6 text-center text-gray-500">Ingen logs fundet.</td>
               </tr>
             `;
             return;
           }
 
-          usersData.forEach(user => appendUserToTable(user));
+          logsData.forEach(log => appendLogToTable(log));
         } catch (error) {
-          console.error('Error fetching users:', error);
-          displayErrorMessage('Kunne ikke hente brugere. Prøv igen senere.');
+          console.error('Error fetching logs:', error);
+          displayErrorMessage('Kunne ikke hente logs. Prøv igen senere.');
         } finally {
           hideLoader();
         }
       };
 
-      // Render Users
-      const renderUsers = (users) => {
-        if (users.length === 0) {
-          usersTableBody.innerHTML = `
+      // Render Logs
+      const renderLogs = (logs) => {
+        if (logs.length === 0) {
+          logsTableBody.innerHTML = `
             <tr>
-              <td colspan="6" class="py-4 px-6 text-center text-darkBlack dark:text-white">Ingen brugere fundet.</td>
+              <td colspan="6" class="py-4 px-6 text-center text-darkBlack dark:text-white">Ingen logs fundet.</td>
             </tr>
           `;
         } else {
-          usersTableBody.innerHTML = '';
-          users.forEach(user => appendUserToTable(user));
+          logsTableBody.innerHTML = '';
+          logs.forEach(log => appendLogToTable(log));
         }
       };
 
-      // Append User to Table
-      const appendUserToTable = (user) => {
+      // Append Log to Table
+      const appendLogToTable = (log) => {
         const row = document.createElement('tr');
         row.classList.add('border-b', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-lightBlack', 'hover:bg-opacity-20', 'transition-all', 'duration-200');
         row.innerHTML = `
-          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(user._id)}</td>
-          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(user.name)}</td>
-          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(user.email)}</td>
-          <td class="py-4 px-6 text-darkBlack dark:text-white">${capitalizeFirstLetter(user.role)}</td>
-          <td class="py-4 px-6">${getStatusBadge(user.status)}</td>
+          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(log._id)}</td>
+          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(log.action)}</td>
+          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(log.user.name)} (${sanitizeHTML(log.user.email)})</td>
+          <td class="py-4 px-6 text-darkBlack dark:text-white">${new Date(log.date).toLocaleString('da-DK')}</td>
+          <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(log.details.summary)}</td>
           <td class="py-4 px-6 text-center">
-            <button class="edit-user-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="Rediger Bruger" data-id="${user._id}">
-              <i class="fas fa-edit" aria-hidden="true"></i>
-            </button>
-            <button class="deactivate-user-btn text-accentRed hover:text-primaryBlue" aria-label="Deaktiver Bruger" data-id="${user._id}">
-              <i class="fas fa-ban" aria-hidden="true"></i>
+            <button class="view-log-btn text-primaryBlue hover:text-accentGreen" aria-label="Se Log Detaljer" data-id="${log._id}">
+              <i class="fas fa-eye"></i>
             </button>
           </td>
         `;
-        usersTableBody.appendChild(row);
+        logsTableBody.appendChild(row);
 
-        // Add Event Listeners
-        row.querySelector('.edit-user-btn').addEventListener('click', () => editUser(user));
-        row.querySelector('.deactivate-user-btn').addEventListener('click', () => deactivateUser(user._id));
-      };
-
-      // Edit User Function
-      const editUser = (user) => {
-        currentUserId = user._id;
-        modalTitle.textContent = 'Rediger Bruger';
-        document.getElementById('user-name').value = user.name;
-        document.getElementById('user-email').value = user.email;
-        document.getElementById('user-role').value = user.role;
-        // Password field is left empty for security reasons
-        openModal();
-      };
-
-      // Deactivate User Function
-      const deactivateUser = async (userId) => {
-        if (!confirm('Er du sikker på, at du vil deaktivere denne bruger?')) return;
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/users/${userId}/deactivate`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
-          });
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Kunne ikke deaktivere bruger.');
-          }
-          // Refresh users after deactivation
-          fetchUsers();
-        } catch (error) {
-          alert(`Kunne ikke deaktivere bruger: ${error.message}`);
-        }
+        // Add Event Listener for Viewing Log Details
+        row.querySelector('.view-log-btn').addEventListener('click', () => openLogModal(log));
       };
 
       // Sanitize HTML to Prevent XSS
@@ -469,33 +479,6 @@
         const temp = document.createElement('div');
         temp.textContent = str;
         return temp.innerHTML;
-      };
-
-      // Get Status Badge
-      const getStatusBadge = (status) => {
-        let badgeClass = '';
-        let statusText = '';
-        switch (status.toLowerCase()) {
-          case 'aktiv':
-          case 'active':
-            badgeClass = 'bg-accentGreen text-white px-2 py-1 rounded';
-            statusText = 'Aktiv';
-            break;
-          case 'inaktiv':
-          case 'inactive':
-            badgeClass = 'bg-accentRed text-white px-2 py-1 rounded';
-            statusText = 'Inaktiv';
-            break;
-          default:
-            badgeClass = 'bg-pendingYellow text-darkBlack dark:text-white px-2 py-1 rounded';
-            statusText = 'Ukendt';
-        }
-        return `<span class="${badgeClass}">${statusText}</span>`;
-      };
-
-      // Capitalize First Letter
-      const capitalizeFirstLetter = (string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1);
       };
 
       // Show and Hide Loader
@@ -513,69 +496,86 @@
         errorMessage.classList.add('hidden');
       };
 
-      // User Form Submission Handler
-      userForm.addEventListener('submit', async (e) => {
+      // Show Notification
+      const showNotification = (message, type) => {
+        notification.textContent = message;
+        notification.classList.remove('success', 'error');
+        notification.classList.add(type, 'show');
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      };
+
+      // Manual Log Form Submission Handler
+      manualLogForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const userData = {
-          name: document.getElementById('user-name').value.trim(),
-          email: document.getElementById('user-email').value.trim(),
-          role: document.getElementById('user-role').value,
-          password: document.getElementById('user-password').value.trim(),
+        const action = document.getElementById('manual-log-action').value.trim();
+        const user = document.getElementById('manual-log-user').value.trim();
+        const details = document.getElementById('manual-log-details').value.trim();
+
+        if (!action || !user || !details) {
+          showNotification('Alle felter skal udfyldes.', 'error');
+          return;
+        }
+
+        const logData = {
+          action,
+          user: { name: user }, // Assuming the API accepts user name; adjust as needed
+          details: { summary: details },
+          date: new Date().toISOString(),
         };
 
         try {
-          let response;
-          if (currentUserId) {
-            // Update existing user
-            response = await fetch(`${API_BASE_URL}/api/users/${currentUserId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-              },
-              credentials: 'include',
-              body: JSON.stringify(userData),
-            });
-          } else {
-            // Create new user
-            response = await fetch(`${API_BASE_URL}/api/users`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`,
-              },
-              credentials: 'include',
-              body: JSON.stringify(userData),
-            });
-          }
+          // Show loader
+          loader.classList.remove('hidden');
+
+          const response = await fetch(`${API_BASE_URL}/api/logs`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${getToken()}`,
+            },
+            credentials: 'include',
+            body: JSON.stringify(logData),
+          });
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Kunne ikke gemme bruger.');
+            throw new Error(errorData.error || 'Kunne ikke indtaste log.');
           }
 
-          fetchUsers();
-          closeModal();
+          // Clear form
+          manualLogForm.reset();
+
+          // Fetch and update logs
+          fetchLogs();
+
+          showNotification('Log indtastet succesfuldt.', 'success');
         } catch (error) {
-          alert(`Kunne ikke gemme bruger: ${error.message}`);
+          console.error('Error submitting log:', error);
+          showNotification(`Kunne ikke indtaste log: ${error.message}`, 'error');
+        } finally {
+          // Hide loader
+          loader.classList.add('hidden');
         }
       });
 
       // Search Functionality
       searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        const filteredUsers = usersData.filter(user => {
-          const name = user.name.toLowerCase();
-          const email = user.email.toLowerCase();
-          const role = user.role.toLowerCase();
-          return name.includes(searchTerm) || email.includes(searchTerm) || role.includes(searchTerm);
+        const filteredLogs = logsData.filter(log => {
+          const action = log.action.toLowerCase();
+          const userName = log.user.name.toLowerCase();
+          const userEmail = log.user.email.toLowerCase();
+          const summary = log.details.summary.toLowerCase();
+          return action.includes(searchTerm) || userName.includes(searchTerm) || userEmail.includes(searchTerm) || summary.includes(searchTerm);
         });
-        renderUsers(filteredUsers);
+        renderLogs(filteredLogs);
       });
 
-      // Fetch Users on Page Load
-      fetchUsers();
+      // Fetch Logs on Page Load
+      fetchLogs();
     });
   </script>
 

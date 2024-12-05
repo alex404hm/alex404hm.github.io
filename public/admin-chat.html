@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div id="chat-container" class="w-full max-w-4xl h-[85vh] bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-4 flex items-center justify-between">
+            <h1 class="text-xl font-semibold">Admin Chat Dashboard</h1>
+            <select id="chat-selector" class="ml-4 p-2 text-black rounded-md border border-gray-300 bg-white">
+                <option value="">Select a chat</option>
+            </select>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="messages" class="flex-1 p-4 overflow-y-auto bg-gray-100" style="scroll-behavior: smooth;">
+            <!-- Messages will be appended here -->
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="p-2 text-sm text-gray-500 ml-4 hidden">User is typing...</div>
+
+        <!-- Input Section -->
+        <div id="chat-form" class="p-4 flex items-center bg-white border-t border-gray-300">
+            <input type="text" id="chat-input" class="flex-1 p-3 border border-gray-300 rounded-lg outline-none" placeholder="Type your message..." autocomplete="off">
+            <button id="send-button" class="ml-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io('http://localhost:3000');
+            const chatSelector = document.getElementById('chat-selector');
+            const messagesDiv = document.getElementById('messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+
+            let currentChatID = '';
+
+            // Fetch active chats using the API
+            async function fetchActiveChats() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/chats');
+                    const data = await response.json();
+                    chatSelector.innerHTML = '<option value="">Select a chat</option>';
+                    data.activeChats.forEach((chat) => {
+                        const option = document.createElement('option');
+                        option.value = chat;
+                        option.textContent = chat;
+                        chatSelector.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch active chats:', error);
+                }
+            }
+
+            // Handle chat selection
+            chatSelector.addEventListener('change', async () => {
+                currentChatID = chatSelector.value;
+                messagesDiv.innerHTML = ''; // Clear old messages
+                if (currentChatID) {
+                    socket.emit('joinChat', currentChatID);
+                    await fetchChatMessages(currentChatID);
+                }
+            });
+
+            // Fetch chat messages using the API
+            async function fetchChatMessages(chatID) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/chats/${chatID}/messages`);
+                    const data = await response.json();
+                    data.messages.forEach((msg) => appendMessage(msg.sender, msg.message));
+                } catch (error) {
+                    console.error('Failed to fetch chat messages:', error);
+                }
+            }
+
+            // Send a message via the socket
+            sendButton.addEventListener('click', () => {
+                if (chatInput.value.trim() !== '' && currentChatID) {
+                    const message = chatInput.value;
+                    chatInput.value = '';
+                    socket.emit('adminMessage', { chatID: currentChatID, message });
+                }
+            });
+
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendButton.click();
+                } else if (currentChatID) {
+                    socket.emit('typing', { chatID: currentChatID });
+                }
+            });
+
+            // Receive new messages from the server via Socket.IO
+            socket.on('chatMessage', (data) => {
+                if (data.chatID === currentChatID) {
+                    appendMessage(data.sender, data.message);
+                    typingIndicator.classList.add('hidden'); // Hide typing indicator
+                }
+            });
+
+            // Typing indicator when user is typing
+            socket.on('typing', (sender) => {
+                if (sender === 'User' && currentChatID) {
+                    typingIndicator.classList.remove('hidden');
+                    // Hide after 2 seconds if no more typing is detected
+                    setTimeout(() => {
+                        typingIndicator.classList.add('hidden');
+                    }, 2000);
+                }
+            });
+
+            // Helper to append message to messages div
+            function appendMessage(sender, message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', 'flex', 'items-center', 'mb-4');
+
+                const bubble = document.createElement('div');
+                bubble.classList.add('rounded-lg', 'p-3', 'shadow-md', 'max-w-xs');
+
+                if (sender === 'Admin') {
+                    messageElement.classList.add('justify-end');
+                    bubble.classList.add('bg-blue-500', 'text-white', 'ml-3');
+                } else {
+                    messageElement.classList.add('justify-start');
+                    bubble.classList.add('bg-gray-300', 'text-gray-800', 'mr-3');
+                }
+
+                bubble.textContent = `[${sender}]: ${message}`;
+                messageElement.appendChild(bubble);
+                messagesDiv.appendChild(messageElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            // Fetch active chats initially
+            fetchActiveChats();
+        });
+    </script>
+</body>
+</html>

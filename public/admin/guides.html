@@ -13,7 +13,7 @@
     <meta property="og:title" content="Support Pro - Admin Guides">
     <meta property="og:description" content="Administrer guider hurtigt og effektivt med vores avancerede Admin Dashboard.">
     <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
-    <meta property="og:url" content="https://yourwebsite.com/guides">
+    <meta property="og:url" content="https://yourwebsite.comguides">
     <meta property="og:type" content="website">
 
     <!-- Favicon -->
@@ -42,8 +42,9 @@
                         lightBlack: '#334155',
                         accentGreen: '#16A34A',
                         accentRed: '#DC2626',
-                        warningYellow: '#EAB308',
                         hoverBlue: '#1E40AF',
+                        pendingYellow: '#F59E0B',
+                        guidePurple: '#8B5CF6',
                     },
                 },
             },
@@ -53,12 +54,31 @@
 
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+    <!-- Chart.js for Graphs (if needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Loader Styles -->
+    <style>
+        .loader {
+            border-top-color: #2563EB;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
-<body class="relative bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+<body class="bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+
+    <!-- Dashboard Layout -->
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50" aria-label="Sidebar Navigation">
             <div>
                 <!-- Logo -->
                 <div class="text-center mb-8">
@@ -68,30 +88,40 @@
                     </h2>
                 </div>
                 <!-- Navigation -->
-                <nav class="space-y-4" aria-label="Sidebar Navigation">
-                    <a href="admin.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+                <nav class="space-y-4" role="navigation">
+                    <a href="/admin" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Dashboard">
                         <i class="fas fa-tachometer-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Dashboard
                     </a>
-                    <a href="tickets.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+                    <a href="tickets" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Tickets">
                         <i class="fas fa-ticket-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Tickets
                     </a>
-                    <a href="guides.html" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all">
+                    <a href="guides" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Guides">
                         <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Guides
                     </a>
-                    <a href="users.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+                    <a href="logs" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Logs">
+                        <i class="fas fa-file-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+                        Logs
+                    </a>
+                    <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
                         <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Brugere
                     </a>
-                    <a href="#logout" id="logout-button" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
-                        <i class="fas fa-sign-out-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-                        Log ud
-                    </a>
                 </nav>
             </div>
+            <!-- Logout Button at Bottom of Sidebar -->
+            <div class="mt-10">
+                <button id="logout-button" class="flex items-center p-3 text-base rounded-lg bg-accentRed text-white hover:bg-hoverBlue transition-all w-full text-left focus:outline-none" aria-label="Log ud">
+                    <i class="fas fa-sign-out-alt mr-3" aria-hidden="true"></i>
+                    Log ud
+                </button>
+            </div>
         </aside>
+
+        <!-- Overlay for Mobile Sidebar -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden lg:hidden z-40"></div>
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col ml-0 lg:ml-72 transition-all duration-300">
@@ -99,24 +129,43 @@
             <header class="flex items-center justify-between p-4 bg-lightBlack dark:bg-darkBlack text-secondaryGray dark:text-white shadow-md rounded-b-2xl">
                 <!-- Hamburger Menu for Mobile -->
                 <button id="menu-button" class="lg:hidden focus:outline-none" aria-label="Toggle Sidebar">
-                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
                 <!-- Search Bar -->
                 <div class="relative flex-1 mx-4">
                     <input type="text" id="search-input" placeholder="Søg i guider..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
-                    <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors"></i>
+                    <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors" aria-hidden="true"></i>
                 </div>
-                <!-- Dark Mode Toggle -->
-                <button id="theme-toggle" class="ml-4 focus:outline-none" aria-label="Toggle Dark Mode">
-                    <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
-                </button>
+                <!-- Dark Mode Toggle and Profile Dropdown -->
+                <div class="flex items-center space-x-4">
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="focus:outline-none" aria-label="Toggle Dark Mode">
+                        <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <button id="profile-menu-button" class="flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false" aria-label="Profile Menu">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile Picture" class="w-10 h-10 rounded-full">
+                            <i class="fas fa-chevron-down ml-2 text-secondaryGray dark:text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
+                            <!-- Removed Logout from Profile Dropdown -->
+                        </div>
+                    </div>
+                </div>
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6">
+            <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6 overflow-auto">
                 <div class="flex items-center justify-between mb-6">
                     <h1 class="text-4xl font-bold text-darkBlack dark:text-white">Guider</h1>
                     <button id="create-guide-button" class="px-6 py-3 bg-primaryBlue text-white rounded-lg shadow-md hover:bg-hoverBlue transition-all focus:outline-none">Opret Ny Guide</button>
+                </div>
+
+                <!-- Loader -->
+                <div id="loader" class="flex justify-center items-center mb-6 hidden">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
                 </div>
 
                 <!-- Guides Table Section -->
@@ -144,8 +193,9 @@
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                         </svg>
                     </div>
+
                     <!-- Error Message -->
-                    <div id="error-message" class="text-center text-red-500 mt-4 hidden">
+                    <div id="error-message" class="text-center text-red-500 dark:text-red-400 mt-4 hidden">
                         Kunne ikke hente guider. Prøv igen senere.
                     </div>
                 </section>
@@ -193,12 +243,15 @@
     <!-- JavaScript for CRUD Operations -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const API_BASE_URL = 'http://localhost:3000';
+            const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual API base URL
             let currentGuideId = null;
+            let guidesData = [];
 
+            // Elements
             const themeToggle = document.getElementById('theme-toggle');
             const menuButton = document.getElementById('menu-button');
             const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
             const createGuideButton = document.getElementById('create-guide-button');
             const guidesTableBody = document.getElementById('guides-table-body');
             const loadingIndicator = document.getElementById('loading-indicator');
@@ -208,6 +261,8 @@
             const modalTitle = document.getElementById('modal-title');
             const cancelButton = document.getElementById('cancel-button');
             const logoutButton = document.getElementById('logout-button');
+            const searchInput = document.getElementById('search-input');
+            const loader = document.getElementById('loader');
 
             // Initialize Theme
             const initializeTheme = () => {
@@ -225,40 +280,27 @@
             });
 
             // Sidebar Toggle for Mobile
-            menuButton.addEventListener('click', () => {
+            const toggleSidebar = () => {
                 sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            };
+
+            menuButton.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Profile Dropdown Toggle
+            const profileMenuButton = document.getElementById('profile-menu-button');
+            const profileDropdown = document.getElementById('profile-dropdown');
+
+            profileMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event from bubbling up
+                profileDropdown.classList.toggle('hidden');
             });
 
-            // Open Create Guide Modal
-            createGuideButton.addEventListener('click', () => {
-                currentGuideId = null;
-                modalTitle.textContent = 'Opret Ny Guide';
-                guideForm.reset();
-                openModal();
-            });
-
-            // Open and Close Modal Functions
-            const openModal = () => guideModal.classList.remove('hidden');
-            const closeModal = () => guideModal.classList.add('hidden');
-            cancelButton.addEventListener('click', closeModal);
-
-            // Logout Functionality
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/api/logout`, {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: {
-                            'Authorization': `Bearer ${getToken()}`,
-                        },
-                    });
-                    if (response.ok) {
-                        window.location.href = '/auth/login';
-                    } else {
-                        alert('Kunne ikke logge ud. Prøv igen.');
-                    }
-                } catch (error) {
-                    console.error('Logout Error:', error);
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!profileMenuButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.add('hidden');
                 }
             });
 
@@ -276,28 +318,83 @@
                 return '';
             };
 
-            // Fetch Guides from API
-            const fetchGuides = async () => {
-                showLoadingIndicator();
-                guidesTableBody.innerHTML = '';
+            // Logout Functionality
+            const logout = async () => {
+                if (!confirm('Er du sikker på, at du vil logge ud?')) return;
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/guides`, {
+                    const response = await fetch(`${API_BASE_URL}/api/logout`, {
+                        method: 'POST',
                         credentials: 'include',
                         headers: {
                             'Authorization': `Bearer ${getToken()}`,
                         },
                     });
-                    if (!response.ok) throw new Error('Could not fetch guides.');
-                    const { guides } = await response.json();
-                    if (guides.length === 0) {
-                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500">Ingen guider fundet.</td></tr>`;
+                    if (response.ok) {
+                        window.location.href = '/auth/login';
                     } else {
-                        guides.forEach(guide => appendGuideToTable(guide));
+                        alert('Kunne ikke logge ud. Prøv igen.');
                     }
                 } catch (error) {
+                    console.error('Logout Error:', error);
+                    alert('Der opstod en fejl under log ud. Prøv igen senere.');
+                }
+            };
+
+            logoutButton.addEventListener('click', logout);
+
+            // Open Create Guide Modal
+            createGuideButton.addEventListener('click', () => {
+                currentGuideId = null;
+                modalTitle.textContent = 'Opret Ny Guide';
+                guideForm.reset();
+                openModal();
+            });
+
+            // Open and Close Modal Functions
+            const openModal = () => guideModal.classList.remove('hidden');
+            const closeModal = () => guideModal.classList.add('hidden');
+            cancelButton.addEventListener('click', closeModal);
+
+            // Fetch Guides from API
+            const fetchGuides = async () => {
+                showLoader();
+                hideErrorMessage();
+                guidesTableBody.innerHTML = '';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/apiguides`, {
+                        credentials: 'include',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                        },
+                    });
+                    if (!response.ok) throw new Error('Kunne ikke hente guider.');
+                    const data = await response.json();
+                    guidesData = data.guides || [];
+                    if (guidesData.length === 0) {
+                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500">Ingen guider fundet.</td></tr>`;
+                    } else {
+                        guidesData.forEach(guide => appendGuideToTable(guide));
+                    }
+                } catch (error) {
+                    console.error('Error fetching guides:', error);
                     displayErrorMessage('Kunne ikke hente guider. Prøv igen senere.');
                 } finally {
-                    hideLoadingIndicator();
+                    hideLoader();
+                }
+            };
+
+            // Render Guides
+            const renderGuides = (guides) => {
+                if (guides.length === 0) {
+                    guidesTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="py-4 px-6 text-center text-darkBlack dark:text-white">Ingen guider fundet.</td>
+                        </tr>
+                    `;
+                } else {
+                    guidesTableBody.innerHTML = '';
+                    guides.forEach(guide => appendGuideToTable(guide));
                 }
             };
 
@@ -306,21 +403,22 @@
                 const row = document.createElement('tr');
                 row.classList.add('border-b', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-lightBlack', 'hover:bg-opacity-20', 'transition-all', 'duration-200');
                 row.innerHTML = `
-                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide._id}</td>
-                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.title}</td>
-                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.category}</td>
-                    <td class="py-4 px-6 text-darkBlack dark:text-white">${guide.views}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide._id)}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide.title)}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide.category)}</td>
+                    <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide.views.toString())}</td>
                     <td class="py-4 px-6 text-center">
                         <button class="edit-guide-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="Edit Guide" data-id="${guide._id}">
-                            <i class="fas fa-edit"></i>
+                            <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                         <button class="delete-guide-btn text-accentRed hover:text-primaryBlue" aria-label="Delete Guide" data-id="${guide._id}">
-                            <i class="fas fa-trash-alt"></i>
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
                         </button>
                     </td>
                 `;
                 guidesTableBody.appendChild(row);
 
+                // Add Event Listeners
                 row.querySelector('.edit-guide-btn').addEventListener('click', () => editGuide(guide));
                 row.querySelector('.delete-guide-btn').addEventListener('click', () => deleteGuide(guide._id));
             };
@@ -340,7 +438,7 @@
             const deleteGuide = async (guideId) => {
                 if (!confirm('Er du sikker på, at du vil slette denne guide?')) return;
                 try {
-                    const response = await fetch(`${API_BASE_URL}/api/guides/id/${guideId}`, {
+                    const response = await fetch(`${API_BASE_URL}/apiguides/id/${guideId}`, {
                         method: 'DELETE',
                         credentials: 'include',
                         headers: {
@@ -349,22 +447,12 @@
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(errorData.error || 'Failed to delete guide.');
+                        throw new Error(errorData.error || 'Kunne ikke slette guide.');
                     }
                     fetchGuides();
                 } catch (error) {
                     alert(`Kunne ikke slette guide: ${error.message}`);
                 }
-            };
-
-            // Show and Hide Loading Indicator
-            const showLoadingIndicator = () => loadingIndicator.classList.remove('hidden');
-            const hideLoadingIndicator = () => loadingIndicator.classList.add('hidden');
-
-            // Display Error Message
-            const displayErrorMessage = (message) => {
-                errorMessage.textContent = message;
-                errorMessage.classList.remove('hidden');
             };
 
             // Guide Form Submission Handler
@@ -381,7 +469,7 @@
                 try {
                     let response;
                     if (currentGuideId) {
-                        response = await fetch(`${API_BASE_URL}/api/guides/id/${currentGuideId}`, {
+                        response = await fetch(`${API_BASE_URL}/apiguides/id/${currentGuideId}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -391,7 +479,7 @@
                             body: JSON.stringify(guideData),
                         });
                     } else {
-                        response = await fetch(`${API_BASE_URL}/api/guides`, {
+                        response = await fetch(`${API_BASE_URL}/apiguides`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -404,7 +492,7 @@
 
                     if (!response.ok) {
                         const errorData = await response.json();
-                        throw new Error(errorData.error || 'Failed to save guide.');
+                        throw new Error(errorData.error || 'Kunne ikke gemme guide.');
                     }
 
                     fetchGuides();
@@ -414,25 +502,52 @@
                 }
             });
 
+            // Get Status Badge (if applicable)
+            // For guides, you might have statuses; adjust as needed
+            /*
+            const getStatusBadge = (status) => {
+                // Implement if guides have statuses
+            };
+            */
+
+            // Sanitize HTML
+            const sanitizeHTML = (str) => {
+                const temp = document.createElement('div');
+                temp.textContent = str;
+                return temp.innerHTML;
+            };
+
+            // Show and Hide Loader
+            const showLoader = () => loader.classList.remove('hidden');
+            const hideLoader = () => loader.classList.add('hidden');
+
+            // Display Error Message
+            const displayErrorMessage = (message) => {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            };
+
+            // Hide Error Message
+            const hideErrorMessage = () => {
+                errorMessage.classList.add('hidden');
+            };
+
             // Search Functionality
-            document.getElementById('search-input').addEventListener('input', (e) => {
+            searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
-                const rows = guidesTableBody.getElementsByTagName('tr');
-                Array.from(rows).forEach(row => {
-                    const title = row.cells[1].textContent.toLowerCase();
-                    const category = row.cells[2].textContent.toLowerCase();
-                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                const filteredGuides = guidesData.filter(guide => {
+                    const title = guide.title.toLowerCase();
+                    const category = guide.category.toLowerCase();
+                    return title.includes(searchTerm) || category.includes(searchTerm);
                 });
+                renderGuides(filteredGuides);
             });
 
             // Fetch Guides on Page Load
             fetchGuides();
         });
     </script>
+
 </body>
 
 </html>

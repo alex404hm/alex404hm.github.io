@@ -34,6 +34,7 @@
             accentRed: '#DC2626',
             hoverBlue: '#1E40AF',
             pendingYellow: '#F59E0B',
+            guidePurple: '#8B5CF6',
           },
         },
       },
@@ -42,13 +43,17 @@
 
   <!-- FontAwesome for Icons -->
   <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+  <!-- Chart.js for Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body class="relative bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+<body class="bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
+
   <!-- Dashboard Layout -->
   <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50" aria-label="Sidebar Navigation">
       <div>
         <!-- Logo -->
         <div class="text-center mb-8">
@@ -58,38 +63,40 @@
           </h2>
         </div>
         <!-- Navigation -->
-        <nav class="space-y-4" aria-label="Sidebar Navigation">
-          <a href="admin.html" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all">
+        <nav class="space-y-4" role="navigation">
+          <a href="/admin" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page">
             <i class="fas fa-tachometer-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Dashboard
           </a>
-          <a href="tickets.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+          <a href="tickets" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
             <i class="fas fa-ticket-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Tickets
           </a>
-          <a href="guides.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+          <a href="guides" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
             <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Guides
           </a>
-          <a href="users.html" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+          <a href="logs" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
+            <i class="fas fa-file-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
+            Logs
+          </a>
+          <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
             <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Brugere
           </a>
-          <a href="#logout" id="logout-button" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all">
-            <i class="fas fa-sign-out-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-            Log ud
-          </a>
         </nav>
       </div>
-      <!-- Footer Section -->
-      <div class="mt-10 flex items-center">
-        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin Avatar" class="w-10 h-10 rounded-full mr-3">
-        <div class="font-roboto text-left">
-          <p>Admin Bruger</p>
-          <p class="text-xs">Administrator</p>
-        </div>
+      <!-- Logout Button at Bottom of Sidebar -->
+      <div class="mt-10">
+        <button id="logout-button" class="flex items-center p-3 text-base rounded-lg bg-accentRed text-white hover:bg-hoverBlue transition-all w-full text-left focus:outline-none" aria-label="Log ud">
+          <i class="fas fa-sign-out-alt mr-3" aria-hidden="true"></i>
+          Log ud
+        </button>
       </div>
     </aside>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden lg:hidden z-40"></div>
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col ml-0 lg:ml-72 transition-all duration-300">
@@ -97,63 +104,91 @@
       <header class="flex items-center justify-between p-4 bg-lightBlack dark:bg-darkBlack text-secondaryGray dark:text-white shadow-md rounded-b-2xl">
         <!-- Hamburger Menu for Mobile -->
         <button id="menu-button" class="lg:hidden focus:outline-none" aria-label="Toggle Sidebar">
-          <i class="fas fa-bars"></i>
+          <i class="fas fa-bars text-xl"></i>
         </button>
         <!-- Search Bar -->
         <div class="relative flex-1 mx-4">
           <input type="text" placeholder="Søg..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
-          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors"></i>
+          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors" aria-hidden="true"></i>
         </div>
-        <!-- Dark Mode Toggle -->
-        <button id="theme-toggle" class="ml-4 focus:outline-none" aria-label="Toggle Dark Mode">
-          <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
-        </button>
+        <!-- Profile and Dark Mode Toggle -->
+        <div class="flex items-center space-x-4">
+          <!-- Dark Mode Toggle -->
+          <button id="theme-toggle" class="focus:outline-none" aria-label="Toggle Dark Mode">
+            <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
+          </button>
+          <!-- Profile Dropdown -->
+          <div class="relative">
+            <button id="profile-menu-button" class="flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false" aria-label="Profile Menu">
+              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile Picture" class="w-10 h-10 rounded-full">
+              <i class="fas fa-chevron-down ml-2 text-secondaryGray dark:text-gray-400"></i>
+            </button>
+            <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
+              <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
+              <!-- Removed Logout from Profile Dropdown -->
+            </div>
+          </div>
+        </div>
       </header>
 
       <!-- Main Dashboard Content -->
-      <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6">
+      <main class="flex-1 p-6 bg-white dark:bg-darkBlack rounded-lg mt-6 overflow-auto">
         <h1 class="text-3xl font-semibold mb-6 text-darkBlack dark:text-white">Admin Dashboard</h1>
+
+        <!-- Loader -->
+        <div id="loader" class="flex justify-center items-center mb-6">
+          <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+
         <!-- Overview Cards Section -->
-        <section id="overview" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <section id="overview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <!-- Total Users Card -->
-          <div id="total-users" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
-            <div class="p-4 bg-primaryBlue rounded-lg">
-              <i class="fas fa-users text-white text-2xl" aria-hidden="true"></i>
+          <div id="total-users" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-md flex items-center hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-3 bg-primaryBlue rounded-lg">
+              <i class="fas fa-users text-white text-xl" aria-hidden="true"></i>
             </div>
-            <div class="ml-4">
-              <p id="total-users-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
-              <p class="text-sm text-gray-700 dark:text-gray-400">Samlede Brugere</p>
+            <div class="ml-3">
+              <p id="total-users-count" class="text-xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-xs text-gray-700 dark:text-gray-400">Samlede Brugere</p>
             </div>
           </div>
           <!-- Open Tickets Card -->
-          <div id="open-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
-            <div class="p-4 bg-accentGreen rounded-lg">
-              <i class="fas fa-ticket-alt text-white text-2xl" aria-hidden="true"></i>
+          <div id="open-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-md flex items-center hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-3 bg-accentGreen rounded-lg">
+              <i class="fas fa-ticket-alt text-white text-xl" aria-hidden="true"></i>
             </div>
-            <div class="ml-4">
-              <p id="open-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
-              <p class="text-sm text-gray-700 dark:text-gray-400">Åbne Tickets</p>
+            <div class="ml-3">
+              <p id="open-tickets-count" class="text-xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-xs text-gray-700 dark:text-gray-400">Åbne Tickets</p>
             </div>
           </div>
           <!-- Pending Tickets Card -->
-          <div id="pending-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
-            <div class="p-4 bg-pendingYellow rounded-lg">
-              <i class="fas fa-hourglass-half text-white text-2xl" aria-hidden="true"></i>
+          <div id="pending-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-md flex items-center hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-3 bg-pendingYellow rounded-lg">
+              <i class="fas fa-hourglass-half text-white text-xl" aria-hidden="true"></i>
             </div>
-            <div class="ml-4">
-              <p id="pending-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">0</p>
-              <p class="text-sm text-gray-700 dark:text-gray-400">Ventende Tickets</p>
+            <div class="ml-3">
+              <p id="pending-tickets-count" class="text-xl font-semibold text-darkBlack dark:text-white">0</p>
+              <p class="text-xs text-gray-700 dark:text-gray-400">Ventende Tickets</p>
             </div>
           </div>
-          <!-- Closed Tickets Card -->
-          <div id="closed-tickets" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-lg flex items-center hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
-            <div class="p-4 bg-accentRed rounded-lg">
-              <i class="fas fa-check-circle text-white text-2xl" aria-hidden="true"></i>
+          <!-- Guides Card -->
+          <div id="guides" class="bg-secondaryGray dark:bg-lightBlack p-4 rounded-xl shadow-md flex items-center hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="p-3 bg-guidePurple rounded-lg">
+              <i class="fas fa-book-reader text-white text-xl" aria-hidden="true"></i>
             </div>
-            <div class="ml-4">
-              <p id="closed-tickets-count" class="text-2xl font-semibold text-darkBlack dark:text-white">Loading...</p>
-              <p class="text-sm text-gray-700 dark:text-gray-400">Lukkede Tickets</p>
+            <div class="ml-3">
+              <p id="guides-count" class="text-xl font-semibold text-darkBlack dark:text-white">Loading...</p>
+              <p class="text-xs text-gray-700 dark:text-gray-400">Guides</p>
             </div>
+          </div>
+        </section>
+
+        <!-- Graph Section -->
+        <section id="graphs" class="mb-10">
+          <h2 class="text-2xl font-medium text-darkBlack dark:text-white mb-6">Statistik</h2>
+          <div class="bg-secondaryGray dark:bg-lightBlack p-6 rounded-xl shadow-md">
+            <canvas id="ticketsChart" class="w-full h-64"></canvas>
           </div>
         </section>
 
@@ -176,7 +211,11 @@
       const themeToggle = document.getElementById('theme-toggle');
       const menuButton = document.getElementById('menu-button');
       const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
       const logoutButton = document.getElementById('logout-button');
+      const profileMenuButton = document.getElementById('profile-menu-button');
+      const profileDropdown = document.getElementById('profile-dropdown');
+      const loader = document.getElementById('loader');
 
       // Initialize Theme
       const initializeTheme = () => {
@@ -194,8 +233,25 @@
       });
 
       // Sidebar Toggle for Mobile
-      menuButton.addEventListener('click', () => {
+      const toggleSidebar = () => {
         sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+      };
+
+      menuButton.addEventListener('click', toggleSidebar);
+      overlay.addEventListener('click', toggleSidebar);
+
+      // Profile Dropdown Toggle
+      profileMenuButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event from bubbling up
+        profileDropdown.classList.toggle('hidden');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (event) => {
+        if (!profileMenuButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+          profileDropdown.classList.add('hidden');
+        }
       });
 
       // Function to get the JWT token from cookies
@@ -213,7 +269,8 @@
       };
 
       // Logout Functionality
-      logoutButton.addEventListener('click', async () => {
+      const logout = async () => {
+        if (!confirm('Er du sikker på, at du vil logge ud?')) return;
         try {
           const response = await fetch(`${API_BASE_URL}/api/logout`, {
             method: 'POST',
@@ -229,8 +286,12 @@
           }
         } catch (error) {
           console.error('Logout Error:', error);
+          alert('Der opstod en fejl under log ud. Prøv igen senere.');
         }
-      });
+      };
+
+      logoutButton.addEventListener('click', logout);
+      // Removed logout from dropdown
 
       // Fetch data from API and update UI
       async function fetchData() {
@@ -252,8 +313,8 @@
           document.getElementById('open-tickets-count').textContent = data.openTickets;
           // Update pending tickets
           document.getElementById('pending-tickets-count').textContent = data.pendingTickets || 0;
-          // Update closed tickets
-          document.getElementById('closed-tickets-count').textContent = data.closedTickets;
+          // Update guides
+          document.getElementById('guides-count').textContent = data.guides;
           // Update recent activities
           const recentActivitiesList = document.getElementById('recent-activities-list');
           recentActivitiesList.innerHTML = '';
@@ -264,8 +325,8 @@
               listItem.innerHTML = `
                 <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
                 <div>
-                  <p class="text-darkBlack dark:text-white">${activity.description}</p>
-                  <p class="text-gray-700 dark:text-gray-300 text-sm">${activity.timestamp}</p>
+                  <p class="text-darkBlack dark:text-white">${sanitizeHTML(activity.description)}</p>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm">${sanitizeHTML(activity.timestamp)}</p>
                 </div>
               `;
               recentActivitiesList.appendChild(listItem);
@@ -273,18 +334,103 @@
           } else {
             recentActivitiesList.innerHTML = '<li class="text-secondaryGray">Ingen seneste aktiviteter.</li>';
           }
+
+          // Initialize Charts
+          initializeCharts(data.chartData);
+
+          // Hide Loader
+          loader.classList.add('hidden');
         } catch (error) {
           console.error('Error fetching dashboard data:', error);
           // Display error message to user
           const recentActivitiesList = document.getElementById('recent-activities-list');
           recentActivitiesList.innerHTML = '<li class="text-red-500">Kunne ikke hente data. Prøv igen senere.</li>';
+          // Hide Loader
+          loader.classList.add('hidden');
         }
+      }
+
+      // Sanitize HTML to prevent XSS
+      function sanitizeHTML(str) {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+      }
+
+      // Initialize Charts using Chart.js
+      function initializeCharts(chartData) {
+        const ctx = document.getElementById('ticketsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: chartData.labels, // e.g., ['January', 'February', 'March', 'April']
+            datasets: [{
+                label: 'Åbne Tickets',
+                data: chartData.openTickets, // e.g., [12, 19, 3, 5]
+                backgroundColor: 'rgba(22, 163, 74, 0.6)', // accentGreen with transparency
+                borderColor: 'rgba(22, 163, 74, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Lukkede Tickets',
+                data: chartData.closedTickets, // e.g., [7, 11, 5, 8]
+                backgroundColor: 'rgba(220, 38, 38, 0.6)', // accentRed with transparency
+                borderColor: 'rgba(220, 38, 38, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#6B7280' // Gray-500
+                },
+                grid: {
+                  color: '#D1D5DB' // Gray-300
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#6B7280' // Gray-500
+                },
+                grid: {
+                  display: false
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#6B7280' // Gray-500
+                }
+              }
+            }
+          }
+        });
       }
 
       // Load data on page load
       fetchData();
     });
   </script>
+
+  <!-- Loader Styles -->
+  <style>
+    .loader {
+      border-top-color: #3498db;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </body>
 
 </html>

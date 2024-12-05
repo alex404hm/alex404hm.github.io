@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Profile - Support Pro</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- SweetAlert2 for Alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+
+    <!-- Intl-Tel-Input CSS and JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js" defer></script>
+
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0f172a, #1e3a8a);
+        }
+        .tooltip {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #f3f4f6;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .relative:hover .tooltip {
+            opacity: 1;
+        }
+        .iti {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <main class="bg-gray-800 shadow-lg rounded-xl p-10 w-full max-w-md">
+        <header class="text-center mb-6">
+            <h1 class="text-4xl font-bold text-white mb-2">Setup Your Profile</h1>
+            <p class="text-gray-400">Complete your profile to get the best experience on Support Pro.</p>
+        </header>
+        
+        <form id="setup-profile-form" enctype="multipart/form-data" class="space-y-6">
+            <!-- Profile Picture Upload -->
+            <div class="flex justify-center mb-6">
+                <div class="relative">
+                    <input 
+                        type="file" 
+                        id="profilePicture" 
+                        name="profilePicture" 
+                        accept="image/*" 
+                        class="hidden" 
+                        onchange="loadFile(event)" 
+                        aria-label="Upload Profile Picture"
+                        required
+                    >
+                    <label for="profilePicture" class="cursor-pointer">
+                        <div class="w-32 h-32 rounded-full bg-gray-600 hover:bg-gray-500 flex items-center justify-center overflow-hidden transition duration-300 ease-in-out">
+                            <img 
+                                id="output" 
+                                src="https://via.placeholder.com/150" 
+                                alt="Profile Picture Preview" 
+                                class="object-cover w-full h-full"
+                            >
+                        </div>
+                    </label>
+                    <div class="tooltip">Click to upload or change your profile picture</div>
+                </div>
+            </div>
+
+            <!-- Full Name Input -->
+            <div class="form-group">
+                <label for="fullName" class="block text-sm font-medium text-gray-300">Full Name</label>
+                <input 
+                    type="text" 
+                    id="fullName" 
+                    name="fullName" 
+                    required 
+                    class="mt-1 block w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-300 ease-in-out" 
+                    placeholder="Enter your full name"
+                    aria-required="true"
+                >
+            </div>
+
+            <!-- Phone Number Input without Country Code -->
+            <div class="form-group">
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-300">Phone Number</label>
+                <input 
+                    type="tel" 
+                    id="phoneNumber" 
+                    name="phoneNumber" 
+                    required 
+                    class="mt-1 block w-full px-4 py-3 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-300 ease-in-out" 
+                    placeholder="Enter your phone number"
+                    aria-required="true"
+                >
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 ease-in-out"
+            >
+                Save Profile
+            </button>
+        </form>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Preview uploaded profile picture
+        function loadFile(event) {
+            const output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = () => URL.revokeObjectURL(output.src); // Free memory
+        }
+
+        // Initialize intlTelInput for the phone number field
+        document.addEventListener('DOMContentLoaded', function () {
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const iti = intlTelInput(phoneNumberInput, {
+                initialCountry: "auto",
+                nationalMode: false, // Allows country code
+                autoPlaceholder: "aggressive",
+                formatOnDisplay: true,
+                separateDialCode: true, // Shows country code separately
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            // Update placeholder when country changes
+            phoneNumberInput.addEventListener('countrychange', function() {
+                const countryData = iti.getSelectedCountryData();
+                phoneNumberInput.placeholder = `e.g. ${countryData.dialCode} 12 34 56 78`;
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('setup-profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Clear previous alerts
+            Swal.close();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const iti = window.intlTelInputGlobals.getInstance(phoneNumberInput);
+            const phoneNumber = iti.getNumber(intlTelInputUtils.numberFormat.INTERNATIONAL); // Includes country code
+            const profilePictureInput = document.getElementById('profilePicture');
+            const profilePictureFile = profilePictureInput.files[0];
+
+            // Basic client-side validation
+            if (!fullName || !phoneNumber || !profilePictureFile) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Incomplete Information',
+                    text: 'Please fill out all fields and upload a profile picture.',
+                });
+                return;
+            }
+
+            // Validate phone number using intl-tel-input
+            if (!iti.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Phone Number',
+                    text: 'Please enter a valid phone number.',
+                });
+                return;
+            }
+
+            // Validate file type
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validImageTypes.includes(profilePictureFile.type)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid File Type',
+                    text: 'Only JPEG, PNG, and GIF images are allowed.',
+                });
+                return;
+            }
+
+            // Validate file size (max 2MB)
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            if (profilePictureFile.size > maxSize) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'File Too Large',
+                    text: 'Profile picture must be less than 2MB.',
+                });
+                return;
+            }
+
+            try {
+                // Prepare FormData
+                const formData = new FormData();
+                formData.append('fullName', fullName);
+                formData.append('phoneNumber', phoneNumber);
+                formData.append('profilePicture', profilePictureFile);
+
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Saving Profile...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+
+                // Send data to API
+                const response = await fetch('/api/profile/setup', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include' // Include cookies for authentication
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Profile Updated',
+                        text: 'Your profile has been updated successfully!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Redirect to dashboard
+                        window.location.href = result.redirect || '/dashboard';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.error || 'An error occurred while updating your profile.',
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error',
+                    text: 'An unexpected error occurred. Please try again later.',
+                });
+            }
+        });
+
+        // Helper function to convert file to Base64 (Not used in this setup)
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+    </script>
+</body>
+</html>

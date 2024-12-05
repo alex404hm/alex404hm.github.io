@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <title>Setup Profile - Support Pro</title>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 to-indigo-900 font-sans">
+    <div class="bg-gray-900 shadow-2xl rounded-2xl p-8 w-full max-w-lg">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-white mb-4">Setup Your Profile</h1>
+            <p class="text-lg text-gray-400">Complete your profile to get the best experience on Support Pro.</p>
+        </header>
+        
+        <form id="setup-profile-form" action="/profile/setup" method="POST" class="space-y-8">
+            <div class="flex items-center justify-center mb-8">
+                <div class="relative">
+                    <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="hidden" onchange="loadFile(event)">
+                    <label for="profilePicture" class="cursor-pointer" aria-label="Upload Profile Picture">
+                        <div class="w-36 h-36 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden transition-transform transform hover:scale-105">
+                            <img id="output" src="https://via.placeholder.com/150" alt="Profile Picture" class="object-cover w-full h-full">
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                <input type="text" id="fullName" name="fullName" required class="block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required maxlength="16" class="block w-full px-4 py-3 border border-gray-700 bg-gray-800 text-white rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-500" placeholder="Enter your phone number">
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-transform transform hover:scale-105 focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50">Save Profile</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to load the selected profile picture
+        const loadFile = (event) => {
+            const output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = () => {
+                URL.revokeObjectURL(output.src); // Free memory
+            }
+        };
+
+        // Initialize international telephone input
+        document.addEventListener("DOMContentLoaded", function() {
+            const phoneInputField = document.getElementById("phoneNumber");
+            window.intlTelInput(phoneInputField, {
+                initialCountry: "dk",
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+        });
+    </script>
+</body>
+</html>
