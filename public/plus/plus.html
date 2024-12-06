@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plus Subscription Member Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-gray-900 text-white h-screen overflow-hidden">
+    <!-- Dashboard Layout -->
+    <div id="plus-dashboard" class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="w-80 bg-gradient-to-b from-gray-800 to-gray-900 p-8 flex flex-col justify-between rounded-r-lg shadow-lg">
+            <div>
+                <div class="flex items-center mb-12">
+                    <div class="h-14 w-14 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+                        JP
+                    </div>
+                    <div class="ml-5">
+                        <h4 class="text-2xl font-bold">John Doe</h4>
+                        <span class="text-sm text-gray-400">Plus Member</span>
+                    </div>
+                </div>
+                <nav>
+                    <ul class="space-y-6">
+                        <li>
+                            <a href="#" class="flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+                                <i class="fas fa-tachometer-alt mr-4 text-xl"></i>
+                                <span class="text-lg">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+                                <i class="fas fa-book mr-4 text-xl"></i>
+                                <span class="text-lg">Exclusive Content</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+                                <i class="fas fa-chart-line mr-4 text-xl"></i>
+                                <span class="text-lg">Advanced Analytics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+                                <i class="fas fa-comments mr-4 text-xl"></i>
+                                <span class="text-lg">Chatbot</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+                                <i class="fas fa-life-ring mr-4 text-xl"></i>
+                                <span class="text-lg">Priority Support</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="mt-12">
+                <button @click="logout()" class="w-full py-4 text-left text-red-500 hover:text-white flex items-center transition-colors duration-300">
+                    <i class="fas fa-sign-out-alt mr-4 text-xl"></i>
+                    <span class="text-lg">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-10 overflow-y-auto flex flex-col space-y-8">
+            <!-- Personalized Overview -->
+            <section class="bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg p-8 shadow-lg">
+                <h2 class="text-4xl font-bold mb-4">Welcome, {{ userName }}</h2>
+                <p class="text-gray-300 mb-2">Subscription Renewal Date: <span class="font-semibold text-white">{{ renewalDate }}</span></p>
+                <p class="text-gray-300">Enjoy your exclusive perks as a Plus member!</p>
+            </section>
+
+            <!-- Chatbot Section -->
+            <section class="bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg p-8 shadow-lg flex flex-col h-96">
+                <h3 class="text-3xl font-semibold mb-4">Chatbot Assistant</h3>
+                <div class="flex-1 overflow-y-auto bg-gray-700 p-4 rounded-lg mb-4">
+                    <div v-for="message in chatMessages" :key="message.id" :class="{'text-right': message.user, 'text-left': !message.user}" class="mb-3">
+                        <span :class="{'bg-green-600': message.user, 'bg-blue-600': !message.user}" class="inline-block py-2 px-4 rounded-lg max-w-xs text-white">{{ message.text }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message..." class="flex-1 p-4 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <button @click="sendMessage" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-transform duration-300 transform hover:scale-105">
+                        Send
+                    </button>
+                </div>
+            </section>
+
+            <!-- Exclusive Content Access -->
+            <section class="bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg p-8 shadow-lg">
+                <h3 class="text-3xl font-semibold mb-4">Exclusive Content</h3>
+                <ul class="text-gray-300 space-y-3">
+                    <li v-for="content in exclusiveContent" :key="content.id">
+                        <a :href="content.link" class="hover:text-white transition-colors duration-300">{{ content.title }}</a>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Advanced Analytics and Tools -->
+            <section class="bg-gradient-to-br from-gray-800 to-gray-700 rounded-lg p-8 shadow-lg">
+                <h3 class="text-3xl font-semibold mb-4">Advanced Analytics and Tools</h3>
+                <div class="analytics-container text-center">
+                    <p class="text-gray-300 mb-4">Access detailed insights and analytics exclusive to Plus members.</p>
+                    <div class="analytics-graph w-full h-40 bg-gray-800 flex items-center justify-center rounded-lg text-gray-500">Graph Placeholder</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    userName: 'John Doe',
+                    renewalDate: '2025-01-15',
+                    exclusiveContent: [
+                        { id: 1, title: 'Advanced IT Guide', link: '#' },
+                        { id: 2, title: 'Expert Insights Webinar', link: '#' }
+                    ],
+                    chatMessages: [
+                        { id: 1, user: false, text: 'Hello! How can I assist you today?' }
+                    ],
+                    newMessage: '',
+                };
+            },
+            methods: {
+                sendMessage() {
+                    if (this.newMessage.trim() !== '') {
+                        this.chatMessages.push({ id: this.chatMessages.length + 1, user: true, text: this.newMessage });
+                        this.newMessage = '';
+                        setTimeout(() => {
+                            this.chatMessages.push({ id: this.chatMessages.length + 1, user: false, text: 'Thank you for your message. Let me check that for you.' });
+                        }, 1000);
+                    }
+                },
+                logout() {
+                    console.log('User logged out');
+                }
+            }
+        }).mount('#plus-dashboard');
+    </script>
+
+</body>
+
+</html>
+

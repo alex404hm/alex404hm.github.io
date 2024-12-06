@@ -101,10 +101,7 @@
                         <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Guides
                     </a>
-                    <a href="logs" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Logs">
-                        <i class="fas fa-file-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-                        Logs
-                    </a>
+                    
                     <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
                         <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Brugere
@@ -362,7 +359,7 @@
                 guidesTableBody.innerHTML = '';
 
                 try {
-                    const response = await fetch(`${API_BASE_URL}/apiguides`, {
+                    const response = await fetch(`${API_BASE_URL}/api/guides`, {
                         credentials: 'include',
                         headers: {
                             'Authorization': `Bearer ${getToken()}`,
@@ -438,7 +435,7 @@
             const deleteGuide = async (guideId) => {
                 if (!confirm('Er du sikker på, at du vil slette denne guide?')) return;
                 try {
-                    const response = await fetch(`${API_BASE_URL}/apiguides/id/${guideId}`, {
+                    const response = await fetch(`${API_BASE_URL}/api/guides/id/${guideId}`, {
                         method: 'DELETE',
                         credentials: 'include',
                         headers: {
@@ -469,7 +466,7 @@
                 try {
                     let response;
                     if (currentGuideId) {
-                        response = await fetch(`${API_BASE_URL}/apiguides/id/${currentGuideId}`, {
+                        response = await fetch(`${API_BASE_URL}/api/guides/id/${currentGuideId}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -479,7 +476,7 @@
                             body: JSON.stringify(guideData),
                         });
                     } else {
-                        response = await fetch(`${API_BASE_URL}/apiguides`, {
+                        response = await fetch(`${API_BASE_URL}/api/guides`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
