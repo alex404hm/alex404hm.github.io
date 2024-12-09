@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth" data-theme="light">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Support Pro - Elevate Your IT Support</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Support Pro is a next-generation IT support platform that helps businesses resolve issues efficiently, streamline processes, and boost overall productivity with intelligent AI-driven solutions.">
-    <meta name="keywords"
-        content="IT Support, Workflow Optimization, AI Automation, Team Productivity, Help Desk, IT Solutions">
-    <meta property="og:title" content="Support Pro - Elevate Your IT Support">
-    <meta property="og:description"
-        content="Transform your IT support operations with intelligent workflow automation and personalized support management.">
-    <meta property="og:image" content="https://yourdomain.com/images/og-image.jpg">
-    <meta property="og:url" content="https://yourdomain.com">
-    <meta property="og:type" content="website">
+    <meta name="description" content="Support Pro is a next-generation IT support platform that streamlines IT operations, boosts productivity, and automates workflows with intelligent AI-driven solutions." />
+    <meta name="keywords" content="IT Support, Workflow Optimization, AI Automation, Team Productivity, Help Desk, IT Solutions" />
+    <meta property="og:title" content="Support Pro - Elevate Your IT Support" />
+    <meta property="og:description" content="Transform your IT support operations with intelligent workflow automation and personalized support management." />
+    <meta property="og:image" content="https://yourdomain.com/images/og-image.jpg" />
+    <meta property="og:url" content="https://yourdomain.com" />
+    <meta property="og:type" content="website" />
 
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,25 +25,11 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-                        manrope: ['Manrope', 'sans-serif'],
                     },
                     colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        },
-                        accent: {
-                            100: '#fff4e6',
-                            200: '#ffd6a5',
-                            300: '#fdba74',
-                            400: '#ff8800',
-                            500: '#ff751a',
-                        },
+                        primaryBlue: '#0369a1',
+                        hoverBlue: '#0284c7',
+                        secondaryGray: '#a3a3a3',
                     },
                 },
             },
@@ -56,443 +37,411 @@
     </script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
-    <!-- Custom CSS for Animations -->
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-jLKHWMZEKW4JvLAJFAV9J7N+ZAEj4N4f3Izk1voWbb7Peop51hV3GcXvYx9HO22A" crossorigin="anonymous"/>
+
     <style>
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 1.5s ease-out forwards;
-            opacity: 0;
-        }
-
-        .animation-delay-500 {
-            animation-delay: 0.5s;
-        }
-
-        .animation-delay-1000 {
-            animation-delay: 1s;
-        }
-
-        .scroll-arrow {
-            cursor: pointer;
-        }
-
-        .scroll-arrow span {
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(10px);
-            }
-        }
-
-        /* Text Gradient */
-        .text-gradient {
-            background: linear-gradient(to right, #7C3AED, #FF6E7F);
-            -webkit-background-clip: text;
-            color: transparent;
+        .fade-bg {
+            transition: opacity 1s ease-in-out;
         }
     </style>
 </head>
-
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-sans">
 
-    <header
-    class="fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-screen-md border border-gray-100 bg-white/80 py-3 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg">
-    <div class="px-4">
-        <div class="flex items-center justify-between">
-            <div class="flex shrink-0">
-                <a aria-current="page" class="flex items-center" href="/">
-                    <img class="h-7 w-auto" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="">
-                    <p class="sr-only">Website Title</p>
-                </a>
+<!-- Navbar -->
+<header class="fixed inset-x-0 top-0 z-30 w-full py-4 mx-auto bg-white/90 dark:bg-gray-900/80 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg">
+    <div class="container mx-auto px-6 flex items-center justify-between">
+        <!-- Brand -->
+        <a href="#home" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">
+            Support Pro
+        </a>
+
+        <!-- Main Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+            <a href="#home" class="px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                Home
+            </a>
+            <div class="relative group">
+                <button class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue focus:outline-none">
+                    OS Options
+                </button>
+                <div class="opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out origin-top scale-95 group-hover:scale-100 z-50">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Windows -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Popular OS with a wide range of features.</p>
+                            </div>
+                        </div>
+                        <!-- macOS -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Sleek design & seamless integration.</p>
+                            </div>
+                        </div>
+                        <!-- Linux -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Open-source OS favored by developers.</p>
+                            </div>
+                        </div>
+                        <!-- iOS -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">For Apple's mobile devices.</p>
+                            </div>
+                        </div>
+                        <!-- Android -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Customizable and widely used.</p>
+                            </div>
+                        </div>
+                        <!-- ChromeOS -->
+                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                            <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Lightweight & simple for Chromebooks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
-                <a aria-current="page"
-                    class="inline-block rounded-lg px-2 py-1 text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                    href="#">How it works</a>
-                <a class="inline-block rounded-lg px-2 py-1 text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                    href="#">Pricing</a>
-            </div>
-            <div class="flex items-center justify-end gap-3">
-                <a class="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex"
-                    href="/login">Sign in</a>
-                <a class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                    href="/login">Login</a>
-            </div>
+            <a href="#pricing" class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                Pricing
+            </a>
+        </nav>
+
+        <!-- Right-side Actions -->
+        <div class="flex items-center space-x-4">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+            </button>
+            <!-- Sign In & Sign Up -->
+            <a href="#signin" class="text-sm font-medium text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Sign In</a>
+            <a href="#signup" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-primaryBlue transition duration-300 hover:bg-hoverBlue focus:outline-none focus:ring-2 focus:ring-primaryBlue shadow-md hover:scale-105">
+                Sign Up
+            </a>
         </div>
     </div>
 </header>
-    <!-- Dark Mode Toggle Script -->
-    <script>
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        darkModeToggle.addEventListener('click', () => {
-            const htmlElement = document.documentElement;
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
 
-        // Load dark mode preference from local storage
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+<!-- Dark Mode Toggle Script -->
+<script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const rootEl = document.documentElement;
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            rootEl.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            rootEl.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
         }
+    }
+
+    // Initialize theme
+    if (localStorage.getItem('theme') === 'dark' ||
+       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        if (rootEl.classList.contains('dark')) {
+            setTheme('light');
+        } else {
+            setTheme('dark');
+        }
+    });
+</script>
+
+<main class="pt-[5rem] md:pt-[7rem]">
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
+        <!-- Background Slideshow -->
+        <div class="absolute inset-0">
+            <div id="bg1" class="absolute inset-0 bg-cover bg-center fade-bg opacity-100 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg');"></div>
+            <div id="bg2" class="absolute inset-0 bg-cover bg-center fade-bg opacity-0 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg');"></div>
+        </div>
+        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 px-4 max-w-4xl mx-auto space-y-6">
+            <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight">
+                Revolutionize Your <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500">IT Support</span>
+            </h1>
+            <p class="max-w-2xl mx-auto font-light text-lg md:text-xl lg:text-2xl">
+                Elevate your IT support services with intelligent automation and personalized management.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="#features" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primaryBlue bg-white rounded-full shadow-lg hover:bg-gray-200 hover:shadow-xl transform hover:scale-105 transition">
+                    Learn More
+                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+                <a href="#cta" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-full shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-600 transform hover:scale-105 transition">
+                    Get Started
+                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011 1v8.586l3.707-3.707a1 1 0 011.414 1.414l-5.414 5.414a1 1 0 01-1.414 0l-5.414-5.414a1 1 0 011.414-1.414L9 12.586V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Slideshow Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = [
+                'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg',
+                'https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg',
+                'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg',
+                'https://images.pexels.com/photos/1181341/pexels-photo-1181341.jpeg',
+                'https://images.pexels.com/photos/7682087/pexels-photo-7682087.jpeg',
+                'https://images.pexels.com/photos/12899151/pexels-photo-12899151.jpeg',
+                'https://images.pexels.com/photos/8867427/pexels-photo-8867427.jpeg'
+            ];
+            let currentIndex = 0;
+            const bg1 = document.getElementById('bg1');
+            const bg2 = document.getElementById('bg2');
+
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % images.length;
+                if (bg1.classList.contains('opacity-100')) {
+                    bg2.style.backgroundImage = `url('${images[currentIndex]}')`;
+                    bg1.classList.replace('opacity-100', 'opacity-0');
+                    bg2.classList.replace('opacity-0', 'opacity-100');
+                } else {
+                    bg1.style.backgroundImage = `url('${images[currentIndex]}')`;
+                    bg2.classList.replace('opacity-100', 'opacity-0');
+                    bg1.classList.replace('opacity-0', 'opacity-100');
+                }
+            }, 4000);
+        });
     </script>
 
-    <!-- Hero Section with Scroll Arrow Button -->
-    <main>
-        <section class="relative h-screen overflow-hidden text-white bg-primary-700">
-            <!-- Background Slideshow with Darkened Filter -->
-            <div id="slideshow" class="absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms] ease-in-out opacity-80"
-                style="background-image: url('https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg');"
-                aria-hidden="true">
-                <div class="absolute inset-0 bg-black opacity-60"></div> <!-- Dark overlay filter -->
-            </div>
-
-            <!-- Content Wrapper -->
-            <div class="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center max-w-7xl mx-auto space-y-8">
-                <!-- Headline with Animated Entrance -->
-                <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight animate-fade-in">
-                    Revolutionize Your <span class="text-gradient">IT Support</span> with Support Pro
-                </h1>
-
-                <!-- Subtitle with Animation Delay -->
-                <p class="max-w-xl md:max-w-2xl font-light text-lg md:text-xl lg:text-2xl text-white animate-fade-in animation-delay-500">
-                    Elevate your IT support services with intelligent automation and personalized support management.
-                </p>
-
-                <!-- Call-to-Action Buttons -->
-                <div class="flex flex-col md:flex-row gap-6 animate-fade-in animation-delay-1000">
-                    <a href="#features"
-                        class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primary-700 bg-white rounded-full shadow-lg hover:bg-gray-200 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800 transition-transform duration-300 transform hover:scale-105">
-                        Learn More
-                        <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </a>
-                    <a href="#contact"
-                        class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-full shadow-lg hover:bg-blue-600 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-transform duration-300 transform hover:scale-105">
-                        Get Started
-                        <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M10.293 3.293a1 1 0 011 1v8.586l3.707-3.707a1 1 0 011.414 1.414l-5.414 5.414a1 1 0 01-1.414 0l-5.414-5.414a1 1 0 011.414-1.414L9 12.586V4a1 1 0 011-1z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Scroll Down Button with Smooth Scrolling -->
-            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-                <button id="scroll-arrow" class="scroll-arrow focus:outline-none" aria-label="Scroll down">
-                    <span class="block w-12 h-12 border-2 border-white rounded-full flex items-center justify-center animate-bounce">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M10 3a1 1 0 011 1v8.586l3.707-3.707a1 1 0 011.414 1.414l-5.414 5.414a1 1 0 01-1.414 0l-5.414-5.414a1 1 0 011.414-1.414L9 12.586V4a1 1 0 011-1z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </span>
-                </button>
-            </div>
-
-            <!-- Blurry Circular Overlay for Stylish Background -->
-            <div class="absolute m-auto blur-[160px] max-w-xs h-[13rem] top-16 inset-x-0 opacity-50 z-0"
-                style="background: linear-gradient(180deg, #7C3AED 0%, rgba(152, 103, 240, 0.98) 0.01%, rgba(237, 78, 80, 0.2) 100%)">
-            </div>
-        </section>
-
-        <!-- JavaScript for Background Slideshow and Smooth Scroll -->
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                // Background Slideshow Logic
-                const images = [
-                    'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg',
-                    'https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg',
-                    'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg',
-                    'https://images.pexels.com/photos/1181341/pexels-photo-1181341.jpeg',
-                    'https://images.pexels.com/photos/7682087/pexels-photo-7682087.jpeg',
-                    'https://images.pexels.com/photos/12899151/pexels-photo-12899151.jpeg',
-                    'https://images.pexels.com/photos/8867427/pexels-photo-8867427.jpeg',
-                ];
-
-                let currentIndex = 0;
-                const slideshowElement = document.getElementById('slideshow');
-
-                setInterval(() => {
-                    currentIndex = (currentIndex + 1) % images.length;
-                    slideshowElement.style.backgroundImage = `url('${images[currentIndex]}')`;
-                }, 6000); // Change image every 6 seconds
-
-                // Smooth Scroll Logic for Scroll Arrow Button
-                document.getElementById("scroll-arrow").addEventListener("click", function () {
-                    window.scrollTo({
-                        top: window.innerHeight,
-                        behavior: "smooth"
-                    });
-                });
-            });
-        </script>
-<div class=" dark:bg-gray-900">
-    <div class="pt-12 bg-gray-50 dark:bg-gray-900 sm:pt-20">
-      <div class="max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-3xl font-extrabold leading-9 text-gray-900 dark:text-white sm:text-4xl sm:leading-10">
-            Trusted by developers
-          </h2>
-          <p class="mt-3 text-xl leading-7 text-gray-600 dark:text-gray-400 sm:mt-4">
-            This package powers many production applications on many different hosting platforms.
-          </p>
+    <!-- Stats Section -->
+    <section class="dark:bg-gray-900 py-12 sm:py-20">
+        <div class="max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Trusted by Developers</h2>
+            <p class="mt-3 text-xl text-gray-600 dark:text-gray-400 sm:mt-4">Powering numerous production applications across various platforms.</p>
         </div>
-      </div>
-      <div class="pb-12 mt-10 bg-gray-50 dark:bg-gray-900 sm:pb-16">
-        <div class="relative">
-          <div class="absolute inset-0 h-1/2 bg-gray-50 dark:bg-gray-900"></div>
-          <div class="relative max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
-            <div class="max-w-4xl mx-auto">
-              <dl class="bg-white dark:bg-gray-800 rounded-lg shadow-lg sm:grid sm:grid-cols-3">
-                <div
-                  class="flex flex-col p-6 text-center border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-r">
-                  <dt class="order-2 mt-2 text-lg font-medium leading-6 text-gray-500 dark:text-gray-400" id="item-1">
-                    Stars on GitHub
-                  </dt>
-                  <dd class="order-1 text-5xl font-extrabold leading-none text-indigo-600 dark:text-indigo-100"
-                    aria-describedby="item-1" id="starsCount">
-                    0
-                  </dd>
+        <div class="pb-12 mt-10 bg-gray-50 dark:bg-gray-900 sm:pb-16">
+            <div class="relative">
+                <div class="absolute inset-0 h-1/2 bg-gray-50 dark:bg-gray-900"></div>
+                <div class="relative max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
+                    <div class="max-w-4xl mx-auto">
+                        <dl class="bg-white dark:bg-gray-800 rounded-lg shadow-lg sm:grid sm:grid-cols-3">
+                            <div class="flex flex-col p-6 text-center border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-r">
+                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Stars on GitHub</dt>
+                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="starsCount">0</dd>
+                            </div>
+                            <div class="flex flex-col p-6 text-center border-t border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l sm:border-r">
+                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Downloads</dt>
+                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="downloadsCount">0</dd>
+                            </div>
+                            <div class="flex flex-col p-6 text-center border-t border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l">
+                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Sponsors</dt>
+                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="sponsorsCount">0</dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
-                <div
-                  class="flex flex-col p-6 text-center border-t border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l sm:border-r">
-                  <dt class="order-2 mt-2 text-lg font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    Downloads
-                  </dt>
-                  <dd class="order-1 text-5xl font-extrabold leading-none text-indigo-600 dark:text-indigo-100"
-                    id="downloadsCount">
-                    0
-                  </dd>
-                </div>
-                <div
-                  class="flex flex-col p-6 text-center border-t border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l">
-                  <dt class="order-2 mt-2 text-lg font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    Sponsors
-                  </dt>
-                  <dd class="order-1 text-5xl font-extrabold leading-none text-indigo-600 dark:text-indigo-100"
-                    id="sponsorsCount">
-                    0
-                  </dd>
-                </div>
-              </dl>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-  
-  <script>
-    const targets = [
-      { element: document.getElementById('starsCount'), count: 4670, suffix: '+' },
-      { element: document.getElementById('downloadsCount'), count: 80000, suffix: '+' },
-      { element: document.getElementById('sponsorsCount'), count: 100, suffix: '+' }
-    ];
-  
-    // Find the maximum count among all targets
-    const maxCount = Math.max(...targets.map(target => target.count));
-  
-    // Function to animate count-up effect
-    function animateCountUp(target, duration) {
-      let currentCount = 0;
-      const increment = Math.ceil(target.count / (duration / 10));
-  
-      const interval = setInterval(() => {
-        currentCount += increment;
-        if (currentCount >= target.count) {
-          clearInterval(interval);
-          currentCount = target.count;
-          target.element.textContent = currentCount + target.suffix;
-        } else {
-          target.element.textContent = currentCount;
+    </section>
+
+    <script>
+        const targets = [
+            { element: document.getElementById('starsCount'), count: 4670, suffix: '+' },
+            { element: document.getElementById('downloadsCount'), count: 80000, suffix: '+' },
+            { element: document.getElementById('sponsorsCount'), count: 100, suffix: '+' }
+        ];
+
+        const maxCount = Math.max(...targets.map(t => t.count));
+        function animateCountUp(target, duration) {
+            let currentCount = 0;
+            const increment = Math.ceil(target.count / (duration / 10));
+            const interval = setInterval(() => {
+                currentCount += increment;
+                if (currentCount >= target.count) {
+                    clearInterval(interval);
+                    target.element.textContent = target.count + target.suffix;
+                } else {
+                    target.element.textContent = currentCount;
+                }
+            }, 10);
         }
-      }, 10);
-    }
-  
-    // Animate count-up for each target with adjusted duration
-    targets.forEach(target => {
-      animateCountUp(target, maxCount / 100); // Adjust duration based on max count
-    });
-  </script>
 
+        targets.forEach(target => {
+            animateCountUp(target, maxCount / 100);
+        });
+    </script>
 
-
-
-
-
-        <!-- Empowering Each Other Section -->
-        <section class="py-24 relative">
-            <div class="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
-                <div class="w-full grid lg:grid-cols-2 grid-cols-1 gap-12">
-                    <div class="w-full grid sm:grid-cols-2 grid-cols-1 gap-6">
-                        <div class="pt-24 flex justify-end items-start">
-                            <img class="rounded-xl object-cover" src="https://pagedone.io/asset/uploads/1717741205.png" alt="Empowering Image 1">
-                        </div>
-                        <div class="flex justify-start items-start">
-                            <img class="rounded-xl object-cover" src="https://pagedone.io/asset/uploads/1717741215.png" alt="Empowering Image 2">
-                        </div>
-                    </div>
-                    <div class="w-full flex flex-col justify-center items-start gap-10">
-                        <div class="w-full flex flex-col justify-center items-start gap-8">
-                            <div class="w-full flex flex-col justify-start items-start gap-3">
-                                <h2 class="text-gray-900 dark:text-white text-4xl font-bold font-manrope leading-normal">Empowering Each Other to Succeed</h2>
-                                <p class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">
-                                    Every project we've undertaken has been a collaborative effort, where every person involved has left their mark. Together, we've not only constructed buildings but also built enduring connections that define our success story.
-                                </p>
-                            </div>
-                            <div class="w-full flex items-center gap-10">
-                                <div class="flex flex-col items-start">
-                                    <h3 class="text-gray-900 dark:text-white text-4xl font-bold font-manrope leading-normal">33+</h3>
-                                    <h6 class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">Years of Experience</h6>
-                                </div>
-                                <div class="flex flex-col items-start">
-                                    <h4 class="text-gray-900 dark:text-white text-4xl font-bold font-manrope leading-normal">125+</h4>
-                                    <h6 class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">Successful Projects</h6>
-                                </div>
-                                <div class="flex flex-col items-start">
-                                    <h4 class="text-gray-900 dark:text-white text-4xl font-bold font-manrope leading-normal">52+</h4>
-                                    <h6 class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">Happy Clients</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#read-more" class="sm:w-fit w-full px-3.5 py-2 bg-indigo-600 hover:bg-indigo-800 transition-all duration-700 ease-in-out rounded-lg shadow justify-center items-center flex">
-                            <span class="px-1.5 text-white text-sm font-medium leading-6">Read More</span>
-                        </a>
-                    </div>
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Features That Empower</h2>
+            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">
+                Discover how Support Pro can streamline your IT processes and improve productivity.
+            </p>
+            <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
+                    <i class="fas fa-robot text-4xl text-primaryBlue mb-4"></i>
+                    <h3 class="font-semibold text-xl dark:text-white">AI-Driven Support</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">Automate repetitive tasks and quickly resolve issues with intelligent assistance.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
+                    <i class="fas fa-chart-line text-4xl text-primaryBlue mb-4"></i>
+                    <h3 class="font-semibold text-xl dark:text-white">Real-Time Analytics</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">Monitor performance and gain insights to continuously improve support operations.</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
+                    <i class="fas fa-user-shield text-4xl text-primaryBlue mb-4"></i>
+                    <h3 class="font-semibold text-xl dark:text-white">Robust Security</h3>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">Keep your data safe and compliant with advanced security measures.</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="bg-gray-50 py-12 sm:py-16 lg:py-20 xl:py-24">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
-                    <p class="text-sm font-bold uppercase tracking-widest text-gray-700">How It Works</p>
-                    <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">Launch your blog
-                        in
-                        4 easy steps
-                    </h2>
-                    <p class="mx-auto mt-4 max-w-2xl text-lg font-normal text-gray-700 lg:text-xl lg:leading-8">
-                        Create your own blog with us and launch it with just 4 easy steps
-                    </p>
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-16 lg:py-20 xl:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">How It Works</p>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl lg:text-5xl">Launch your blog in 4 easy steps</h2>
+            <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-700 dark:text-gray-300 lg:text-xl">
+                Create your blog and get it running in just a few simple steps.
+            </p>
+        </div>
+        <ul class="mx-auto mt-12 max-w-5xl grid grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:grid-cols-4">
+            <!-- Step 1 -->
+            <li class="flex flex-col items-center">
+                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+                    <i class="fas fa-database text-gray-600 dark:text-gray-300"></i>
                 </div>
-                <ul class="mx-auto mt-12 grid max-w-md grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:max-w-5xl lg:grid-cols-4">
-                    <li class="flex-start group relative flex lg:flex-col">
-                        <span
-                            class="absolute left-[18px] top-14 h-[calc(100%_-_32px)] w-px bg-gray-300 lg:right-0 lg:left-auto lg:top-[18px] lg:h-px lg:w-[calc(100%_-_72px)]"
-                            aria-hidden="true"></span>
-                        <div
-                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 transition-all duration-200 group-hover:border-gray-900 group-hover:bg-gray-900">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-600 group-hover:text-white">
-                                <path
-                                    d="M21 12C21 13.6569 16.9706 15 12 15C7.02944 15 3 13.6569 3 12M21 5C21 6.65685 16.9706 8 12 8C7.02944 8 3 6.65685 3 5M21 5C21 3.34315 16.9706 2 12 2C7.02944 2 3 3.34315 3 5M21 5V19C21 20.6569 16.9706 22 12 22C7.02944 22 3 20.6569 3 19V5"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-6 lg:ml-0 lg:mt-10">
-                            <h3
-                                class="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500">
-                                Add your databases
-                            </h3>
-                            <h4 class="mt-2 text-base text-gray-700">Use your own Notion databases or duplicate ours.</h4>
-                        </div>
-                    </li>
-                    <li class="flex-start group relative flex lg:flex-col">
-                        <span
-                            class="absolute left-[18px] top-14 h-[calc(100%_-_32px)] w-px bg-gray-300 lg:right-0 lg:left-auto lg:top-[18px] lg:h-px lg:w-[calc(100%_-_72px)]"
-                            aria-hidden="true"></span>
-                        <div
-                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 transition-all duration-200 group-hover:border-gray-900 group-hover:bg-gray-900">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-600 group-hover:text-white">
-                                <path
-                                    d="M2 3L2 21M22 3V21M11.8 20H12.2C13.8802 20 14.7202 20 15.362 19.673C15.9265 19.3854 16.3854 18.9265 16.673 18.362C17 17.7202 17 16.8802 17 15.2V8.8C17 7.11984 17 6.27976 16.673 5.63803C16.3854 5.07354 15.9265 4.6146 15.362 4.32698C14.7202 4 13.8802 4 12.2 4H11.8C10.1198 4 9.27976 4 8.63803 4.32698C8.07354 4.6146 7.6146 5.07354 7.32698 5.63803C7 6.27976 7 7.11984 7 8.8V15.2C7 16.8802 7 17.7202 7.32698 18.362C7.6146 18.9265 8.07354 19.3854 8.63803 19.673C9.27976 20 10.1198 20 11.8 20Z"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-6 lg:ml-0 lg:mt-10">
-                            <h3
-                                class="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500">
-                                Map your fields
-                            </h3>
-                            <h4 class="mt-2 text-base text-gray-700">Map your Notion fields with Feather fields.</h4>
-                        </div>
-                    </li>
-                    <li class="flex-start group relative flex lg:flex-col">
-                        <span
-                            class="absolute left-[18px] top-14 h-[calc(100%_-_32px)] w-px bg-gray-300 lg:right-0 lg:left-auto lg:top-[18px] lg:h-px lg:w-[calc(100%_-_72px)]"
-                            aria-hidden="true"></span>
-                        <div
-                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 transition-all duration-200 group-hover:border-gray-900 group-hover:bg-gray-900">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-600 group-hover:text-white">
-                                <path
-                                    d="M22 12C22 17.5228 17.5228 22 12 22M22 12C22 6.47715 17.5228 2 12 2M22 12C22 9.79086 17.5228 8 12 8C6.47715 8 2 9.79086 2 12M22 12C22 14.2091 17.5228 16 12 16C6.47715 16 2 14.2091 2 12M12 22C6.47715 22 2 17.5228 2 12M12 22C14.2091 22 16 17.5228 16 12C16 6.47715 14.2091 2 12 2M12 22C9.79086 22 8 17.5228 8 12C8 6.47715 9.79086 2 12 2M2 12C2 6.47715 6.47715 2 12 2"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-6 lg:ml-0 lg:mt-10">
-                            <h3
-                                class="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500">
-                                Choose your domain
-                            </h3>
-                            <h4 class="mt-2 text-base text-gray-700">Choose a domain or a subdomain for your blog.</h4>
-                        </div>
-                    </li>
-                    <li class="flex-start group relative flex lg:flex-col">
-                        <div
-                            class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-gray-50 transition-all duration-200 group-hover:border-gray-900 group-hover:bg-gray-900">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5 text-gray-600 group-hover:text-white">
-                                <path
-                                    d="M5.50049 10.5L2.00049 7.9999L3.07849 6.92193C3.964 6.03644 4.40676 5.5937 4.9307 5.31387C5.39454 5.06614 5.90267 4.91229 6.42603 4.86114C7.01719 4.80336 7.63117 4.92617 8.85913 5.17177L10.5 5.49997M18.4999 13.5L18.8284 15.1408C19.0742 16.3689 19.1971 16.983 19.1394 17.5743C19.0883 18.0977 18.9344 18.6059 18.6867 19.0699C18.4068 19.5939 17.964 20.0367 17.0783 20.9224L16.0007 22L13.5007 18.5M7 16.9998L8.99985 15M17.0024 8.99951C17.0024 10.1041 16.107 10.9995 15.0024 10.9995C13.8979 10.9995 13.0024 10.1041 13.0024 8.99951C13.0024 7.89494 13.8979 6.99951 15.0024 6.99951C16.107 6.99951 17.0024 7.89494 17.0024 8.99951ZM17.1991 2H16.6503C15.6718 2 15.1826 2 14.7223 2.11053C14.3141 2.20853 13.9239 2.37016 13.566 2.5895C13.1623 2.83689 12.8164 3.18282 12.1246 3.87469L6.99969 9C5.90927 10.0905 5.36406 10.6358 5.07261 11.2239C4.5181 12.343 4.51812 13.6569 5.07268 14.776C5.36415 15.3642 5.90938 15.9094 6.99984 16.9998V16.9998C8.09038 18.0904 8.63565 18.6357 9.22386 18.9271C10.343 19.4817 11.6569 19.4817 12.7761 18.9271C13.3643 18.6356 13.9095 18.0903 15 16.9997L20.1248 11.8745C20.8165 11.1827 21.1624 10.8368 21.4098 10.4331C21.6291 10.0753 21.7907 9.6851 21.8886 9.27697C21.9991 8.81664 21.9991 8.32749 21.9991 7.34918V6.8C21.9991 5.11984 21.9991 4.27976 21.6722 3.63803C21.3845 3.07354 20.9256 2.6146 20.3611 2.32698C19.7194 2 18.8793 2 17.1991 2Z"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-6 lg:ml-0 lg:mt-10">
-                            <h3
-                                class="text-xl font-bold text-gray-900 before:mb-2 before:block before:font-mono before:text-sm before:text-gray-500">
-                                Get your blog
-                            </h3>
-                            <h4 class="mt-2 text-base text-gray-700">That's it. You will get back a professional blog.</h4>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </section>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Add your databases</h3>
+                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Connect your Notion databases or use our templates.</p>
+            </li>
+            <!-- Step 2 -->
+            <li class="flex flex-col items-center">
+                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+                    <i class="fas fa-project-diagram text-gray-600 dark:text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Map your fields</h3>
+                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Easily map Notion fields to your blog’s structure.</p>
+            </li>
+            <!-- Step 3 -->
+            <li class="flex flex-col items-center">
+                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+                    <i class="fas fa-globe text-gray-600 dark:text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Choose your domain</h3>
+                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Pick a custom domain or a subdomain for your blog.</p>
+            </li>
+            <!-- Step 4 -->
+            <li class="flex flex-col items-center">
+                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+                    <i class="fas fa-check text-gray-600 dark:text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Get your blog</h3>
+                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Your professional blog is now ready to go.</p>
+            </li>
+        </ul>
+    </section>
 
-        
+    <!-- About Us (Empowering Each Other) Section -->
+    <section class="py-24 relative dark:bg-gray-900">
+        <div class="max-w-7xl px-4 md:px-5 mx-auto grid lg:grid-cols-2 gap-12">
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div class="pt-24 flex justify-end">
+                    <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741205.png" alt="Image 1">
+                </div>
+                <div>
+                    <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741215.png" alt="Image 2">
+                </div>
+            </div>
+            <div class="flex flex-col justify-center gap-10">
+                <div class="flex flex-col gap-8">
+                    <div class="flex flex-col gap-3">
+                        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">Empowering Each Other to Succeed</h2>
+                        <p class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">
+                            Every project is a collaborative effort, leaving a lasting mark. Together, we build enduring solutions and connections that define our success.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-10">
+                        <div class="flex flex-col">
+                            <h3 class="text-4xl font-bold text-gray-900 dark:text-white">33+</h3>
+                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Years of Experience</h6>
+                        </div>
+                        <div class="flex flex-col">
+                            <h4 class="text-4xl font-bold text-gray-900 dark:text-white">125+</h4>
+                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Successful Projects</h6>
+                        </div>
+                        <div class="flex flex-col">
+                            <h4 class="text-4xl font-bold text-gray-900 dark:text-white">52+</h4>
+                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Happy Clients</h6>
+                        </div>
+                    </div>
+                </div>
+                <a href="#read-more" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 transition rounded-lg shadow text-white text-sm font-medium w-fit">
+                    Read More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="cta" class="bg-white dark:bg-gray-900 py-16">
+        <div class="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">Ready to Transform Your IT Support?</h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">Join thousands of businesses streamlining their IT operations with Support Pro.</p>
+            <a href="#signup" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-primaryBlue rounded-full shadow-lg hover:bg-hoverBlue hover:shadow-xl transform hover:scale-105 transition">
+                Get Started Today
+            </a>
+        </div>
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-100 dark:bg-gray-800 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center sm:gap-6 mb-4 sm:mb-0">
+            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">About Us</a>
+            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Contact</a>
+            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Privacy Policy</a>
+        </div>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">&copy; <span id="year"></span> Support Pro. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
 </body>
-
 </html>

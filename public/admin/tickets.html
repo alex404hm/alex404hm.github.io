@@ -22,7 +22,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS via CDN -->
+  <!-- Tailwind CSS via CDN (Development Only) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Custom Tailwind Configuration -->
@@ -69,12 +69,68 @@
         transform: rotate(360deg);
       }
     }
+
+    /* Smooth dropdown transition */
+    .transition-dropdown {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .transition-dropdown.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+
+    .dark .modal-content {
+      background-color: #1E293B;
+      color: white;
+    }
   </style>
 </head>
 
 <body class="bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
 
-  <!-- Dashboard Layout -->
+  <!-- Success Alert -->
+  <div id="success-alert" class="hidden fixed top-20 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+    <span id="alert-message">Action Successful!</span>
+  </div>
+
+  <!-- Error Alert -->
+  <div id="error-alert" class="hidden fixed top-20 right-5 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50">
+    <span id="error-message-content">An error occurred!</span>
+  </div>
+
+  <!-- Main Container -->
   <div class="flex min-h-screen">
     <!-- Sidebar -->
     <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50" aria-label="Sidebar Navigation">
@@ -100,7 +156,6 @@
             <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Guides
           </a>
-          
           <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
             <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
             Brugere
@@ -146,7 +201,7 @@
             </button>
             <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
               <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
-              <!-- Removed Logout from Profile Dropdown -->
+              <!-- Additional Profile Options Can Be Added Here -->
             </div>
           </div>
         </div>
@@ -196,11 +251,74 @@
     </div>
   </div>
 
+  <!-- View/Edit Ticket Modal -->
+  <div id="ticket-modal" class="modal">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="modal-title" class="text-2xl font-semibold">Ticket Details</h2>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none" aria-label="Close Modal">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="modal-body">
+        <!-- Ticket Details Will Be Injected Here -->
+      </div>
+      <div class="mt-6 flex justify-end space-x-4">
+        <button id="edit-ticket-button" class="bg-primaryBlue text-white px-4 py-2 rounded hover:bg-hoverBlue transition focus:outline-none">Edit</button>
+        <button id="close-ticket-button" class="bg-accentRed text-white px-4 py-2 rounded hover:bg-red-700 transition focus:outline-none">Close Ticket</button>
+      </div>
+      <!-- Chat Section -->
+      <div class="mt-6">
+        <h3 class="text-xl font-semibold mb-2">Conversation</h3>
+        <div id="chat-messages" class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-4">
+          <!-- Chat Messages Will Appear Here -->
+        </div>
+        <form id="chat-form" class="flex">
+          <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primaryBlue dark:bg-gray-600 dark:text-white" aria-label="Type your message">
+          <button type="submit" class="ml-2 bg-primaryBlue text-white px-4 py-2 rounded-lg hover:bg-hoverBlue transition focus:outline-none" aria-label="Send Message">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Ticket Modal -->
+  <div id="edit-ticket-modal" class="modal">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Edit Ticket</h2>
+        <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none" aria-label="Close Modal">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form id="edit-ticket-form">
+        <div class="mb-4">
+          <label for="edit-subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Emne</label>
+          <input type="text" id="edit-subject" name="subject" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primaryBlue dark:bg-gray-600 dark:text-white" required>
+        </div>
+        <div class="mb-4">
+          <label for="edit-status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+          <select id="edit-status" name="status" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primaryBlue dark:bg-gray-600 dark:text-white" required>
+            <option value="Open">Åben</option>
+            <option value="Pending">Afventer</option>
+            <option value="Closed">Lukket</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="cancel-edit-button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition focus:outline-none">Cancel</button>
+          <button type="submit" class="bg-primaryBlue text-white px-4 py-2 rounded-lg hover:bg-hoverBlue transition focus:outline-none">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- JavaScript for Functionality -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual API base URL
       let ticketsData = [];
+      let currentTicketId = null;
 
       // Elements
       const themeToggle = document.getElementById('theme-toggle');
@@ -215,6 +333,20 @@
       const errorMessage = document.getElementById('error-message');
       const searchInput = document.getElementById('search-input');
       const loader = document.getElementById('loader');
+      const successAlert = document.getElementById('success-alert');
+      const alertMessage = document.getElementById('alert-message');
+      const ticketModal = document.getElementById('ticket-modal');
+      const closeModalButton = document.getElementById('close-modal');
+      const modalBody = document.getElementById('modal-body');
+      const editTicketButton = document.getElementById('edit-ticket-button');
+      const closeTicketButton = document.getElementById('close-ticket-button');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatForm = document.getElementById('chat-form');
+      const chatInput = document.getElementById('chat-input');
+      const editTicketModal = document.getElementById('edit-ticket-modal');
+      const closeEditModalButton = document.getElementById('close-edit-modal');
+      const editTicketForm = document.getElementById('edit-ticket-form');
+      const cancelEditButton = document.getElementById('cancel-edit-button');
 
       // Initialize Theme
       const initializeTheme = () => {
@@ -244,12 +376,14 @@
       profileMenuButton.addEventListener('click', (e) => {
         e.stopPropagation(); // Prevent event from bubbling up
         profileDropdown.classList.toggle('hidden');
+        profileDropdown.classList.toggle('show');
       });
 
       // Close dropdown when clicking outside
       document.addEventListener('click', (event) => {
         if (!profileMenuButton.contains(event.target) && !profileDropdown.contains(event.target)) {
           profileDropdown.classList.add('hidden');
+          profileDropdown.classList.remove('show');
         }
       });
 
@@ -346,8 +480,14 @@
             <button class="view-ticket-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="View Ticket" data-id="${ticket._id}">
               <i class="fas fa-eye" aria-hidden="true"></i>
             </button>
-            <button class="close-ticket-btn text-accentRed hover:text-primaryBlue" aria-label="Close Ticket" data-id="${ticket._id}">
+            <button class="edit-ticket-btn text-secondaryGray hover:text-primaryBlue mr-2" aria-label="Edit Ticket" data-id="${ticket._id}">
+              <i class="fas fa-edit" aria-hidden="true"></i>
+            </button>
+            <button class="close-ticket-btn text-accentRed hover:text-primaryBlue mr-2" aria-label="Close Ticket" data-id="${ticket._id}">
               <i class="fas fa-times-circle" aria-hidden="true"></i>
+            </button>
+            <button class="delete-ticket-btn text-accentRed hover:text-primaryBlue" aria-label="Delete Ticket" data-id="${ticket._id}">
+              <i class="fas fa-trash-alt" aria-hidden="true"></i>
             </button>
           </td>
         `;
@@ -355,14 +495,172 @@
 
         // Add Event Listeners
         row.querySelector('.view-ticket-btn').addEventListener('click', () => viewTicket(ticket._id));
+        row.querySelector('.edit-ticket-btn').addEventListener('click', () => editTicket(ticket._id));
         row.querySelector('.close-ticket-btn').addEventListener('click', () => closeTicket(ticket._id));
+        row.querySelector('.delete-ticket-btn').addEventListener('click', () => deleteTicket(ticket._id));
       };
 
       // View Ticket Function
-      const viewTicket = (ticketId) => {
-        // Implement viewing ticket details
-        alert(`Viser billet: ${ticketId}`);
+      const viewTicket = async (ticketId) => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${getToken()}`,
+            },
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke hente billetdetaljer.');
+          }
+
+          const ticket = await response.json();
+          currentTicketId = ticket._id;
+          populateModal(ticket);
+          openModal();
+        } catch (error) {
+          console.error('Error viewing ticket:', error);
+          displayErrorMessage('Kunne ikke hente billetdetaljer. Prøv igen senere.');
+        }
       };
+
+      // Populate Modal with Ticket Details
+      const populateModal = (ticket) => {
+        const statusBadge = getStatusBadge(ticket.status);
+        const sanitizedSubject = sanitizeHTML(ticket.subject);
+        const sanitizedDescription = sanitizeHTML(ticket.description || 'Ingen beskrivelse.');
+        const createdDate = new Date(ticket.created).toLocaleString();
+
+        modalBody.innerHTML = `
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ticket ID:</label>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${ticket._id}</p>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Emne:</label>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizedSubject}</p>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
+            <p class="mt-1 text-lg">
+              ${statusBadge}
+            </p>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Oprettet:</label>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${createdDate}</p>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Beskrivelse:</label>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizedDescription}</p>
+          </div>
+        `;
+
+        // Populate Chat Messages
+        chatMessages.innerHTML = '';
+        if (ticket.conversation && ticket.conversation.length > 0) {
+          ticket.conversation.forEach(msg => appendChatMessage(msg.message, msg.sender));
+        }
+      };
+
+      // Open Modal
+      const openModal = () => {
+        ticketModal.classList.add('active');
+      };
+
+      // Close Modal
+      const closeModal = () => {
+        ticketModal.classList.remove('active');
+        currentTicketId = null;
+        chatMessages.innerHTML = '';
+      };
+
+      // Close Modal Button
+      closeModalButton.addEventListener('click', closeModal);
+
+      // Edit Ticket Function
+      const editTicket = async (ticketId) => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${getToken()}`,
+            },
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke hente billetdetaljer.');
+          }
+
+          const ticket = await response.json();
+          populateEditModal(ticket);
+          openEditModal();
+        } catch (error) {
+          console.error('Error editing ticket:', error);
+          displayErrorMessage('Kunne ikke hente billetdetaljer. Prøv igen senere.');
+        }
+      };
+
+      // Populate Edit Modal with Ticket Details
+      const populateEditModal = (ticket) => {
+        document.getElementById('edit-subject').value = ticket.subject;
+        document.getElementById('edit-status').value = ticket.status;
+      };
+
+      // Open Edit Modal
+      const openEditModal = () => {
+        editTicketModal.classList.add('active');
+      };
+
+      // Close Edit Modal
+      const closeEditModal = () => {
+        editTicketModal.classList.remove('active');
+      };
+
+      // Close Edit Modal Buttons
+      closeEditModalButton.addEventListener('click', closeEditModal);
+      cancelEditButton.addEventListener('click', closeEditModal);
+
+      // Handle Edit Ticket Form Submission
+      editTicketForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const updatedSubject = sanitizeHTML(document.getElementById('edit-subject').value.trim());
+        const updatedStatus = document.getElementById('edit-status').value;
+
+        if (updatedSubject === '' || updatedStatus === '') {
+          alert('Venligst udfyld alle felter.');
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/tickets/${currentTicketId}/edit`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({
+              subject: updatedSubject,
+              status: updatedStatus,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke opdatere billet.');
+          }
+
+          // Refresh tickets after editing
+          fetchTickets();
+          closeEditModal();
+          closeModal();
+          showSuccessAlert('Billet opdateret succesfuldt!');
+        } catch (error) {
+          console.error('Error updating ticket:', error);
+          alert(`Kunne ikke opdatere billet: ${error.message}`);
+        }
+      });
 
       // Close Ticket Function
       const closeTicket = async (ticketId) => {
@@ -381,8 +679,32 @@
           }
           // Refresh tickets after closing
           fetchTickets();
+          showSuccessAlert('Billet lukket succesfuldt!');
         } catch (error) {
           alert(`Kunne ikke lukke billet: ${error.message}`);
+        }
+      };
+
+      // Delete Ticket Function
+      const deleteTicket = async (ticketId) => {
+        if (!confirm('Er du sikker på, at du vil slette denne billet? Dette kan ikke fortrydes.')) return;
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${getToken()}`,
+            },
+          });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke slette billet.');
+          }
+          // Refresh tickets after deletion
+          fetchTickets();
+          showSuccessAlert('Billet slettet succesfuldt!');
+        } catch (error) {
+          alert(`Kunne ikke slette billet: ${error.message}`);
         }
       };
 
@@ -396,19 +718,24 @@
             badgeClass = 'bg-accentGreen text-white px-2 py-1 rounded';
             statusText = 'Åben';
             break;
+          case 'afventer':
+          case 'pending':
+            badgeClass = 'bg-pendingYellow text-darkBlack dark:text-white px-2 py-1 rounded';
+            statusText = 'Afventer';
+            break;
           case 'lukket':
           case 'closed':
             badgeClass = 'bg-accentRed text-white px-2 py-1 rounded';
             statusText = 'Lukket';
             break;
           default:
-            badgeClass = 'bg-pendingYellow text-darkBlack dark:text-white px-2 py-1 rounded';
+            badgeClass = 'bg-gray-300 text-gray-700 px-2 py-1 rounded';
             statusText = 'Ukendt';
         }
         return `<span class="${badgeClass}">${statusText}</span>`;
       };
 
-      // Sanitize HTML
+      // Sanitize HTML to prevent XSS
       const sanitizeHTML = (str) => {
         const temp = document.createElement('div');
         temp.textContent = str;
@@ -430,15 +757,84 @@
         errorMessage.classList.add('hidden');
       };
 
-      // Search Functionality
-      searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredTickets = ticketsData.filter(ticket => {
-          const subject = ticket.subject.toLowerCase();
-          const status = ticket.status.toLowerCase();
-          return subject.includes(searchTerm) || status.includes(searchTerm);
-        });
-        renderTickets(filteredTickets);
+      // Show Success Alert
+      const showSuccessAlert = (message) => {
+        alertMessage.textContent = message;
+        successAlert.classList.remove("hidden");
+        successAlert.classList.add("fade-in");
+        setTimeout(() => {
+          successAlert.classList.remove("fade-in");
+          successAlert.classList.add("fade-out");
+          setTimeout(() => {
+            successAlert.classList.add("hidden");
+            successAlert.classList.remove("fade-out");
+          }, 500);
+        }, 3000);
+      };
+
+      // Handle Chat Form Submission
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = sanitizeHTML(chatInput.value.trim());
+        if (message === '') return;
+
+        appendChatMessage(message, 'user');
+        chatInput.value = '';
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/tickets/${currentTicketId}/chat`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({ message }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke sende besked.');
+          }
+
+          const data = await response.json();
+          appendChatMessage(data.reply, 'support');
+        } catch (error) {
+          console.error('Error sending message:', error);
+          appendChatMessage('Der opstod en fejl under afsendelse af din besked.', 'support');
+        }
+      });
+
+      // Append Chat Message
+      const appendChatMessage = (message, sender) => {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+
+        const messageContent = document.createElement("div");
+        messageContent.classList.add("message-content");
+        messageContent.textContent = message;
+
+        messageDiv.appendChild(messageContent);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+      // Close Modal When Clicking Outside
+      window.addEventListener('click', (event) => {
+        if (event.target === ticketModal) {
+          closeModal();
+        }
+        if (event.target === editTicketModal) {
+          closeEditModal();
+        }
+      });
+
+      // Close Modal with Escape Key
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeModal();
+          closeEditModal();
+        }
       });
 
       // Fetch Tickets on Page Load
