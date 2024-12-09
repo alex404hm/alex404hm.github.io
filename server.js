@@ -736,7 +736,7 @@ app.get('/dashboard', authenticateToken, (req, res) => {
 });
 
 app.get('/dashboard/tickets', authenticateToken, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'tickets.html'));
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
 });
 
 app.get('/admin', authenticateAdmin, (req, res) => {

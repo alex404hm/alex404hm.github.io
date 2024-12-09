@@ -13,7 +13,7 @@
     <meta property="og:title" content="Support Pro - Admin Guides">
     <meta property="og:description" content="Administrer guider hurtigt og effektivt med vores avancerede Admin Dashboard.">
     <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
-    <meta property="og:url" content="https://yourwebsite.comguides">
+    <meta property="og:url" content="https://yourwebsite.com/guides">
     <meta property="og:type" content="website">
 
     <!-- Favicon -->
@@ -55,8 +55,8 @@
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 
-    <!-- Chart.js for Graphs (if needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Axios for HTTP Requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Loader Styles -->
     <style>
@@ -69,6 +69,24 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        /* Scrollbar Styles for Data Table */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
@@ -99,9 +117,8 @@
                     </a>
                     <a href="guides" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Guides">
                         <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-                        Guides
+                        Guider
                     </a>
-                    
                     <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
                         <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
                         Brugere
@@ -147,7 +164,6 @@
                         </button>
                         <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
                             <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
-                            <!-- Removed Logout from Profile Dropdown -->
                         </div>
                     </div>
                 </div>
@@ -201,25 +217,25 @@
     </div>
 
     <!-- Modal for Creating/Editing Guides -->
-    <div id="guide-modal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-darkBlack rounded-lg shadow-lg p-8 w-3/4 lg:w-1/2">
+    <div id="guide-modal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center z-50" aria-modal="true" role="dialog">
+        <div class="bg-white dark:bg-darkBlack rounded-lg shadow-lg p-8 w-11/12 md:w-3/4 lg:w-1/2">
             <h2 id="modal-title" class="text-2xl font-bold mb-4 text-darkBlack dark:text-white">Opret Ny Guide</h2>
             <form id="guide-form">
                 <div class="mb-4">
                     <label for="guide-title" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Titel</label>
-                    <input type="text" id="guide-title" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
+                    <input type="text" id="guide-title" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required aria-required="true">
                 </div>
                 <div class="mb-4">
                     <label for="guide-subtitle" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Underoverskrift</label>
-                    <input type="text" id="guide-subtitle" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none">
+                    <input type="text" id="guide-subtitle" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-required="false">
                 </div>
                 <div class="mb-4">
                     <label for="guide-content" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Indhold</label>
-                    <textarea id="guide-content" rows="5" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required></textarea>
+                    <textarea id="guide-content" rows="5" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required aria-required="true"></textarea>
                 </div>
                 <div class="mb-4">
                     <label for="guide-category" class="block text-sm font-medium mb-1 text-darkBlack dark:text-white">Kategori</label>
-                    <select id="guide-category" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required>
+                    <select id="guide-category" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" required aria-required="true">
                         <option value="" disabled selected>Vælg en kategori</option>
                         <option value="Windows">Windows</option>
                         <option value="macOS">macOS</option>
@@ -369,7 +385,7 @@
                     const data = await response.json();
                     guidesData = data.guides || [];
                     if (guidesData.length === 0) {
-                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500">Ingen guider fundet.</td></tr>`;
+                        guidesTableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">Ingen guider fundet.</td></tr>`;
                     } else {
                         guidesData.forEach(guide => appendGuideToTable(guide));
                     }
@@ -405,10 +421,10 @@
                     <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide.category)}</td>
                     <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(guide.views.toString())}</td>
                     <td class="py-4 px-6 text-center">
-                        <button class="edit-guide-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="Edit Guide" data-id="${guide._id}">
+                        <button class="edit-guide-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="Rediger Guide" data-id="${guide._id}">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
-                        <button class="delete-guide-btn text-accentRed hover:text-primaryBlue" aria-label="Delete Guide" data-id="${guide._id}">
+                        <button class="delete-guide-btn text-accentRed hover:text-primaryBlue" aria-label="Slet Guide" data-id="${guide._id}">
                             <i class="fas fa-trash-alt" aria-hidden="true"></i>
                         </button>
                     </td>
@@ -435,6 +451,7 @@
             const deleteGuide = async (guideId) => {
                 if (!confirm('Er du sikker på, at du vil slette denne guide?')) return;
                 try {
+                    showLoader();
                     const response = await fetch(`${API_BASE_URL}/api/guides/id/${guideId}`, {
                         method: 'DELETE',
                         credentials: 'include',
@@ -449,6 +466,8 @@
                     fetchGuides();
                 } catch (error) {
                     alert(`Kunne ikke slette guide: ${error.message}`);
+                } finally {
+                    hideLoader();
                 }
             };
 
@@ -464,6 +483,7 @@
                 };
 
                 try {
+                    showLoader();
                     let response;
                     if (currentGuideId) {
                         response = await fetch(`${API_BASE_URL}/api/guides/id/${currentGuideId}`, {
@@ -496,18 +516,12 @@
                     closeModal();
                 } catch (error) {
                     alert(`Kunne ikke gemme guide: ${error.message}`);
+                } finally {
+                    hideLoader();
                 }
             });
 
-            // Get Status Badge (if applicable)
-            // For guides, you might have statuses; adjust as needed
-            /*
-            const getStatusBadge = (status) => {
-                // Implement if guides have statuses
-            };
-            */
-
-            // Sanitize HTML
+            // Sanitize HTML to prevent XSS
             const sanitizeHTML = (str) => {
                 const temp = document.createElement('div');
                 temp.textContent = str;

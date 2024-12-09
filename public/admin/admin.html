@@ -44,8 +44,8 @@
   <!-- FontAwesome for Icons -->
   <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 
-  <!-- Chart.js for Graphs -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Axios for HTTP Requests -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body class="bg-lightBlack text-secondaryGray font-inter dark:bg-darkBlack dark:text-white transition-colors duration-300">
@@ -104,7 +104,7 @@
         </button>
         <!-- Search Bar -->
         <div class="relative flex-1 mx-4">
-          <input type="text" placeholder="Søg..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
+          <input type="text" placeholder="Søg..." id="search-input" class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
           <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors" aria-hidden="true"></i>
         </div>
         <!-- Profile and Dark Mode Toggle -->
@@ -121,7 +121,6 @@
             </button>
             <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
               <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
-              <!-- Removed Logout from Profile Dropdown -->
             </div>
           </div>
         </div>
@@ -164,7 +163,7 @@
               <i class="fas fa-hourglass-half text-white text-xl" aria-hidden="true"></i>
             </div>
             <div class="ml-3">
-              <p id="pending-tickets-count" class="text-xl font-semibold text-darkBlack dark:text-white">0</p>
+              <p id="pending-tickets-count" class="text-xl font-semibold text-darkBlack dark:text-white">Loading...</p>
               <p class="text-xs text-gray-700 dark:text-gray-400">Ventende Tickets</p>
             </div>
           </div>
@@ -180,11 +179,38 @@
           </div>
         </section>
 
-        <!-- Graph Section -->
-        <section id="graphs" class="mb-10">
-          <h2 class="text-2xl font-medium text-darkBlack dark:text-white mb-6">Statistik</h2>
-          <div class="bg-secondaryGray dark:bg-lightBlack p-6 rounded-xl shadow-md">
-            <canvas id="ticketsChart" class="w-full h-64"></canvas>
+        <!-- Data Table Section -->
+        <section id="data-table" class="mb-10">
+          <h2 class="text-2xl font-medium text-darkBlack dark:text-white mb-6">Seneste Tickets</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white dark:bg-darkBlack rounded-lg shadow-md">
+              <thead>
+                <tr>
+                  <th class="py-3 px-6 bg-secondaryGray dark:bg-lightBlack text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Ticket ID
+                  </th>
+                  <th class="py-3 px-6 bg-secondaryGray dark:bg-lightBlack text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Brugernavn
+                  </th>
+                  <th class="py-3 px-6 bg-secondaryGray dark:bg-lightBlack text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th class="py-3 px-6 bg-secondaryGray dark:bg-lightBlack text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Oprettet Dato
+                  </th>
+                  <th class="py-3 px-6 bg-secondaryGray dark:bg-lightBlack text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Handlinger
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="tickets-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tr>
+                  <td colspan="5" class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">
+                    Indlæser tickets...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
@@ -192,7 +218,7 @@
         <section id="recent-activities" class="mb-12">
           <h2 class="text-2xl font-medium text-darkBlack dark:text-white mb-6">Seneste Aktiviteter</h2>
           <ul id="recent-activities-list" class="space-y-6">
-            <li class="text-secondaryGray">Loading recent activities...</li>
+            <li class="text-secondaryGray">Indlæser seneste aktiviteter...</li>
           </ul>
         </section>
       </main>
@@ -202,8 +228,9 @@
   <!-- JavaScript for Functionality -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const API_BASE_URL = 'http://localhost:3000';
+      const API_BASE_URL = 'http://localhost:3000'; // Update this to your actual API base URL
 
+      // DOM Elements
       const themeToggle = document.getElementById('theme-toggle');
       const menuButton = document.getElementById('menu-button');
       const sidebar = document.getElementById('sidebar');
@@ -212,6 +239,13 @@
       const profileMenuButton = document.getElementById('profile-menu-button');
       const profileDropdown = document.getElementById('profile-dropdown');
       const loader = document.getElementById('loader');
+      const ticketsTableBody = document.getElementById('tickets-table-body');
+      const recentActivitiesList = document.getElementById('recent-activities-list');
+      const totalUsersCount = document.getElementById('total-users-count');
+      const openTicketsCount = document.getElementById('open-tickets-count');
+      const pendingTicketsCount = document.getElementById('pending-tickets-count');
+      const guidesCount = document.getElementById('guides-count');
+      const searchInput = document.getElementById('search-input');
 
       // Initialize Theme
       const initializeTheme = () => {
@@ -287,129 +321,145 @@
       };
 
       logoutButton.addEventListener('click', logout);
-      // Removed logout from dropdown
 
       // Fetch data from API and update UI
-      async function fetchData() {
+      const fetchData = async () => {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/dashboard-data`, {
-            credentials: 'include',
+          const response = await axios.get(`${API_BASE_URL}/api/dashboard-data`, {
             headers: {
               'Authorization': `Bearer ${getToken()}`,
             },
+            withCredentials: true,
           });
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
 
-          // Update total users
-          document.getElementById('total-users-count').textContent = data.totalUsers;
-          // Update open tickets
-          document.getElementById('open-tickets-count').textContent = data.openTickets;
-          // Update pending tickets
-          document.getElementById('pending-tickets-count').textContent = data.pendingTickets || 0;
-          // Update guides
-          document.getElementById('guides-count').textContent = data.guides;
-          // Update recent activities
-          const recentActivitiesList = document.getElementById('recent-activities-list');
-          recentActivitiesList.innerHTML = '';
-          if (data.recentActivities && data.recentActivities.length > 0) {
-            data.recentActivities.forEach(activity => {
-              const listItem = document.createElement('li');
-              listItem.classList.add('bg-secondaryGray', 'dark:bg-lightBlack', 'p-5', 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'hover:shadow-lg', 'transition-shadow', 'duration-300');
-              listItem.innerHTML = `
-                <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
-                <div>
-                  <p class="text-darkBlack dark:text-white">${sanitizeHTML(activity.description)}</p>
-                  <p class="text-gray-700 dark:text-gray-300 text-sm">${sanitizeHTML(activity.timestamp)}</p>
-                </div>
-              `;
-              recentActivitiesList.appendChild(listItem);
-            });
-          } else {
-            recentActivitiesList.innerHTML = '<li class="text-secondaryGray">Ingen seneste aktiviteter.</li>';
-          }
+          const data = response.data;
 
-          // Initialize Charts
-          initializeCharts(data.chartData);
+          // Update Overview Cards
+          totalUsersCount.textContent = data.totalUsers;
+          openTicketsCount.textContent = data.openTickets;
+          pendingTicketsCount.textContent = data.pendingTickets || 0;
+          guidesCount.textContent = data.guides;
+
+          // Update Recent Activities
+          updateRecentActivities(data.recentActivities);
+
+          // Update Tickets Table
+          updateTicketsTable(data.recentTickets);
 
           // Hide Loader
           loader.classList.add('hidden');
         } catch (error) {
           console.error('Error fetching dashboard data:', error);
-          // Display error message to user
-          const recentActivitiesList = document.getElementById('recent-activities-list');
-          recentActivitiesList.innerHTML = '<li class="text-red-500">Kunne ikke hente data. Prøv igen senere.</li>';
+          // Display error messages
+          totalUsersCount.textContent = 'Error';
+          openTicketsCount.textContent = 'Error';
+          pendingTicketsCount.textContent = 'Error';
+          guidesCount.textContent = 'Error';
+          recentActivitiesList.innerHTML = '<li class="text-red-500">Kunne ikke hente seneste aktiviteter. Prøv igen senere.</li>';
+          ticketsTableBody.innerHTML = '<tr><td colspan="5" class="py-4 px-6 text-center text-red-500">Kunne ikke hente tickets. Prøv igen senere.</td></tr>';
           // Hide Loader
           loader.classList.add('hidden');
         }
-      }
+      };
 
-      // Sanitize HTML to prevent XSS
-      function sanitizeHTML(str) {
+      // Update Recent Activities
+      const updateRecentActivities = (activities) => {
+        recentActivitiesList.innerHTML = '';
+        if (activities && activities.length > 0) {
+          activities.forEach(activity => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('bg-secondaryGray', 'dark:bg-lightBlack', 'p-5', 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'hover:shadow-lg', 'transition-shadow', 'duration-300');
+            listItem.innerHTML = `
+              <i class="fas fa-user-circle text-primaryBlue text-3xl mr-4" aria-hidden="true"></i>
+              <div>
+                <p class="text-darkBlack dark:text-white">${sanitizeHTML(activity.description)}</p>
+                <p class="text-gray-700 dark:text-gray-300 text-sm">${sanitizeHTML(activity.timestamp)}</p>
+              </div>
+            `;
+            recentActivitiesList.appendChild(listItem);
+          });
+        } else {
+          recentActivitiesList.innerHTML = '<li class="text-secondaryGray">Ingen seneste aktiviteter.</li>';
+        }
+      };
+
+      // Update Tickets Table
+      const updateTicketsTable = (tickets) => {
+        ticketsTableBody.innerHTML = '';
+        if (tickets && tickets.length > 0) {
+          tickets.forEach(ticket => {
+            const row = document.createElement('tr');
+            row.classList.add('hover:bg-secondaryGray', 'dark:hover:bg-lightBlack', 'transition-colors');
+            row.innerHTML = `
+              <td class="py-4 px-6 text-sm font-medium text-gray-900 dark:text-white">${sanitizeHTML(ticket.id)}</td>
+              <td class="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">${sanitizeHTML(ticket.username)}</td>
+              <td class="py-4 px-6 text-sm">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${getStatusClasses(ticket.status)}">
+                  ${sanitizeHTML(ticket.status)}
+                </span>
+              </td>
+              <td class="py-4 px-6 text-sm text-gray-700 dark:text-gray-300">${formatDate(ticket.createdAt)}</td>
+              <td class="py-4 px-6 text-sm">
+                <button class="view-ticket-button text-primaryBlue dark:text-accentGreen hover:underline" data-ticket-id="${sanitizeHTML(ticket.id)}">Se</button>
+                <!-- Add more action buttons as needed -->
+              </td>
+            `;
+            ticketsTableBody.appendChild(row);
+          });
+        } else {
+          ticketsTableBody.innerHTML = '<tr><td colspan="5" class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">Ingen tickets fundet.</td></tr>';
+        }
+      };
+
+      // Helper Functions
+      const sanitizeHTML = (str) => {
         const temp = document.createElement('div');
         temp.textContent = str;
         return temp.innerHTML;
-      }
+      };
 
-      // Initialize Charts using Chart.js
-      function initializeCharts(chartData) {
-        const ctx = document.getElementById('ticketsChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: chartData.labels, // e.g., ['January', 'February', 'March', 'April']
-            datasets: [{
-                label: 'Åbne Tickets',
-                data: chartData.openTickets, // e.g., [12, 19, 3, 5]
-                backgroundColor: 'rgba(22, 163, 74, 0.6)', // accentGreen with transparency
-                borderColor: 'rgba(22, 163, 74, 1)',
-                borderWidth: 1
-              },
-              {
-                label: 'Lukkede Tickets',
-                data: chartData.closedTickets, // e.g., [7, 11, 5, 8]
-                backgroundColor: 'rgba(220, 38, 38, 0.6)', // accentRed with transparency
-                borderColor: 'rgba(220, 38, 38, 1)',
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: '#6B7280' // Gray-500
-                },
-                grid: {
-                  color: '#D1D5DB' // Gray-300
-                }
-              },
-              x: {
-                ticks: {
-                  color: '#6B7280' // Gray-500
-                },
-                grid: {
-                  display: false
-                }
-              }
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: '#6B7280' // Gray-500
-                }
-              }
-            }
+      const formatDate = (dateStr) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateStr).toLocaleDateString('da-DK', options);
+      };
+
+      const getStatusClasses = (status) => {
+        switch (status.toLowerCase()) {
+          case 'åben':
+            return 'bg-accentGreen text-white';
+          case 'lukket':
+            return 'bg-accentRed text-white';
+          case 'pending':
+            return 'bg-pendingYellow text-white';
+          default:
+            return 'bg-secondaryGray text-gray-700 dark:text-gray-300';
+        }
+      };
+
+      // Search Functionality (Optional Enhancement)
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const rows = ticketsTableBody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          if (cells.length > 0) {
+            const matches = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(query));
+            row.style.display = matches ? '' : 'none';
           }
         });
-      }
+      });
 
-      // Load data on page load
+      // Event Delegation for View Ticket Buttons
+      ticketsTableBody.addEventListener('click', (e) => {
+        if (e.target && e.target.matches('.view-ticket-button')) {
+          const ticketId = e.target.getAttribute('data-ticket-id');
+          // Redirect to ticket details page or open a modal
+          window.location.href = `/tickets/${ticketId}`;
+        }
+      });
+
+      // Fetch data on page load
       fetchData();
     });
   </script>
@@ -417,7 +467,7 @@
   <!-- Loader Styles -->
   <style>
     .loader {
-      border-top-color: #3498db;
+      border-top-color: #2563EB; /* primaryBlue */
       animation: spin 1s ease-in-out infinite;
     }
 
@@ -425,6 +475,24 @@
       to {
         transform: rotate(360deg);
       }
+    }
+
+    /* Scrollbar Styles for Data Table */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
   </style>
 </body>

@@ -1,71 +1,304 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da" class="scroll-smooth" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
+    <title>Admin Login | Support Pro</title>
+
+    <!-- Meta Description for SEO -->
+    <meta name="description" content="Login to the Support Pro Admin Dashboard to manage your platform efficiently.">
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="Admin Login | Support Pro">
+    <meta property="og:description" content="Securely access the Support Pro Admin Dashboard to manage your platform.">
+    <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
+    <meta property="og:url" content="https://yourwebsite.com/admin/login">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#2563EB',
+                        secondaryGray: '#E5E7EB',
+                        darkBlack: '#1E293B',
+                        lightBlack: '#334155',
+                        accentGreen: '#16A34A',
+                        accentRed: '#DC2626',
+                        hoverBlue: '#1E40AF',
+                        pendingYellow: '#F59E0B',
+                        guidePurple: '#8B5CF6',
+                    },
+                },
+            },
+            plugins: [],
+        };
+    </script>
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+    <!-- Axios for HTTP Requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Loader Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
+        .loader {
+            border-top-color: #2563EB;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-gray-900">Admin Login</h2>
-            <p class="text-sm text-gray-500">Sign in to access the admin dashboard</p>
+
+<body class="bg-gray-900 flex items-center justify-center min-h-screen transition-colors duration-300">
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <!-- Branding Section -->
+        <div class="flex flex-col items-center mb-8">
+            <img src="https://yourwebsite.com/images/logo.svg" alt="Support Pro Logo" class="h-12 mb-4">
+            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white">Admin Login</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Log ind for at få adgang til admin dashboardet</p>
         </div>
+
+        <!-- Login Form -->
         <form id="login-form" action="/api/login" method="POST" class="space-y-6">
-            <div class="relative">
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" id="email" name="email" required class="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400" placeholder="admin@example.com">
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                <input type="email" id="email" name="email" required
+                    class="mt-1 p-3 w-full border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 dark:bg-gray-700 dark:text-white"
+                    placeholder="admin@example.com" aria-required="true">
+                <p id="email-error" class="mt-1 text-xs text-red-600 dark:text-red-400 hidden">Indtast en gyldig email.</p>
             </div>
+
+            <!-- Password Field -->
             <div class="relative">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" name="password" required class="mt-1 p-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400" placeholder="••••••••">
+                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="mt-1 p-3 w-full border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 dark:bg-gray-700 dark:text-white"
+                    placeholder="••••••••" aria-required="true">
+                <button type="button" id="toggle-password"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                    <i id="toggle-icon" class="fas fa-eye text-gray-500 dark:text-gray-400"></i>
+                </button>
+                <p id="password-error" class="mt-1 text-xs text-red-600 dark:text-red-400 hidden">Indtast et password.</p>
             </div>
+
+            <!-- Remember Me & Forgot Password -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <input type="checkbox" id="remember-me" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                    <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Remember me </label>
+                    <input type="checkbox" id="remember-me" name="remember"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Husk mig</label>
                 </div>
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
+                    <a href="/password-reset" class="font-medium text-blue-600 hover:text-blue-500">Glemt dit password?</a>
                 </div>
             </div>
+
+            <!-- Submit Button -->
             <div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+                <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Log ind
+                </button>
             </div>
+
+            <!-- Loader and Error Message -->
+            <div id="form-feedback" class="flex items-center justify-center space-x-2 hidden">
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                <span class="text-sm text-gray-700 dark:text-gray-300">Logger ind...</span>
+            </div>
+            <p id="login-error" class="text-center text-sm text-red-600 dark:text-red-400 hidden">Fejl ved login. Kontroller dine oplysninger og prøv igen.</p>
         </form>
+
+        <!-- Dark Mode Toggle Button -->
+        <button id="dark-mode-toggle" class="mt-6 flex items-center justify-center w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+            <i id="dark-mode-icon" class="fas fa-moon mr-2"></i>
+            <span id="dark-mode-text">Skift til mørk tilstand</span>
+        </button>
     </div>
+
+    <!-- JavaScript for Form Functionality -->
     <script>
-        document.getElementById('login-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordButton = document.getElementById('toggle-password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const formFeedback = document.getElementById('form-feedback');
+            const loginError = document.getElementById('login-error');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const darkModeIcon = document.getElementById('dark-mode-icon');
+            const darkModeText = document.getElementById('dark-mode-text');
 
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+            // Toggle Password Visibility
+            togglePasswordButton.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                toggleIcon.classList.toggle('fa-eye');
+                toggleIcon.classList.toggle('fa-eye-slash');
+            });
 
-                const data = await response.json();
-                if (response.ok) {
-                    window.location.href = '/admin';
+            // Dark Mode Toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    darkModeIcon.classList.remove('fa-moon');
+                    darkModeIcon.classList.add('fa-sun');
+                    darkModeText.textContent = 'Skift til lys tilstand';
                 } else {
-                    alert(data.error || 'Login failed. Please try again.');
+                    darkModeIcon.classList.remove('fa-sun');
+                    darkModeIcon.classList.add('fa-moon');
+                    darkModeText.textContent = 'Skift til mørk tilstand';
                 }
-            } catch (error) {
-                alert('An error occurred. Please try again later.');
-            }
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // Initialize Theme Based on Local Storage
+            const initializeTheme = () => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    darkModeIcon.classList.remove('fa-moon');
+                    darkModeIcon.classList.add('fa-sun');
+                    darkModeText.textContent = 'Skift til lys tilstand';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    darkModeIcon.classList.remove('fa-sun');
+                    darkModeIcon.classList.add('fa-moon');
+                    darkModeText.textContent = 'Skift til mørk tilstand';
+                }
+            };
+            initializeTheme();
+
+            // Form Validation
+            const validateForm = () => {
+                let isValid = true;
+
+                // Email Validation
+                if (!emailInput.value.trim()) {
+                    emailError.textContent = 'Email er påkrævet.';
+                    emailError.classList.remove('hidden');
+                    isValid = false;
+                } else if (!/\S+@\S+\.\S+/.test(emailInput.value)) {
+                    emailError.textContent = 'Indtast en gyldig email.';
+                    emailError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    emailError.classList.add('hidden');
+                }
+
+                // Password Validation
+                if (!passwordInput.value.trim()) {
+                    passwordError.textContent = 'Password er påkrævet.';
+                    passwordError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    passwordError.classList.add('hidden');
+                }
+
+                return isValid;
+            };
+
+            // Handle Form Submission
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // Reset Error Messages
+                loginError.classList.add('hidden');
+
+                // Validate Form
+                if (!validateForm()) {
+                    return;
+                }
+
+                // Show Loading Indicator
+                formFeedback.classList.remove('hidden');
+
+                // Prepare Data
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+                const remember = document.getElementById('remember-me').checked;
+
+                try {
+                    const response = await axios.post('/api/login', {
+                        email,
+                        password,
+                        remember
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        withCredentials: true
+                    });
+
+                    if (response.status === 200) {
+                        // Redirect to admin dashboard
+                        window.location.href = '/admin';
+                    } else {
+                        // Show error message
+                        loginError.textContent = response.data.error || 'Login mislykkedes. Prøv igen.';
+                        loginError.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    // Handle Errors
+                    if (error.response && error.response.data && error.response.data.error) {
+                        loginError.textContent = error.response.data.error;
+                    } else {
+                        loginError.textContent = 'En fejl opstod. Prøv igen senere.';
+                    }
+                    loginError.classList.remove('hidden');
+                } finally {
+                    // Hide Loading Indicator
+                    formFeedback.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
+
 </html>
