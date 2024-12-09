@@ -56,7 +56,7 @@ requiredEnvVars.forEach((varName) => {
 });
 
 const {
-  BASE_URL = 'http://localhost:3000',
+  BASE_URL = 'http://172.234.99.32:3000',
   PORT = process.env.PORT || 3000,
   NODE_ENV = 'development',
   JWT_EXPIRES_IN = '1h',

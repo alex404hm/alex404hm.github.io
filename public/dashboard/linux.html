@@ -188,7 +188,7 @@
             initializeDarkMode();
 
             // Fetch and display the most popular guides
-            fetchGuides('http://localhost:3000/api/guides?category=Linux&limit=6', displayPopularGuides);
+            fetchGuides('http://172.234.99.32:3000/api/guides?category=Linux&limit=6', displayPopularGuides);
 
             // Search functionality
             initializeSearch();
@@ -250,7 +250,7 @@
                 searchInput.addEventListener('input', (e) => {
                     const query = e.target.value.trim();
                     if (query) {
-                        fetchGuides(`http://localhost:3000/api/guides/search?q=${query}`, displaySearchResults);
+                        fetchGuides(`http://172.234.99.32:3000/api/guides/search?q=${query}`, displaySearchResults);
                     } else {
                         toggleVisibility('mostPopularGuides', true);
                         toggleVisibility('searchResults', false);
