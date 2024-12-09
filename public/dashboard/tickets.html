@@ -1,182 +1,570 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Pro Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide-icons"></script>
-    <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard - Support Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      padding-top: 5rem; /* Offset for fixed navbar */
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .modal {
+      position: fixed; 
+      top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.5); display:none; 
+      justify-content:center; align-items:center; z-index:50;
+    }
+    .modal.active {
+      display:flex;
+    }
+    .modal-content {
+      background:white; color:black; padding:1.5rem;
+      border-radius:0.5rem; width:90%; max-width:600px; max-height:90%; overflow-y:auto;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark .modal-content {
+      background:#1E293B; color:white;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Support Dashboard</h1>
-            <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        placeholder="Search tickets..." 
-                        class="w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-                <button 
-                    id="create-ticket-btn"
-                    class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Create Ticket
-                </button>
-            </div>
-        </header>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300 font-inter">
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect x="8" y="2" width="8" height="4" rx="1"></rect>
-                    </svg>
+  <!-- Navbar -->
+  <header class="fixed inset-x-0 top-0 z-30 w-full bg-black dark:bg-white text-white dark:text-black py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
+    <div class="container mx-auto px-6 flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold hover:text-blue-500 transition-colors duration-300">Support Pro</a>
+      <nav class="hidden md:flex items-center space-x-6">
+        <a href="/dashboard" class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
+          Home
+        </a>
+        <div class="relative dropdown group" onclick="toggleDropdown(this)">
+          <button class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
+            OS Options
+          </button>
+          <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Windows -->
+              <a href="/dashboard/windows" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">Windows</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Popular OS for PCs.</p>
                 </div>
-                <div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Total Tickets</p>
-                    <p id="total-tickets" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
+              </a>
+              <!-- macOS -->
+              <a href="/dashboard/macos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
+                <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">macOS</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Sleek design & hardware.</p>
                 </div>
+              </a>
+              <!-- Linux -->
+              <a href="/dashboard/linux" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
+                <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">Linux</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Open-source & flexible.</p>
+                </div>
+              </a>
+              <!-- iOS -->
+              <a href="/dashboard/ios" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
+                <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">iOS/iPadOS</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Mobile OS for iPhones/iPads.</p>
+                </div>
+              </a>
+              <!-- Android -->
+              <a href="/dashboard/android" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
+                <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">AndroidOS</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Customizable mobile OS.</p>
+                </div>
+              </a>
+              <!-- ChromeOS -->
+              <a href="/dashboard/chromeos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
+                <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS" class="w-12 h-12">
+                <div class="ml-4">
+                  <h3 class="text-lg font-semibold">ChromeOS</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Lightweight, for Chromebooks.</p>
+                </div>
+              </a>
             </div>
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Open Tickets</p>
-                    <p id="open-tickets" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                        <line x1="12" y1="9" x2="12" y2="13"></line>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Pending Tickets</p>
-                    <p id="pending-tickets" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
-                <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Closed Tickets</p>
-                    <p id="closed-tickets" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
-                </div>
-            </div>
+          </div>
         </div>
+        <a href="/profile" class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
+          Profile
+        </a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <i id="theme-icon" class="fas fa-moon"></i>
+        </button>
+        <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+          Logout
+        </a>
+      </div>
+    </div>
+  </header>
 
-        <!-- Tickets Table -->
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-            <table class="w-full">
-                <thead class="bg-gray-100 dark:bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tickets-body" class="divide-y divide-gray-200 dark:divide-gray-700">
-                    <!-- Tickets will be dynamically inserted here -->
-                </tbody>
-            </table>
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
+      <h1 class="text-3xl font-bold">Your Tickets</h1>
+      <div class="flex items-center space-x-4 w-full md:w-auto">
+        <div class="relative flex-1 md:flex-none">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search tickets..." 
+            class="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          >
         </div>
+        <button 
+          id="create-ticket-btn"
+          class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-plus-circle mr-2"></i>
+          Create Ticket
+        </button>
+      </div>
+    </header>
 
-        <!-- Create Ticket Modal -->
-        <div id="create-ticket-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-96 p-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Create New Ticket</h2>
-                <form id="create-ticket-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name</label>
-                        <input 
-                            type="text" 
-                            id="ticket-name" 
-                            required 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
-                        <input 
-                            type="text" 
-                            id="ticket-subject" 
-                            required 
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button 
-                            type="button" 
-                            id="cancel-create-ticket" 
-                            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button 
-                            type="submit" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Create Ticket
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
+        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+          <i class="fas fa-clipboard-list"></i>
         </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Total Tickets</p>
+          <p id="total-tickets" class="text-2xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
+        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Open Tickets</p>
+          <p id="open-tickets" class="text-2xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
+        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Pending Tickets</p>
+          <p id="pending-tickets" class="text-2xl font-bold">0</p>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 flex items-center">
+        <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+          <i class="fas fa-times-circle"></i>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Closed Tickets</p>
+          <p id="closed-tickets" class="text-2xl font-bold">0</p>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // Define local storage key
-        const STORAGE_KEY = "support-tickets";
+    <!-- Tickets Table -->
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-100 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tickets-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+          <!-- Tickets go here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-        let tickets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  <!-- Create Ticket Modal -->
+  <div id="create-ticket-modal" class="modal">
+    <div class="modal-content bg-gray-50 dark:bg-gray-900 rounded-lg p-6 shadow-lg transition-colors duration-300">
+      <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Create New Ticket</h2>
+        <button id="cancel-create-ticket"
+          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded-full p-1 transition"
+          aria-label="Close Modal">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
 
-        const saveTickets = () => {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
-        };
+      <form id="create-ticket-form" class="space-y-6">
+        <!-- Subject -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+          <input type="text" id="ticket-subject" required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            placeholder="Enter the ticket subject...">
+        </div>
 
-        // Update all UI components (List etc)
-        renderTable()
-    </script>
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+          <textarea id="ticket-description" required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            placeholder="Describe your issue or request..."></textarea>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+          <select id="ticket-category"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            <option value="Windows">Windows</option>
+            <option value="macOS">macOS</option>
+            <option value="Linux">Linux</option>
+            <option value="Android">Android</option>
+            <option value="iOS">iOS/iPadOS</option>
+            <option value="ChromeOS">ChromeOS</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Other Category Field -->
+        <div id="other-category-container" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Category</label>
+          <input type="text" id="other-category-input"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            placeholder="Specify your custom category...">
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-2 pt-2 border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
+          <button type="button" id="cancel-create-ticket-2"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900">
+            Create Ticket
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Ticket Modal -->
+  <div id="view-ticket-modal" class="modal">
+    <div class="modal-content bg-gray-50 dark:bg-gray-900 rounded-lg p-6 shadow-lg transition-colors duration-300">
+      <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Ticket Details</h2>
+        <button id="close-view-modal"
+          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded-full p-1 transition"
+          aria-label="Close Modal">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="view-modal-body" class="mb-8 space-y-4"></div>
+
+      <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Conversation</h3>
+      <div id="chat-messages" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-6"></div>
+      <form id="chat-form" class="flex">
+        <input type="text" id="chat-input" placeholder="Type your message..."
+          class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition"
+        >
+        <button type="submit"
+          class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const currentTheme = localStorage.getItem("theme") || (prefersDarkScheme.matches ? "dark" : "light");
+    if (currentTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      themeIcon.classList.remove("fa-moon");
+      themeIcon.classList.add("fa-sun");
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle("dark");
+      let theme = "light";
+      if (document.documentElement.classList.contains("dark")) {
+        theme = "dark";
+        themeIcon.classList.remove("fa-moon");
+        themeIcon.classList.add("fa-sun");
+      } else {
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-moon");
+      }
+      localStorage.setItem("theme", theme);
+    });
+
+    function toggleDropdown(el) {
+      // If you need manual toggle on mobile, implement logic here.
+    }
+
+    const ticketsBody = document.getElementById('tickets-body');
+    const searchInput = document.getElementById('search-input');
+
+    const totalTicketsEl = document.getElementById('total-tickets');
+    const openTicketsEl = document.getElementById('open-tickets');
+    const pendingTicketsEl = document.getElementById('pending-tickets');
+    const closedTicketsEl = document.getElementById('closed-tickets');
+
+    const createTicketBtn = document.getElementById('create-ticket-btn');
+    const createTicketModal = document.getElementById('create-ticket-modal');
+    const createTicketForm = document.getElementById('create-ticket-form');
+    const cancelCreateTicketBtn = document.getElementById('cancel-create-ticket');
+    const cancelCreateTicketBtn2 = document.getElementById('cancel-create-ticket-2');
+    const ticketSubjectInput = document.getElementById('ticket-subject');
+    const ticketDescriptionInput = document.getElementById('ticket-description');
+    const ticketCategorySelect = document.getElementById('ticket-category');
+    const otherCategoryContainer = document.getElementById('other-category-container');
+    const otherCategoryInput = document.getElementById('other-category-input');
+
+    const viewTicketModal = document.getElementById('view-ticket-modal');
+    const closeViewModal = document.getElementById('close-view-modal');
+    const viewModalBody = document.getElementById('view-modal-body');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    let tickets = [];
+    let currentTicketId = null;
+
+    const showModal = (modal) => modal.classList.add('active');
+    const hideModal = (modal) => modal.classList.remove('active');
+
+    const updateStats = (ticketList) => {
+      totalTicketsEl.textContent = ticketList.length;
+      const open = ticketList.filter(t => t.status === 'open').length;
+      const pending = ticketList.filter(t => t.status === 'pending').length;
+      const closed = ticketList.filter(t => t.status === 'closed').length;
+      openTicketsEl.textContent = open;
+      pendingTicketsEl.textContent = pending;
+      closedTicketsEl.textContent = closed;
+    };
+
+    const renderTable = (ticketList) => {
+      ticketsBody.innerHTML = "";
+      ticketList.forEach(ticket => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm">${ticket._id}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">${ticket.subject}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+              ticket.status === 'open' ? 'bg-green-100 text-green-800' :
+              ticket.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }">${ticket.status}</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${new Date(ticket.createdDate).toLocaleString()}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <button class="view-ticket-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex items-center space-x-2"
+              data-id="${ticket._id}">
+              <i class="fas fa-eye"></i>
+              <span>View</span>
+            </button>
+          </td>
+        `;
+        const viewBtn = tr.querySelector('.view-ticket-btn');
+        viewBtn.addEventListener('click', () => viewTicket(ticket._id));
+        ticketsBody.appendChild(tr);
+      });
+    };
+
+    async function fetchTickets(searchTerm = "") {
+      let url = '/api/tickets';
+      if (searchTerm.trim()) {
+        url += `?search=${encodeURIComponent(searchTerm)}`;
+      }
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) {
+        console.error('Failed to fetch tickets');
+        return;
+      }
+      const data = await res.json();
+      tickets = data.tickets || data; 
+      renderTable(tickets);
+      updateStats(tickets);
+    }
+
+    async function createTicket(subject, description, category) {
+      const res = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ subject, description, category })
+      });
+      if (!res.ok) {
+        console.error('Failed to create ticket');
+        return;
+      }
+      await fetchTickets(searchInput.value);
+    }
+
+    async function viewTicket(ticketId) {
+      try {
+        const res = await fetch(`/api/tickets/${ticketId}`, { credentials: 'include' });
+        if (!res.ok) {
+          console.error('Failed to fetch ticket details');
+          return;
+        }
+        const ticket = await res.json();
+        currentTicketId = ticket._id;
+        populateViewModal(ticket);
+        showModal(viewTicketModal);
+      } catch (err) {
+        console.error('Error viewing ticket:', err);
+      }
+    }
+
+    function populateViewModal(ticket) {
+      // Populate ticket details
+      viewModalBody.innerHTML = `
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Ticket ID:</label>
+            <p class="text-lg font-medium">${ticket._id}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Subject:</label>
+            <p class="text-lg font-medium">${ticket.subject}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Status:</label>
+            <p class="text-lg font-medium">${ticket.status}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Created:</label>
+            <p class="text-lg font-medium">${new Date(ticket.createdDate).toLocaleString()}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Description:</label>
+            <p class="text-lg font-medium">${ticket.description || 'No description'}</p>
+          </div>
+        </div>
+      `;
+
+      // Populate conversation
+      chatMessages.innerHTML = '';
+      if (ticket.conversation && ticket.conversation.length > 0) {
+        ticket.conversation.forEach(msg => appendChatMessage(msg.message, msg.sender));
+      } else {
+        // Optional placeholder
+        // chatMessages.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-300">No conversation yet. Start by sending a message.</p>`;
+      }
+    }
+
+    function appendChatMessage(message, sender) {
+      const div = document.createElement('div');
+      div.classList.add('mb-2', 'p-2', 'rounded-lg', 'max-w-xs', 'break-words');
+      if (sender.toLowerCase() === 'user') {
+        div.classList.add('bg-blue-200', 'dark:bg-blue-600', 'ml-auto');
+      } else {
+        div.classList.add('bg-gray-300', 'dark:bg-gray-600');
+      }
+      div.textContent = message;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      appendChatMessage(message, 'User');
+      chatInput.value = '';
+
+      try {
+        const res = await fetch(`/api/tickets/${currentTicketId}/responses`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        if (!res.ok) {
+          console.error('Failed to send message');
+          appendChatMessage('Error sending your message.', 'Support');
+          return;
+        }
+        const data = await res.json();
+        if (data.reply) {
+          appendChatMessage(data.reply, 'Support');
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        appendChatMessage('Error sending your message.', 'Support');
+      }
+    });
+
+    createTicketBtn.addEventListener('click', () => showModal(createTicketModal));
+    [cancelCreateTicketBtn, cancelCreateTicketBtn2].forEach(btn => btn.addEventListener('click', () => hideModal(createTicketModal)));
+
+    createTicketForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const subject = ticketSubjectInput.value.trim();
+      const description = ticketDescriptionInput.value.trim();
+      let category = ticketCategorySelect.value;
+      if (category === 'Other') category = otherCategoryInput.value.trim();
+      if (!subject || !description || !category) return;
+      await createTicket(subject, description, category);
+      hideModal(createTicketModal);
+    });
+
+    ticketCategorySelect.addEventListener('change', (e) => {
+      if (e.target.value === 'Other') {
+        otherCategoryContainer.classList.remove('hidden');
+      } else {
+        otherCategoryContainer.classList.add('hidden');
+      }
+    });
+
+    searchInput.addEventListener('input', (e) => fetchTickets(e.target.value));
+    closeViewModal.addEventListener('click', () => {
+      hideModal(viewTicketModal);
+      currentTicketId = null;
+      chatMessages.innerHTML = '';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === createTicketModal) hideModal(createTicketModal);
+      if (e.target === viewTicketModal) hideModal(viewTicketModal);
+    });
+
+    // Initial load
+    fetchTickets();
+  </script>
 </body>
 </html>

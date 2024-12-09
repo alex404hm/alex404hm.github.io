@@ -1,31 +1,20 @@
 <!DOCTYPE html>
 <html lang="da" class="scroll-smooth" data-theme="light">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Support Pro - Ticket Administration</title>
+  <meta name="description" content="Support Pro Ticket Administration for efficient ticket management." />
+  <meta property="og:title" content="Support Pro - Ticket Administration" />
+  <meta property="og:description" content="Efficient ticket management for your support team." />
+  <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg" />
+  <meta property="og:url" content="https://yourwebsite.com/tickets" />
+  <meta property="og:type" content="website" />
 
-  <!-- Meta Description for SEO -->
-  <meta name="description" content="Support Pro Ticket Administration for efficient ticket management.">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 
-  <!-- Open Graph Meta Tags for Social Sharing -->
-  <meta property="og:title" content="Support Pro - Ticket Administration">
-  <meta property="og:description" content="Efficient ticket management for your support team.">
-  <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg">
-  <meta property="og:url" content="https://yourwebsite.com/tickets">
-  <meta property="og:type" content="website">
-
-  <!-- Favicon -->
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS via CDN (Development Only) -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Custom Tailwind Configuration -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -50,71 +39,36 @@
       },
     };
   </script>
-
-  <!-- FontAwesome for Icons -->
   <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 
-  <!-- Chart.js for Graphs (if needed) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Loader Styles -->
   <style>
     .loader {
       border-top-color: #2563EB;
       animation: spin 1s ease-in-out infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Smooth dropdown transition */
     .transition-dropdown {
       transition: opacity 0.3s ease, transform 0.3s ease;
       opacity: 0;
       transform: translateY(-10px);
     }
-
     .transition-dropdown.show {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* Modal Styles */
     .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); display: none;
+      justify-content: center; align-items: center; z-index: 1000;
     }
-
-    .modal.active {
-      display: flex;
-    }
-
+    .modal.active { display: flex; }
     .modal-content {
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 90%;
-      overflow-y: auto;
+      background-color: white; color: black; padding: 20px;
+      border-radius: 8px; width: 90%; max-width: 600px; max-height: 90%; overflow-y: auto;
     }
-
-    .dark .modal-content {
-      background-color: #1E293B;
-      color: white;
-    }
+    .dark .modal-content { background-color: #1E293B; color: white; }
   </style>
 </head>
 
@@ -130,43 +84,33 @@
     <span id="error-message-content">An error occurred!</span>
   </div>
 
-  <!-- Main Container -->
   <div class="flex min-h-screen">
     <!-- Sidebar -->
     <aside id="sidebar" class="w-72 bg-lightBlack dark:bg-darkBlack rounded-r-2xl shadow-lg flex flex-col justify-between p-6 fixed inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50" aria-label="Sidebar Navigation">
       <div>
-        <!-- Logo -->
         <div class="text-center mb-8">
           <h2 class="text-2xl font-bold text-primaryBlue flex items-center justify-center">
-            <i class="fas fa-user-cog mr-2" aria-hidden="true"></i>
-            Support Pro - Admin
+            <i class="fas fa-user-cog mr-2"></i> Support Pro - Admin
           </h2>
         </div>
-        <!-- Navigation -->
         <nav class="space-y-4" role="navigation">
-          <a href="/admin" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Dashboard">
-            <i class="fas fa-tachometer-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-            Dashboard
+          <a href="/admin" class="flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Dashboard">
+            <i class="fas fa-tachometer-alt mr-3 text-secondaryGray dark:text-gray-400"></i> Dashboard
           </a>
-          <a href="tickets" class="sidebar-link flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Tickets">
-            <i class="fas fa-ticket-alt mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-            Tickets
+          <a href="tickets" class="flex items-center p-3 text-base rounded-lg bg-hoverBlue text-white transition-all" aria-current="page" aria-label="Tickets">
+            <i class="fas fa-ticket-alt mr-3 text-secondaryGray dark:text-gray-400"></i> Tickets
           </a>
-          <a href="guides" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Guides">
-            <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-            Guides
+          <a href="guides" class="flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Guides">
+            <i class="fas fa-book mr-3 text-secondaryGray dark:text-gray-400"></i> Guides
           </a>
-          <a href="users" class="sidebar-link flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Brugere">
-            <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400" aria-hidden="true"></i>
-            Brugere
+          <a href="users" class="flex items-center p-3 text-base rounded-lg hover:bg-hoverBlue hover:text-white transition-all" aria-label="Users">
+            <i class="fas fa-users mr-3 text-secondaryGray dark:text-gray-400"></i> Brugere
           </a>
         </nav>
       </div>
-      <!-- Logout Button at Bottom of Sidebar -->
       <div class="mt-10">
         <button id="logout-button" class="flex items-center p-3 text-base rounded-lg bg-accentRed text-white hover:bg-hoverBlue transition-all w-full text-left focus:outline-none" aria-label="Log ud">
-          <i class="fas fa-sign-out-alt mr-3" aria-hidden="true"></i>
-          Log ud
+          <i class="fas fa-sign-out-alt mr-3"></i> Log ud
         </button>
       </div>
     </aside>
@@ -174,7 +118,7 @@
     <!-- Overlay for Mobile Sidebar -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden lg:hidden z-40"></div>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <div class="flex-1 flex flex-col ml-0 lg:ml-72 transition-all duration-300">
       <!-- Top Toolbar -->
       <header class="flex items-center justify-between p-4 bg-lightBlack dark:bg-darkBlack text-secondaryGray dark:text-white shadow-md rounded-b-2xl">
@@ -185,23 +129,20 @@
         <!-- Search Bar -->
         <div class="relative flex-1 mx-4">
           <input type="text" id="search-input" placeholder="Søg..." class="w-full px-4 py-3 rounded-lg bg-secondaryGray dark:bg-lightBlack text-darkBlack dark:text-white focus:ring-2 focus:ring-primaryBlue focus:outline-none" aria-label="Search">
-          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors" aria-hidden="true"></i>
+          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-primaryBlue cursor-pointer hover:text-accentGreen transition-colors"></i>
         </div>
-        <!-- Dark Mode Toggle and Profile Dropdown -->
+        <!-- Dark Mode & Profile -->
         <div class="flex items-center space-x-4">
-          <!-- Dark Mode Toggle -->
           <button id="theme-toggle" class="focus:outline-none" aria-label="Toggle Dark Mode">
             <i class="fas fa-moon text-secondaryGray dark:text-gray-400"></i>
           </button>
-          <!-- Profile Dropdown -->
           <div class="relative">
             <button id="profile-menu-button" class="flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false" aria-label="Profile Menu">
-              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile Picture" class="w-10 h-10 rounded-full">
+              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" class="w-10 h-10 rounded-full">
               <i class="fas fa-chevron-down ml-2 text-secondaryGray dark:text-gray-400"></i>
             </button>
             <div id="profile-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-lightBlack rounded-md shadow-lg hidden z-20 transition-dropdown">
               <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-secondaryGray dark:hover:bg-hoverBlue">Profilindstillinger</a>
-              <!-- Additional Profile Options Can Be Added Here -->
             </div>
           </div>
         </div>
@@ -229,29 +170,18 @@
                 </tr>
               </thead>
               <tbody id="tickets-table-body" class="text-sm divide-y divide-gray-200 dark:divide-gray-700">
-                <!-- Dynamic Ticket Rows Will Be Injected Here -->
+                <!-- Tickets go here -->
               </tbody>
             </table>
           </div>
 
-          <!-- Loading Indicator -->
-          <div id="loading-indicator" class="flex justify-center items-center mt-4 hidden">
-            <svg class="animate-spin h-8 w-8 text-primaryBlue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-          </div>
-
-          <!-- Error Message -->
-          <div id="error-message" class="text-center text-red-500 dark:text-red-400 mt-4 hidden">
-            Kunne ikke hente billetter. Prøv igen senere.
-          </div>
+          <div id="error-message" class="text-center text-red-500 dark:text-red-400 mt-4 hidden">Kunne ikke hente billetter. Prøv igen senere.</div>
         </section>
       </main>
     </div>
   </div>
 
-  <!-- View/Edit Ticket Modal -->
+  <!-- Ticket Modal -->
   <div id="ticket-modal" class="modal">
     <div class="modal-content">
       <div class="flex justify-between items-center mb-4">
@@ -260,19 +190,14 @@
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      <div id="modal-body">
-        <!-- Ticket Details Will Be Injected Here -->
-      </div>
+      <div id="modal-body"></div>
       <div class="mt-6 flex justify-end space-x-4">
         <button id="edit-ticket-button" class="bg-primaryBlue text-white px-4 py-2 rounded hover:bg-hoverBlue transition focus:outline-none">Edit</button>
-        <button id="close-ticket-button" class="bg-accentRed text-white px-4 py-2 rounded hover:bg-red-700 transition focus:outline-none">Close Ticket</button>
+        <!-- Removed Close Ticket button as requested -->
       </div>
-      <!-- Chat Section -->
       <div class="mt-6">
         <h3 class="text-xl font-semibold mb-2">Conversation</h3>
-        <div id="chat-messages" class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-4">
-          <!-- Chat Messages Will Appear Here -->
-        </div>
+        <div id="chat-messages" class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-4"></div>
         <form id="chat-form" class="flex">
           <input type="text" id="chat-input" placeholder="Type your message..." class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primaryBlue dark:bg-gray-600 dark:text-white" aria-label="Type your message">
           <button type="submit" class="ml-2 bg-primaryBlue text-white px-4 py-2 rounded-lg hover:bg-hoverBlue transition focus:outline-none" aria-label="Send Message">
@@ -313,14 +238,12 @@
     </div>
   </div>
 
-  <!-- JavaScript for Functionality -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const API_BASE_URL = 'http://172.234.99.32:3000'; // Replace with your actual API base URL
+      const API_BASE_URL = 'http://localhost:3000'; // Update to your actual API URL
       let ticketsData = [];
       let currentTicketId = null;
 
-      // Elements
       const themeToggle = document.getElementById('theme-toggle');
       const menuButton = document.getElementById('menu-button');
       const sidebar = document.getElementById('sidebar');
@@ -329,7 +252,6 @@
       const profileMenuButton = document.getElementById('profile-menu-button');
       const profileDropdown = document.getElementById('profile-dropdown');
       const ticketsTableBody = document.getElementById('tickets-table-body');
-      const loadingIndicator = document.getElementById('loading-indicator');
       const errorMessage = document.getElementById('error-message');
       const searchInput = document.getElementById('search-input');
       const loader = document.getElementById('loader');
@@ -339,7 +261,6 @@
       const closeModalButton = document.getElementById('close-modal');
       const modalBody = document.getElementById('modal-body');
       const editTicketButton = document.getElementById('edit-ticket-button');
-      const closeTicketButton = document.getElementById('close-ticket-button');
       const chatMessages = document.getElementById('chat-messages');
       const chatForm = document.getElementById('chat-form');
       const chatInput = document.getElementById('chat-input');
@@ -348,22 +269,17 @@
       const editTicketForm = document.getElementById('edit-ticket-form');
       const cancelEditButton = document.getElementById('cancel-edit-button');
 
-      // Initialize Theme
       const initializeTheme = () => {
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        }
+        if (savedTheme === 'dark') document.documentElement.classList.add('dark');
       };
       initializeTheme();
 
-      // Theme Toggle
       themeToggle.addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
       });
 
-      // Sidebar Toggle for Mobile
       const toggleSidebar = () => {
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
@@ -372,14 +288,12 @@
       menuButton.addEventListener('click', toggleSidebar);
       overlay.addEventListener('click', toggleSidebar);
 
-      // Profile Dropdown Toggle
       profileMenuButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent event from bubbling up
+        e.stopPropagation();
         profileDropdown.classList.toggle('hidden');
         profileDropdown.classList.toggle('show');
       });
 
-      // Close dropdown when clicking outside
       document.addEventListener('click', (event) => {
         if (!profileMenuButton.contains(event.target) && !profileDropdown.contains(event.target)) {
           profileDropdown.classList.add('hidden');
@@ -387,30 +301,24 @@
         }
       });
 
-      // Function to get the JWT token from cookies
       const getToken = () => {
         const name = 'token=';
         const decodedCookie = decodeURIComponent(document.cookie);
         const ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-          let c = ca[i].trim();
-          if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
-          }
+        for (let c of ca) {
+          c = c.trim();
+          if (c.startsWith(name)) return c.substring(name.length);
         }
         return '';
       };
 
-      // Logout Functionality
       const logout = async () => {
         if (!confirm('Er du sikker på, at du vil logge ud?')) return;
         try {
           const response = await fetch(`${API_BASE_URL}/api/logout`, {
             method: 'POST',
             credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
+            headers: { 'Authorization': `Bearer ${getToken()}` },
           });
           if (response.ok) {
             window.location.href = '/auth/login';
@@ -422,28 +330,76 @@
           alert('Der opstod en fejl under log ud. Prøv igen senere.');
         }
       };
-
       logoutButton.addEventListener('click', logout);
 
-      // Fetch Tickets
-      const fetchTickets = async () => {
+      const showLoader = () => loader.classList.remove('hidden');
+      const hideLoader = () => loader.classList.add('hidden');
+
+      const displayErrorMessage = (msg) => {
+        errorMessage.textContent = msg;
+        errorMessage.classList.remove('hidden');
+      };
+      const hideErrorMessage = () => errorMessage.classList.add('hidden');
+
+      const showSuccessAlert = (msg) => {
+        alertMessage.textContent = msg;
+        successAlert.classList.remove("hidden");
+        setTimeout(() => {
+          successAlert.classList.add("hidden");
+        }, 3000);
+      };
+
+      const sanitizeHTML = (str) => {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+      };
+
+      const getStatusBadge = (status) => {
+        let badgeClass = '';
+        let statusText = '';
+        switch (status.toLowerCase()) {
+          case 'åben':
+          case 'open':
+            badgeClass = 'bg-accentGreen text-white px-2 py-1 rounded';
+            statusText = 'Åben';
+            break;
+          case 'afventer':
+          case 'pending':
+            badgeClass = 'bg-pendingYellow text-black dark:text-white px-2 py-1 rounded';
+            statusText = 'Afventer';
+            break;
+          case 'lukket':
+          case 'closed':
+            badgeClass = 'bg-accentRed text-white px-2 py-1 rounded';
+            statusText = 'Lukket';
+            break;
+          default:
+            badgeClass = 'bg-gray-300 text-gray-700 px-2 py-1 rounded';
+            statusText = 'Ukendt';
+        }
+        return `<span class="${badgeClass}">${statusText}</span>`;
+      };
+
+      const fetchTickets = async (searchTerm = '') => {
         showLoader();
         hideErrorMessage();
         ticketsTableBody.innerHTML = '';
 
+        let url = `${API_BASE_URL}/api/tickets`;
+        if (searchTerm.trim()) url += `?search=${encodeURIComponent(searchTerm)}`;
+
         try {
-          const response = await fetch(`${API_BASE_URL}/api/tickets`, {
+          const res = await fetch(url, {
             credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
+            headers: { 'Authorization': `Bearer ${getToken()}` },
           });
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Kunne ikke hente billetter.');
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.error || 'Kunne ikke hente billetter.');
           }
 
-          const data = await response.json();
+          const data = await res.json();
           ticketsData = data.tickets || [];
           renderTickets(ticketsData);
         } catch (error) {
@@ -454,7 +410,6 @@
         }
       };
 
-      // Render Tickets
       const renderTickets = (tickets) => {
         if (tickets.length === 0) {
           ticketsTableBody.innerHTML = `
@@ -462,13 +417,12 @@
               <td colspan="4" class="py-4 px-6 text-center text-darkBlack dark:text-white">Ingen billetter fundet.</td>
             </tr>
           `;
-        } else {
-          ticketsTableBody.innerHTML = '';
-          tickets.forEach(ticket => appendTicketToTable(ticket));
+          return;
         }
+        ticketsTableBody.innerHTML = '';
+        tickets.forEach(appendTicketToTable);
       };
 
-      // Append Ticket to Table
       const appendTicketToTable = (ticket) => {
         const row = document.createElement('tr');
         row.classList.add('border-b', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-gray-100', 'dark:hover:bg-lightBlack', 'transition-all');
@@ -477,37 +431,29 @@
           <td class="py-4 px-6 text-darkBlack dark:text-white">${sanitizeHTML(ticket.subject)}</td>
           <td class="py-4 px-6">${getStatusBadge(ticket.status)}</td>
           <td class="py-4 px-6 text-center">
-            <button class="view-ticket-btn text-primaryBlue hover:text-accentGreen mr-2" aria-label="View Ticket" data-id="${ticket._id}">
-              <i class="fas fa-eye" aria-hidden="true"></i>
+            <button class="view-ticket-btn text-accentGreen hover:text-accentGreen/80 mr-2" aria-label="View Ticket" data-id="${ticket._id}">
+              <i class="fas fa-eye"></i>
             </button>
-            <button class="edit-ticket-btn text-secondaryGray hover:text-primaryBlue mr-2" aria-label="Edit Ticket" data-id="${ticket._id}">
-              <i class="fas fa-edit" aria-hidden="true"></i>
+            <button class="edit-ticket-btn text-primaryBlue hover:text-hoverBlue mr-2" aria-label="Edit Ticket" data-id="${ticket._id}">
+              <i class="fas fa-edit"></i>
             </button>
-            <button class="close-ticket-btn text-accentRed hover:text-primaryBlue mr-2" aria-label="Close Ticket" data-id="${ticket._id}">
-              <i class="fas fa-times-circle" aria-hidden="true"></i>
-            </button>
-            <button class="delete-ticket-btn text-accentRed hover:text-primaryBlue" aria-label="Delete Ticket" data-id="${ticket._id}">
-              <i class="fas fa-trash-alt" aria-hidden="true"></i>
+            <button class="delete-ticket-btn text-accentRed hover:text-accentRed/80" aria-label="Delete Ticket" data-id="${ticket._id}">
+              <i class="fas fa-trash-alt"></i>
             </button>
           </td>
         `;
         ticketsTableBody.appendChild(row);
 
-        // Add Event Listeners
         row.querySelector('.view-ticket-btn').addEventListener('click', () => viewTicket(ticket._id));
         row.querySelector('.edit-ticket-btn').addEventListener('click', () => editTicket(ticket._id));
-        row.querySelector('.close-ticket-btn').addEventListener('click', () => closeTicket(ticket._id));
         row.querySelector('.delete-ticket-btn').addEventListener('click', () => deleteTicket(ticket._id));
       };
 
-      // View Ticket Function
       const viewTicket = async (ticketId) => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
             credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
+            headers: { 'Authorization': `Bearer ${getToken()}` },
           });
           if (!response.ok) {
             const errorData = await response.json();
@@ -524,13 +470,7 @@
         }
       };
 
-      // Populate Modal with Ticket Details
       const populateModal = (ticket) => {
-        const statusBadge = getStatusBadge(ticket.status);
-        const sanitizedSubject = sanitizeHTML(ticket.subject);
-        const sanitizedDescription = sanitizeHTML(ticket.description || 'Ingen beskrivelse.');
-        const createdDate = new Date(ticket.created).toLocaleString();
-
         modalBody.innerHTML = `
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ticket ID:</label>
@@ -538,54 +478,46 @@
           </div>
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Emne:</label>
-            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizedSubject}</p>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizeHTML(ticket.subject)}</p>
           </div>
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
-            <p class="mt-1 text-lg">
-              ${statusBadge}
-            </p>
+            <p class="mt-1 text-lg">${getStatusBadge(ticket.status)}</p>
           </div>
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Oprettet:</label>
-            <p class="mt-1 text-lg text-gray-900 dark:text-white">${createdDate}</p>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${new Date(ticket.created).toLocaleString()}</p>
           </div>
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Beskrivelse:</label>
-            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizedDescription}</p>
+            <p class="mt-1 text-lg text-gray-900 dark:text-white">${sanitizeHTML(ticket.description || 'Ingen beskrivelse.')}</p>
           </div>
         `;
 
-        // Populate Chat Messages
         chatMessages.innerHTML = '';
         if (ticket.conversation && ticket.conversation.length > 0) {
           ticket.conversation.forEach(msg => appendChatMessage(msg.message, msg.sender));
         }
+
+        // Wire up edit button inside modal
+        editTicketButton.onclick = () => {
+          editTicket(ticket._id);
+        };
       };
 
-      // Open Modal
-      const openModal = () => {
-        ticketModal.classList.add('active');
-      };
-
-      // Close Modal
+      const openModal = () => ticketModal.classList.add('active');
       const closeModal = () => {
         ticketModal.classList.remove('active');
         currentTicketId = null;
         chatMessages.innerHTML = '';
       };
-
-      // Close Modal Button
       closeModalButton.addEventListener('click', closeModal);
 
-      // Edit Ticket Function
       const editTicket = async (ticketId) => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
             credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
+            headers: { 'Authorization': `Bearer ${getToken()}` },
           });
           if (!response.ok) {
             const errorData = await response.json();
@@ -601,33 +533,22 @@
         }
       };
 
-      // Populate Edit Modal with Ticket Details
       const populateEditModal = (ticket) => {
         document.getElementById('edit-subject').value = ticket.subject;
         document.getElementById('edit-status').value = ticket.status;
       };
 
-      // Open Edit Modal
-      const openEditModal = () => {
-        editTicketModal.classList.add('active');
-      };
-
-      // Close Edit Modal
-      const closeEditModal = () => {
-        editTicketModal.classList.remove('active');
-      };
-
-      // Close Edit Modal Buttons
+      const openEditModal = () => editTicketModal.classList.add('active');
+      const closeEditModal = () => editTicketModal.classList.remove('active');
       closeEditModalButton.addEventListener('click', closeEditModal);
       cancelEditButton.addEventListener('click', closeEditModal);
 
-      // Handle Edit Ticket Form Submission
       editTicketForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const updatedSubject = sanitizeHTML(document.getElementById('edit-subject').value.trim());
         const updatedStatus = document.getElementById('edit-status').value;
 
-        if (updatedSubject === '' || updatedStatus === '') {
+        if (!updatedSubject || !updatedStatus) {
           alert('Venligst udfyld alle felter.');
           return;
         }
@@ -638,12 +559,9 @@
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${getToken()}`,
+              'Authorization': `Bearer ${getToken()}`
             },
-            body: JSON.stringify({
-              subject: updatedSubject,
-              status: updatedStatus,
-            }),
+            body: JSON.stringify({ subject: updatedSubject, status: updatedStatus }),
           });
 
           if (!response.ok) {
@@ -651,7 +569,6 @@
             throw new Error(errorData.error || 'Kunne ikke opdatere billet.');
           }
 
-          // Refresh tickets after editing
           fetchTickets();
           closeEditModal();
           closeModal();
@@ -662,45 +579,18 @@
         }
       });
 
-      // Close Ticket Function
-      const closeTicket = async (ticketId) => {
-        if (!confirm('Er du sikker på, at du vil lukke denne billet?')) return;
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}/close`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
-          });
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Kunne ikke lukke billet.');
-          }
-          // Refresh tickets after closing
-          fetchTickets();
-          showSuccessAlert('Billet lukket succesfuldt!');
-        } catch (error) {
-          alert(`Kunne ikke lukke billet: ${error.message}`);
-        }
-      };
-
-      // Delete Ticket Function
       const deleteTicket = async (ticketId) => {
         if (!confirm('Er du sikker på, at du vil slette denne billet? Dette kan ikke fortrydes.')) return;
         try {
           const response = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
             method: 'DELETE',
             credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${getToken()}`,
-            },
+            headers: { 'Authorization': `Bearer ${getToken()}` },
           });
           if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Kunne ikke slette billet.');
           }
-          // Refresh tickets after deletion
           fetchTickets();
           showSuccessAlert('Billet slettet succesfuldt!');
         } catch (error) {
@@ -708,77 +598,12 @@
         }
       };
 
-      // Get Status Badge
-      const getStatusBadge = (status) => {
-        let badgeClass = '';
-        let statusText = '';
-        switch (status.toLowerCase()) {
-          case 'åben':
-          case 'open':
-            badgeClass = 'bg-accentGreen text-white px-2 py-1 rounded';
-            statusText = 'Åben';
-            break;
-          case 'afventer':
-          case 'pending':
-            badgeClass = 'bg-pendingYellow text-darkBlack dark:text-white px-2 py-1 rounded';
-            statusText = 'Afventer';
-            break;
-          case 'lukket':
-          case 'closed':
-            badgeClass = 'bg-accentRed text-white px-2 py-1 rounded';
-            statusText = 'Lukket';
-            break;
-          default:
-            badgeClass = 'bg-gray-300 text-gray-700 px-2 py-1 rounded';
-            statusText = 'Ukendt';
-        }
-        return `<span class="${badgeClass}">${statusText}</span>`;
-      };
-
-      // Sanitize HTML to prevent XSS
-      const sanitizeHTML = (str) => {
-        const temp = document.createElement('div');
-        temp.textContent = str;
-        return temp.innerHTML;
-      };
-
-      // Show and Hide Loader
-      const showLoader = () => loader.classList.remove('hidden');
-      const hideLoader = () => loader.classList.add('hidden');
-
-      // Display Error Message
-      const displayErrorMessage = (message) => {
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
-      };
-
-      // Hide Error Message
-      const hideErrorMessage = () => {
-        errorMessage.classList.add('hidden');
-      };
-
-      // Show Success Alert
-      const showSuccessAlert = (message) => {
-        alertMessage.textContent = message;
-        successAlert.classList.remove("hidden");
-        successAlert.classList.add("fade-in");
-        setTimeout(() => {
-          successAlert.classList.remove("fade-in");
-          successAlert.classList.add("fade-out");
-          setTimeout(() => {
-            successAlert.classList.add("hidden");
-            successAlert.classList.remove("fade-out");
-          }, 500);
-        }, 3000);
-      };
-
-      // Handle Chat Form Submission
       chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const message = sanitizeHTML(chatInput.value.trim());
-        if (message === '') return;
+        if (!message) return;
 
-        appendChatMessage(message, 'user');
+        appendChatMessage(message, 'User');
         chatInput.value = '';
 
         try {
@@ -787,7 +612,7 @@
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${getToken()}`,
+              'Authorization': `Bearer ${getToken()}`
             },
             body: JSON.stringify({ message }),
           });
@@ -798,38 +623,31 @@
           }
 
           const data = await response.json();
-          appendChatMessage(data.reply, 'support');
+          if (data.reply) appendChatMessage(data.reply, 'Support');
         } catch (error) {
           console.error('Error sending message:', error);
-          appendChatMessage('Der opstod en fejl under afsendelse af din besked.', 'support');
+          appendChatMessage('Der opstod en fejl under afsendelse af din besked.', 'Support');
         }
       });
 
-      // Append Chat Message
       const appendChatMessage = (message, sender) => {
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", sender);
-
-        const messageContent = document.createElement("div");
-        messageContent.classList.add("message-content");
-        messageContent.textContent = message;
-
-        messageDiv.appendChild(messageContent);
+        messageDiv.classList.add("mb-2", "p-2", "rounded-lg", "max-w-xs", "break-words");
+        if (sender.toLowerCase() === 'user') {
+          messageDiv.classList.add("bg-blue-200", "dark:bg-blue-600", "ml-auto");
+        } else {
+          messageDiv.classList.add("bg-gray-300", "dark:bg-gray-600");
+        }
+        messageDiv.textContent = message;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       };
 
-      // Close Modal When Clicking Outside
       window.addEventListener('click', (event) => {
-        if (event.target === ticketModal) {
-          closeModal();
-        }
-        if (event.target === editTicketModal) {
-          closeEditModal();
-        }
+        if (event.target === ticketModal) closeModal();
+        if (event.target === editTicketModal) closeEditModal();
       });
 
-      // Close Modal with Escape Key
       window.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
           closeModal();
@@ -837,11 +655,14 @@
         }
       });
 
-      // Fetch Tickets on Page Load
+      searchInput.addEventListener('input', (e) => {
+        fetchTickets(e.target.value);
+      });
+
+      // Initial load
       fetchTickets();
     });
   </script>
 
 </body>
-
 </html>

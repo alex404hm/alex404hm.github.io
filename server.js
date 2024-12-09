@@ -23,12 +23,8 @@ import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
 import { Server as SocketIOServer } from 'socket.io';
-import Stripe from 'stripe';
-import PDFDocument from 'pdfkit';
-import fs from 'fs';
 
 // ============================= Configuration ============================== //
-
 dotenv.config();
 
 // Validate Required Environment Variables
@@ -45,8 +41,6 @@ const requiredEnvVars = [
   'GOOGLE_CLIENT_SECRET',
   'CORS_ORIGIN',
   'BCRYPT_SALT_ROUNDS',
-  'STRIPE_SECRET_KEY',
-  'STRIPE_WEBHOOK_SECRET',
 ];
 requiredEnvVars.forEach((varName) => {
   if (!process.env[varName]) {
@@ -56,29 +50,20 @@ requiredEnvVars.forEach((varName) => {
 });
 
 const {
-  BASE_URL = 'http://172.234.99.32:3000',
+  BASE_URL = 'http://localhost:3000',
   PORT = process.env.PORT || 3000,
   NODE_ENV = 'development',
   JWT_EXPIRES_IN = '1h',
   CORS_ORIGIN,
   BCRYPT_SALT_ROUNDS = '10',
   MONGODB_URI,
-  STRIPE_SECRET_KEY,
-  STRIPE_WEBHOOK_SECRET,
 } = process.env;
-
-// Initialize Stripe
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-10',
-});
 
 // Determine __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ============================= Logger Setup ============================== //
-
-// Configure Winston Logger
 const logger = winston.createLogger({
   level: NODE_ENV === 'production' ? 'info' : 'debug',
   format: winston.format.combine(
@@ -97,7 +82,6 @@ const logger = winston.createLogger({
 });
 
 // =========================== Database Connection ========================= //
-
 mongoose
   .connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -114,7 +98,7 @@ mongoose
 // User Schema
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true }, // Added for user identification
+    name: { type: String, required: true }, 
     email: { type: String, required: true, unique: true },
     password: { type: String },
     googleId: { type: String },
@@ -123,8 +107,7 @@ const userSchema = new mongoose.Schema(
     lastLogin: { type: Date },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
-    theme: { type: String, default: 'light' }, // User preference
-    isPremium: { type: Boolean, default: false },
+    theme: { type: String, default: 'light' },
     phoneNumber: { type: String },
   },
   { timestamps: true }
@@ -132,7 +115,7 @@ const userSchema = new mongoose.Schema(
 
 // Response Schema for Tickets
 const responseSchema = new mongoose.Schema({
-  sender: { type: String, required: true }, // 'User' or 'Support'
+  sender: { type: String, required: true }, 
   message: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });
@@ -143,7 +126,7 @@ const ticketSchema = new mongoose.Schema(
     ticketId: { type: String, default: () => uuidv4(), unique: true },
     subject: { type: String, required: true, maxlength: 100 },
     description: { type: String, required: true, maxlength: 1000 },
-    imageUrl: { type: String }, // URL to the uploaded image
+    imageUrl: { type: String },
     status: { type: String, enum: ['open', 'pending', 'closed'], default: 'open' },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     category: { type: String },
@@ -174,8 +157,6 @@ const guideSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// Ensure unique combination of slug and category
 guideSchema.index({ slug: 1, category: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
@@ -183,7 +164,6 @@ const Ticket = mongoose.model('Ticket', ticketSchema);
 const Guide = mongoose.model('Guide', guideSchema);
 
 // ========================= Nodemailer Configuration ====================== //
-
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -192,7 +172,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.verify((error, success) => {
+transporter.verify((error) => {
   if (error) {
     logger.error('❌ Nodemailer transporter error:', error);
   } else {
@@ -201,8 +181,6 @@ transporter.verify((error, success) => {
 });
 
 // ========================= Passport Configuration ========================= //
-
-// Passport Configuration for Google OAuth
 passport.use(
   new GoogleStrategy(
     {
@@ -212,14 +190,10 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Extract email
         const email = profile.emails[0].value;
-
-        // Check if user with this email already exists
         let user = await User.findOne({ email });
 
         if (user) {
-          // If user exists but doesn't have Google ID, link it
           if (!user.googleId) {
             user.googleId = profile.id;
             await user.save();
@@ -227,17 +201,13 @@ passport.use(
           return done(null, user);
         }
 
-        // If user doesn't exist, create new
         user = await User.create({
           googleId: profile.id,
           name: profile.displayName,
           email: email,
-          isVerified: true, // Google OAuth provides verified email
+          isVerified: true, 
           role: 'user',
         });
-
-        // Send Welcome Email
-        await sendWelcomeEmail(user);
 
         logger.info(`✅ New user registered via Google: ${email}`, { userId: user._id });
         return done(null, user);
@@ -252,7 +222,6 @@ passport.use(
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -263,11 +232,9 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // =========================== Multer Configuration ======================== //
-
-// Multer Configuration for Image Uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'public', 'uploads')); // Ensure this directory exists
+    cb(null, path.join(__dirname, 'public', 'uploads')); 
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = `${Date.now()}-${uuidv4()}`;
@@ -277,7 +244,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const fileTypes = /jpeg|jpg|png|gif/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
@@ -291,12 +258,6 @@ const upload = multer({
 });
 
 // =========================== Helper Functions ============================ //
-
-/**
- * Generate JWT Token
- * @param {Object} user - User object
- * @returns {String} JWT Token
- */
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -312,20 +273,10 @@ const generateToken = (user) => {
   );
 };
 
-/**
- * Generate a random Session ID
- * @returns {String} Session ID
- */
 const generateSessionID = () => crypto.randomBytes(16).toString('hex');
 
-/**
- * Send Verification Email
- * @param {Object} user - User object
- * @param {String} token - JWT Token
- */
 const sendVerificationEmail = async (user, token) => {
   const verifyLink = `${BASE_URL}/api/verify-email?token=${token}`;
-
   const mailOptions = {
     from: `"No Reply" <${process.env.EMAIL_USER}>`,
     to: user.email,
@@ -333,157 +284,26 @@ const sendVerificationEmail = async (user, token) => {
     html: `
       <div style="font-family: Arial, sans-serif;">
         <h2>Welcome, ${user.name}!</h2>
-        <p>Thank you for registering. Please verify your email address to activate your account:</p>
+        <p>Please verify your email address:</p>
         <a href="${verifyLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verify Email</a>
-        <p>If you did not sign up for this account, you can ignore this email.</p>
+        <p>If you did not sign up, ignore this email.</p>
       </div>
     `,
   };
-
   await transporter.sendMail(mailOptions);
 };
 
-/**
- * Send Welcome Email
- * @param {Object} user - User object
- */
-const sendWelcomeEmail = async (user) => {
-  const mailOptions = {
-    from: `"No Reply" <${process.env.EMAIL_USER}>`,
-    to: user.email,
-    subject: '🎉 Welcome to Our Service!',
-    html: `
-      <div style="font-family: Arial, sans-serif;">
-        <h2>Welcome, ${user.name}!</h2>
-        <p>We're excited to have you on board. Explore our features and let us know if you have any questions.</p>
-        <p>Best Regards,<br/>The Team</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-};
-
-/**
- * Generate a URL-friendly slug from a string
- * @param {String} text - The input text
- * @returns {String} - The generated slug
- */
 const generateSlug = (text) => {
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove non-word characters
-    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with '-'
-    .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
-};
-
-/**
- * Get Client IP Address
- * @param {Object} req - Express request object
- * @returns {String} IP Address
- */
-const getClientIP = (req) => {
-  const forwarded = req.headers['x-forwarded-for'];
-  return forwarded ? forwarded.split(',')[0].trim() : req.socket.remoteAddress;
-};
-
-/**
- * Get Geolocation from IP
- * @param {String} ip - IP Address
- * @returns {String} Geolocation
- */
-const getGeolocation = async (ip) => {
-  try {
-    const response = await fetch(`http://ip-api.com/json/${ip}`);
-    const data = await response.json();
-    if (data.status === 'success') {
-      return `${data.city}, ${data.regionName}, ${data.country}`;
-    }
-    return 'Unknown Location';
-  } catch (error) {
-    logger.error('❌ Error fetching geolocation:', error);
-    return 'Unknown Location';
-  }
-};
-
-/**
- * Generate PDF Invoice
- * @param {Object} user - User object
- * @param {String} transactionId - Transaction ID from Stripe
- * @returns {Buffer} PDF Buffer
- */
-const generateInvoice = (user, transactionId) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const doc = new PDFDocument();
-      const buffers = [];
-
-      doc.on('data', buffers.push.bind(buffers));
-      doc.on('end', () => {
-        const pdfData = Buffer.concat(buffers);
-        resolve(pdfData);
-      });
-
-      // PDF Content
-      doc.fontSize(20).text('Invoice', { align: 'center' });
-      doc.moveDown();
-
-      doc.fontSize(12).text(`Invoice To:`, { underline: true });
-      doc.text(`Name: ${user.name}`);
-      doc.text(`Email: ${user.email}`);
-      doc.text(`Phone: ${user.phoneNumber || 'N/A'}`);
-      doc.text(`Date: ${new Date().toLocaleDateString()}`);
-      doc.text(`Transaction ID: ${transactionId}`);
-      doc.moveDown();
-
-      doc.text(`Description: Premium Membership Access`);
-      doc.text(`Amount: $50.00`);
-      doc.moveDown();
-
-      doc.text('Thank you for your purchase!', { align: 'center' });
-
-      doc.end();
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
-
-/**
- * Send Invoice Email
- * @param {Object} user - User object
- * @param {String} transactionId - Transaction ID from Stripe
- * @param {Buffer} invoicePDF - PDF Buffer
- */
-const sendInvoiceEmail = async (user, transactionId, invoicePDF) => {
-  const mailOptions = {
-    from: `"No Reply" <${process.env.EMAIL_USER}>`,
-    to: user.email,
-    subject: '🧾 Your Premium Membership Invoice',
-    html: `
-      <div style="font-family: Arial, sans-serif;">
-        <h2>Thank You for Your Purchase, ${user.name}!</h2>
-        <p>Attached is your invoice for the Premium Membership.</p>
-        <p>If you have any questions, feel free to contact our support team.</p>
-        <p>Best Regards,<br/>The Team</p>
-      </div>
-    `,
-    attachments: [
-      {
-        filename: 'invoice.pdf',
-        content: invoicePDF,
-      },
-    ],
-  };
-
-  await transporter.sendMail(mailOptions);
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 };
 
 // =========================== Middleware =================================== //
-
-// Authentication Middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
@@ -502,7 +322,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Admin Authentication Middleware
 const authenticateAdmin = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
@@ -521,131 +340,85 @@ const authenticateAdmin = (req, res, next) => {
   });
 };
 
-// Premium Membership Check Middleware
-const checkPremium = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  if (user && user.isPremium) {
-    next();
-  } else {
-    res.status(403).json({ error: '❌ Access denied: Premium membership required.' });
-  }
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: '❌ Too many requests, please try again later.' },
 });
 
-// Rate Limiting Middleware
-const createRateLimiter = (options) => rateLimit(options);
-
-const generalLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per windowMs
-  message: { error: '❌ Too many requests from this IP, please try again later.' },
-});
-
-const authLimiter = createRateLimiter({
+const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: { error: '❌ Too many authentication attempts, please try again later.' },
 });
 
 // =========================== Express App Setup ============================ //
-
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()), // Allow multiple origins if needed
+    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()),
     methods: ['GET', 'POST'],
     credentials: true,
   },
 });
 
-// =========================== Global Middleware ============================ //
-
-// Apply general rate limiter to all requests
+// Global Middleware
 app.use(generalLimiter);
-
-// Body Parsers (excluding Stripe Webhook Route)
-app.use(
-  express.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf;
-    },
-  })
-);
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// CORS Configuration
 app.use(
   cors({
-    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()), // Allow multiple origins if needed
+    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()),
     credentials: true,
     optionsSuccessStatus: 200,
   })
 );
-
-// HTTP Request Logging
 app.use(
   morgan(NODE_ENV === 'production' ? 'combined' : 'dev', {
     stream: { write: (msg) => logger.info(msg.trim()) },
   })
 );
-
-// Response Compression
 app.use(compression());
-
-// Cookie Parser
 app.use(cookieParser());
-
-// Static Files Serving with Caching
 app.use(
   express.static(path.join(__dirname, 'public'), {
     maxAge: '1d',
     etag: false,
   })
 );
-
-// Session Management
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: NODE_ENV === 'production', // Ensure HTTPS in production
+      secure: NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
-
-// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Apply rate limiter to authentication routes
 app.use(['/api/login', '/api/signup'], authLimiter);
 
 // =========================== OAuth Routes =============================== //
-
-// Google OAuth Routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
 app.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/auth/login' }),
   asyncHandler(async (req, res) => {
     try {
       const token = generateToken(req.user);
-
       res.cookie('token', token, {
         httpOnly: true,
         secure: NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 24 * 60 * 60 * 1000,
       });
-
       logger.info(`✅ User logged in via Google: ${req.user.email}`, { userId: req.user._id });
-
       res.redirect('/dashboard');
     } catch (error) {
       logger.error('❌ Google OAuth callback error:', error);
@@ -655,18 +428,13 @@ app.get(
 );
 
 // =========================== Static Routes ================================ //
-
-// Redirect /login to /auth/login
 app.get('/login', (req, res) => {
   res.redirect('/auth/login');
 });
-
-// Redirect /signup to /auth/signup
 app.get('/signup', (req, res) => {
   res.redirect('/auth/signup');
 });
 
-// Serve /auth/login, /auth/signup, /auth, etc., with optional redirect if authenticated
 const definedRoutes = [
   {
     route: '/auth/login',
@@ -691,7 +459,6 @@ const definedRoutes = [
   },
 ];
 
-// Define routes from the definedRoutes array
 definedRoutes.forEach(({ route, file, redirectIfAuthenticated: redirectIfAuth }) => {
   if (redirectIfAuth) {
     app.get(
@@ -721,29 +488,26 @@ definedRoutes.forEach(({ route, file, redirectIfAuthenticated: redirectIfAuth })
   }
 });
 
-// Serve /buy and /plus with access control
-app.get('/buy', authenticateToken, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'buy.html'));
-});
-
-app.get('/plus', authenticateToken, checkPremium, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'plus', 'plus.html'));
-});
-
-// Additional Protected Routes
 app.get('/dashboard', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
 });
-
+app.get('/dashboard/profile', authenticateToken, (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, 'public', 'dashboard', 'profile.html'));
+    logger.info(`Profile page served for user: ${req.user.email}`);
+  } catch (error) {
+    logger.error('Error serving profile page:', error);
+    res.status(500).json({ error: 'Failed to load the profile page.' });
+  }
+});
 app.get('/dashboard/tickets', authenticateToken, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'tickets.html'));
 });
 
 app.get('/admin', authenticateAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
 });
 
-// Admin Dashboard Pages
 const adminDashboardPages = ['guides', 'tickets', 'logs', 'users', 'dashboard'];
 adminDashboardPages.forEach((page) => {
   app.get(`/admin/${page}`, authenticateAdmin, (req, res) => {
@@ -751,7 +515,6 @@ adminDashboardPages.forEach((page) => {
   });
 });
 
-// Dashboard Platform Pages
 const dashboardPlatforms = ['macos', 'android', 'chromeos', 'ios', 'linux', 'windows'];
 dashboardPlatforms.forEach((platform) => {
   app.get(`/dashboard/${platform}`, authenticateToken, (req, res) => {
@@ -770,13 +533,10 @@ app.post(
     body('email').isEmail().withMessage('❌ Valid email is required.'),
     body('password')
       .isLength({ min: 8 })
-      .withMessage('❌ Password must be at least 8 characters long.')
-      .matches(/[A-Z]/)
-      .withMessage('❌ Password must contain at least one uppercase letter.')
-      .matches(/[a-z]/)
-      .withMessage('❌ Password must contain at least one lowercase letter.')
-      .matches(/[0-9]/)
-      .withMessage('❌ Password must contain at least one number.'),
+      .withMessage('❌ Password must be at least 8 characters.')
+      .matches(/[A-Z]/).withMessage('❌ Password must contain an uppercase letter.')
+      .matches(/[a-z]/).withMessage('❌ Password must contain a lowercase letter.')
+      .matches(/[0-9]/).withMessage('❌ Password must contain a number.'),
     body('phoneNumber')
       .optional()
       .matches(/^\+?[1-9]\d{1,14}$/)
@@ -793,7 +553,6 @@ app.post(
 
     try {
       const existingUser = await User.findOne({ email });
-
       if (existingUser && existingUser.password) {
         logger.warn('Signup failed: User already exists.', { email });
         return res.status(400).json({ error: '❌ A user with this email already exists.' });
@@ -845,7 +604,6 @@ app.get(
   '/api/verify-email',
   asyncHandler(async (req, res) => {
     const token = req.query.token;
-
     if (!token) {
       return res.status(400).json({ error: '❌ Invalid verification link.' });
     }
@@ -858,7 +616,6 @@ app.get(
 
       try {
         const user = await User.findById(decodedUser.id);
-
         if (!user) {
           return res.status(404).json({ error: '❌ User not found.' });
         }
@@ -895,14 +652,12 @@ app.post(
 
     try {
       const user = await User.findOne({ email });
-
       if (!user || !user.password) {
         logger.warn('Login failed: User does not exist.', { email });
         return res.status(404).json({ error: '❌ User does not exist. Please sign up.' });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
-
       if (!isMatch) {
         logger.warn('Login failed: Invalid credentials.', { email });
         return res.status(401).json({ error: '❌ Invalid credentials.' });
@@ -925,7 +680,7 @@ app.post(
         httpOnly: true,
         secure: NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 24 * 60 * 60 * 1000,
       });
 
       logger.info(`✅ User logged in: ${email}`, { userId: user._id });
@@ -937,7 +692,6 @@ app.post(
           lastLogin: user.lastLogin,
           isVerified: user.isVerified,
           role: user.role,
-          isPremium: user.isPremium,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         },
@@ -1073,15 +827,12 @@ app.get(
   authenticateToken,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-
-    // Validate ticket ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: '❌ Invalid ticket ID.' });
     }
 
     try {
       const ticket = await Ticket.findOne({ _id: id, user: req.user.id });
-
       if (!ticket) {
         return res.status(404).json({ error: '❌ Ticket not found.' });
       }
@@ -1102,24 +853,20 @@ app.post(
     const { id } = req.params;
     const { message } = req.body;
 
-    // Validate input
     if (!message) {
       return res.status(400).json({ error: '❌ Response message is required.' });
     }
 
-    // Validate ticket ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: '❌ Invalid ticket ID.' });
     }
 
     try {
       const ticket = await Ticket.findOne({ _id: id, user: req.user.id });
-
       if (!ticket) {
         return res.status(404).json({ error: '❌ Ticket not found.' });
       }
 
-      // Add user response
       ticket.responses.push({
         sender: 'User',
         message,
@@ -1159,18 +906,12 @@ app.put(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    // Validate ticket ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: '❌ Invalid ticket ID.' });
     }
 
     try {
-      const ticket = await Ticket.findByIdAndUpdate(
-        id,
-        { status },
-        { new: true }
-      );
-
+      const ticket = await Ticket.findByIdAndUpdate(id, { status }, { new: true });
       if (!ticket) {
         return res.status(404).json({ error: '❌ Ticket not found.' });
       }
@@ -1189,8 +930,6 @@ app.put(
 );
 
 // ========================= Users API (Admin) ============================= //
-
-// Get All Users (Admin Only)
 app.get(
   '/api/users',
   authenticateAdmin,
@@ -1214,14 +953,10 @@ app.post(
     body('email').isEmail().withMessage('❌ Valid email is required.'),
     body('role').isIn(['admin', 'supporter', 'user']).withMessage('❌ Invalid role.'),
     body('password')
-      .isLength({ min: 8 })
-      .withMessage('❌ Password must be at least 8 characters long.')
-      .matches(/[A-Z]/)
-      .withMessage('❌ Password must contain at least one uppercase letter.')
-      .matches(/[a-z]/)
-      .withMessage('❌ Password must contain at least one lowercase letter.')
-      .matches(/[0-9]/)
-      .withMessage('❌ Password must contain at least one number.'),
+      .isLength({ min: 8 }).withMessage('❌ Password must be at least 8 characters.')
+      .matches(/[A-Z]/).withMessage('❌ Must contain uppercase.')
+      .matches(/[a-z]/).withMessage('❌ Must contain lowercase.')
+      .matches(/[0-9]/).withMessage('❌ Must contain a number.'),
   ],
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -1232,7 +967,6 @@ app.post(
 
     try {
       const { name, email, role, password } = req.body;
-
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         logger.warn('User creation failed: User already exists.', { email });
@@ -1248,7 +982,7 @@ app.post(
         password: hashedPassword,
         sessionID,
         role,
-        isVerified: true, // Assuming admin creates verified users
+        isVerified: true,
       });
 
       await user.save();
@@ -1287,12 +1021,7 @@ app.put(
     }
 
     try {
-      const user = await User.findByIdAndUpdate(
-        id,
-        { role },
-        { new: true }
-      );
-
+      const user = await User.findByIdAndUpdate(id, { role }, { new: true });
       if (!user) {
         logger.warn('User not found for role update:', id);
         return res.status(404).json({ error: '❌ User not found.' });
@@ -1318,12 +1047,7 @@ app.put(
     const { id } = req.params;
 
     try {
-      const user = await User.findByIdAndUpdate(
-        id,
-        { status: 'inactive' },
-        { new: true }
-      );
-
+      const user = await User.findByIdAndUpdate(id, { status: 'inactive' }, { new: true });
       if (!user) {
         logger.warn('User not found for deactivation:', id);
         return res.status(404).json({ error: '❌ User not found.' });
@@ -1342,7 +1066,6 @@ app.put(
 );
 
 // ========================= Dashboard Endpoint ========================= //
-
 app.get(
   '/api/dashboard-data',
   authenticateAdmin,
@@ -1353,14 +1076,12 @@ app.get(
       const pendingTickets = await Ticket.countDocuments({ status: 'pending' });
       const guides = await Guide.countDocuments();
 
-      // Example chart data (customize as needed)
       const chartData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June'],
         openTickets: [12, 19, 3, 5, 2, 3],
         closedTickets: [7, 11, 5, 8, 3, 7],
       };
 
-      // Example recent activities (customize as needed)
       const recentActivities = [
         { description: 'User John Doe created a new guide.', timestamp: '2024-04-01 10:00' },
         { description: 'Admin Jane Smith closed ticket #123.', timestamp: '2024-04-01 09:30' },
@@ -1383,26 +1104,56 @@ app.get(
 
 // ========================= Guides API ========================= //
 
-/**
- * Get popular guides sorted by views.
- */
+// Search Guides (Public)
 app.get(
-  '/api/guides/popular',
+  '/api/guides/search',
   asyncHandler(async (req, res) => {
+    const { q } = req.query;
+    if (!q || q.trim() === '') {
+      return res.status(400).json({ error: 'Search query is required.' });
+    }
+
     try {
-      const limit = parseInt(req.query.limit) || 6;
-      const popularGuides = await Guide.find().sort({ views: -1 }).limit(limit);
-      res.json({ guides: popularGuides });
+      const searchRegex = new RegExp(q, 'i');
+      const guides = await Guide.find({
+        $or: [
+          { title: searchRegex },
+          { summary: searchRegex },
+          { content: searchRegex },
+          { tags: searchRegex },
+        ],
+      })
+        .sort({ views: -1 })
+        .select('title summary tags category views');
+
+      res.status(200).json({ guides, total: guides.length });
     } catch (error) {
-      logger.error('❌ Error fetching popular guides:', error);
-      res.status(500).json({ error: '❌ Error fetching popular guides.' });
+      logger.error('Error searching guides:', error);
+      res.status(500).json({ error: 'Internal server error while searching guides.' });
     }
   })
 );
 
-/**
- * Fetch a guide by category and slug.
- */
+// Popular Guides (Public)
+app.get(
+  '/api/guides/popular',
+  asyncHandler(async (req, res) => {
+    const limit = Math.min(parseInt(req.query.limit) || 6, 20);
+    try {
+      const popularGuides = await Guide.find()
+        .sort({ views: -1 })
+        .limit(limit)
+        .select('title summary tags category views');
+
+      res.status(200).json({ guides: popularGuides, total: popularGuides.length });
+    } catch (error) {
+      logger.error('Error fetching popular guides:', error);
+      res.status(500).json({ error: 'Internal server error while fetching popular guides.' });
+    }
+  })
+);
+
+// Fetch a single guide by category/slug
 app.get(
   '/api/guides/:category/:slug',
   asyncHandler(async (req, res) => {
@@ -1416,33 +1167,25 @@ app.get(
         return res.status(404).json({ error: '❌ Guide not found.' });
       }
 
-      // Increment view count
       guide.views += 1;
       await guide.save();
 
       res.json(guide);
     } catch (error) {
-      logger.error('❌ Error fetching guide by category and slug:', {
-        error,
-        params: req.params,
-      });
+      logger.error('❌ Error fetching guide:', error);
       res.status(500).json({ error: '❌ Internal Server Error' });
     }
   })
 );
 
-/**
- * Fetch a single guide by ID.
- */
+// Fetch guide by ID
 app.get(
   '/api/guides/id/:id',
-  authenticateToken,
   asyncHandler(async (req, res) => {
     try {
       const guide = await Guide.findById(req.params.id);
       if (!guide) return res.status(404).json({ error: '❌ Guide not found.' });
 
-      // Increment view count
       guide.views += 1;
       await guide.save();
 
@@ -1454,12 +1197,9 @@ app.get(
   })
 );
 
-/**
- * Fetch all guides, with optional filtering by category, tag, or search.
- */
+// Fetch all guides with optional filters
 app.get(
   '/api/guides',
-  authenticateToken,
   asyncHandler(async (req, res) => {
     try {
       const { category, tag, search } = req.query;
@@ -1483,9 +1223,7 @@ app.get(
   })
 );
 
-/**
- * Create a new guide.
- */
+// Create a new guide (Admin)
 app.post(
   '/api/guides',
   authenticateAdmin,
@@ -1507,7 +1245,6 @@ app.post(
       const { title, subtitle, summary, content, tags, category } = req.body;
       const bannerImage = req.file ? `/uploads/${req.file.filename}` : '';
 
-      // Generate unique slug
       let slug = generateSlug(title);
       let uniqueSlug = slug;
       let counter = 1;
@@ -1552,9 +1289,7 @@ app.post(
   })
 );
 
-/**
- * Update an existing guide.
- */
+// Update an existing guide (Admin)
 app.put(
   '/api/guides/id/:id',
   authenticateAdmin,
@@ -1577,7 +1312,6 @@ app.put(
       const updates = { ...req.body };
 
       if (title) {
-        // Generate unique slug
         let slug = generateSlug(title);
         let uniqueSlug = slug;
         let counter = 1;
@@ -1616,9 +1350,7 @@ app.put(
   })
 );
 
-/**
- * Delete Guide by ID.
- */
+// Delete Guide by ID (Admin)
 app.delete(
   '/api/guides/id/:id',
   authenticateAdmin,
@@ -1640,15 +1372,9 @@ app.delete(
   })
 );
 
-// ========================= Articles Endpoint ============================= //
-
-/**
- * Serve the guide based on category and slug.
- * Note: This route serves an HTML page, not JSON. Ensure you have appropriate front-end handling.
- */
+// Serve article template
 app.get(
   '/articles/:category/:slug',
-  authenticateToken,
   asyncHandler(async (req, res) => {
     const { category, slug } = req.params;
 
@@ -1659,15 +1385,14 @@ app.get(
       });
 
       if (!guide) {
-        logger.warn('❌ Guide not found for category and slug:', { category, slug });
+        logger.warn('❌ Guide not found:', { category, slug });
         return res.status(404).sendFile(path.join(__dirname, 'public', 'error', '404.html'));
       }
 
-      // Increment view count
       guide.views += 1;
       await guide.save();
 
-      res.sendFile(path.join(__dirname, 'public', 'template.html')); // Ensure this file can fetch the guide details
+      res.sendFile(path.join(__dirname, 'public', 'template.html'));
     } catch (error) {
       logger.error('❌ Error fetching guide by category and slug:', { error, params: req.params });
       res.status(500).sendFile(path.join(__dirname, 'public', 'error', '500.html'));
@@ -1675,13 +1400,8 @@ app.get(
   })
 );
 
-/**
- * Fetch the guide details for rendering on the client-side.
- * This route can be used by the front-end to fetch guide data via AJAX or similar.
- */
 app.get(
   '/api/articles/:category/:slug/details',
-  authenticateToken,
   asyncHandler(async (req, res) => {
     const { category, slug } = req.params;
 
@@ -1695,7 +1415,6 @@ app.get(
         return res.status(404).json({ error: '❌ Guide not found.' });
       }
 
-      // Increment view count
       guide.views += 1;
       await guide.save();
 
@@ -1707,103 +1426,7 @@ app.get(
   })
 );
 
-// ========================= Stripe Checkout Session ======================= //
-
-app.post(
-  '/api/create-checkout-session',
-  authenticateToken,
-  asyncHandler(async (req, res) => {
-    const YOUR_DOMAIN = BASE_URL;
-
-    try {
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'payment',
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'Premium Membership',
-                description: 'Access to the /plus features.',
-              },
-              unit_amount: 5000, // $50.00 in cents
-            },
-            quantity: 1,
-          },
-        ],
-        success_url: `${YOUR_DOMAIN}/plus?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${YOUR_DOMAIN}/buy`,
-        metadata: {
-          userId: req.user.id,
-        },
-      });
-
-      res.json({ url: session.url });
-    } catch (error) {
-      logger.error('❌ Error creating Stripe Checkout session:', error);
-      res.status(500).json({ error: '❌ Unable to create checkout session.' });
-    }
-  })
-);
-
-// =========================== Stripe Webhook Route ======================== //
-
-app.post(
-  '/api/stripe-webhook',
-  express.raw({ type: 'application/json' }), // Stripe requires raw body
-  asyncHandler(async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-
-    let event;
-
-    try {
-      event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
-      logger.debug(`✅ Webhook event constructed successfully: ${event.id}`);
-    } catch (err) {
-      logger.error('❌ Stripe webhook signature verification failed:', err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    // Handle the event
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object;
-        const userId = session.metadata.userId;
-
-        try {
-          const user = await User.findById(userId);
-          if (user) {
-            user.isPremium = true;
-            await user.save();
-            logger.info(`✅ User ${user.email} has been upgraded to Premium.`);
-
-            // Generate Invoice
-            const transactionId = session.payment_intent; // Assuming payment_intent as transaction ID
-            const invoicePDF = await generateInvoice(user, transactionId);
-
-            // Send Invoice Email
-            await sendInvoiceEmail(user, transactionId, invoicePDF);
-            logger.info(`✅ Invoice sent to user: ${user.email}`);
-          } else {
-            logger.warn(`User with ID ${userId} not found for premium upgrade.`);
-          }
-        } catch (error) {
-          logger.error('❌ Error updating user premium status:', error);
-        }
-        break;
-      // ... handle other event types if needed
-      default:
-        logger.warn(`Unhandled event type ${event.type}`);
-    }
-
-    // Return a 200 response to acknowledge receipt of the event
-    res.json({ received: true });
-  })
-);
-
 // ========================= Socket.IO Setup ============================== //
-
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) {
@@ -1822,42 +1445,28 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   logger.info(`🟢 User connected: ${socket.user.name} (${socket.user.email})`);
-
-  // Join user-specific room
   socket.join(socket.user.id);
 
-  // Listen for chat messages
   socket.on('chatMessage', async (msg) => {
     logger.info(`💬 Message from ${socket.user.name}: ${msg}`);
 
-    // Save message as a response in the latest open ticket
     try {
       const ticket = await Ticket.findOne({ user: socket.user.id, status: 'open' }).sort({ createdAt: -1 });
       if (ticket) {
-        ticket.responses.push({
-          sender: 'User',
-          message: msg,
-        });
-
+        ticket.responses.push({ sender: 'User', message: msg });
         await ticket.save();
 
-        // Simulate Support response after a delay
         setTimeout(async () => {
           const supportMessage = `Support: We have received your message regarding "${ticket.subject}". Our team is looking into it.`;
-          ticket.responses.push({
-            sender: 'Support',
-            message: supportMessage,
-          });
+          ticket.responses.push({ sender: 'Support', message: supportMessage });
           await ticket.save();
-          // Emit support message to the user
           io.to(socket.user.id).emit('chatMessage', supportMessage);
           logger.info(`✅ Support responded to ticket: ${ticket.ticketId}`);
         }, 1500);
 
-        // Emit user message back to the user
         io.to(socket.user.id).emit('chatMessage', `You: ${msg}`);
       } else {
-        socket.emit('chatMessage', 'Support: You have no open tickets. Please create a ticket to start a chat.');
+        socket.emit('chatMessage', 'Support: You have no open tickets. Please create a ticket.');
       }
     } catch (error) {
       logger.error('❌ Live Chat Error:', error);
@@ -1895,7 +1504,6 @@ app.use((err, req, res, next) => {
 });
 
 // =========================== Start Server ================================ //
-
 server.listen(PORT, () => {
   logger.info(`🚀 Server is running on port ${PORT}`);
 });

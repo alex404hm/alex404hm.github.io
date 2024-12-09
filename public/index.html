@@ -1,446 +1,385 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth" data-theme="light">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Support Pro - Elevate Your IT Support</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Support Pro - Elevate Your IT Support</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Support Pro streamlines IT operations, boosts productivity, and automates workflows with AI-driven solutions." />
+  <meta name="keywords" content="IT Support, Workflow Optimization, AI Automation, Team Productivity, Help Desk, IT Solutions" />
+  <meta property="og:title" content="Support Pro - Elevate Your IT Support" />
+  <meta property="og:description" content="Transform your IT support operations with intelligent workflow automation and personalized support management." />
+  <meta property="og:image" content="https://yourdomain.com/images/og-image.jpg" />
+  <meta property="og:url" content="https://yourdomain.com" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Support Pro is a next-generation IT support platform that streamlines IT operations, boosts productivity, and automates workflows with intelligent AI-driven solutions." />
-    <meta name="keywords" content="IT Support, Workflow Optimization, AI Automation, Team Productivity, Help Desk, IT Solutions" />
-    <meta property="og:title" content="Support Pro - Elevate Your IT Support" />
-    <meta property="og:description" content="Transform your IT support operations with intelligent workflow automation and personalized support management." />
-    <meta property="og:image" content="https://yourdomain.com/images/og-image.jpg" />
-    <meta property="og:url" content="https://yourdomain.com" />
-    <meta property="og:type" content="website" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          },
+          colors: {
+            primaryBlue: '#0369a1',
+            hoverBlue: '#0284c7',
+            secondaryGray: '#a3a3a3',
+          },
+        },
+      },
+    };
+  </script>
 
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-                    },
-                    colors: {
-                        primaryBlue: '#0369a1',
-                        hoverBlue: '#0284c7',
-                        secondaryGray: '#a3a3a3',
-                    },
-                },
-            },
-        }
-    </script>
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
-
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-jLKHWMZEKW4JvLAJFAV9J7N+ZAEj4N4f3Izk1voWbb7Peop51hV3GcXvYx9HO22A" crossorigin="anonymous"/>
-
-    <style>
-        .fade-bg {
-            transition: opacity 1s ease-in-out;
-        }
-    </style>
+  <style>
+    .fade-bg {
+      transition: opacity 1s ease-in-out;
+    }
+  </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-sans">
 
 <!-- Navbar -->
 <header class="fixed inset-x-0 top-0 z-30 w-full py-4 mx-auto bg-white/90 dark:bg-gray-900/80 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg">
-    <div class="container mx-auto px-6 flex items-center justify-between">
-        <!-- Brand -->
-        <a href="#home" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">
-            Support Pro
-        </a>
+  <div class="container mx-auto px-6 flex items-center justify-between">
+    <!-- Brand -->
+    <a href="#home" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300" aria-label="Support Pro Home">
+      Support Pro
+    </a>
 
-        <!-- Main Navigation -->
-        <nav class="hidden md:flex items-center space-x-6">
-            <a href="#home" class="px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                Home
-            </a>
-            <div class="relative group">
-                <button class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue focus:outline-none">
-                    OS Options
-                </button>
-                <div class="opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out origin-top scale-95 group-hover:scale-100 z-50">
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Windows -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Popular OS with a wide range of features.</p>
-                            </div>
-                        </div>
-                        <!-- macOS -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Sleek design & seamless integration.</p>
-                            </div>
-                        </div>
-                        <!-- Linux -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Open-source OS favored by developers.</p>
-                            </div>
-                        </div>
-                        <!-- iOS -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">For Apple's mobile devices.</p>
-                            </div>
-                        </div>
-                        <!-- Android -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Customizable and widely used.</p>
-                            </div>
-                        </div>
-                        <!-- ChromeOS -->
-                        <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                            <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
-                            <div class="ml-4">
-                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Lightweight & simple for Chromebooks.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <a href="#pricing" class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                Pricing
-            </a>
-        </nav>
+    <!-- Main Navigation -->
+    <nav class="flex items-center space-x-4" aria-label="Main Navigation">
+      <a href="#home" class="px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+        Home
+      </a>
+      <a href="#features" class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+        Features
+      </a>
+      <a href="#how-it-works" class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+        How It Works
+      </a>
+      <a href="#about" class="px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+        About Us
+      </a>
+    </nav>
 
-        <!-- Right-side Actions -->
-        <div class="flex items-center space-x-4">
-            <!-- Theme Toggle -->
-            <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
-                <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
-            </button>
-            <!-- Sign In & Sign Up -->
-            <a href="#signin" class="text-sm font-medium text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Sign In</a>
-            <a href="#signup" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-primaryBlue transition duration-300 hover:bg-hoverBlue focus:outline-none focus:ring-2 focus:ring-primaryBlue shadow-md hover:scale-105">
-                Sign Up
-            </a>
-        </div>
+    <!-- Right-side Actions -->
+    <div class="flex items-center space-x-4">
+      <!-- Theme Toggle -->
+      <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+        <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
+      </button>
+      <!-- Get Started -->
+      <a href="#cta" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-primaryBlue transition duration-300 hover:bg-hoverBlue focus:outline-none focus:ring-2 focus:ring-primaryBlue shadow-md hover:scale-105">
+        Get Started
+      </a>
     </div>
+  </div>
 </header>
 
 <!-- Dark Mode Toggle Script -->
 <script>
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const rootEl = document.documentElement;
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const rootEl = document.documentElement;
 
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            rootEl.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-        } else {
-            rootEl.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-        }
-    }
-
-    // Initialize theme
-    if (localStorage.getItem('theme') === 'dark' ||
-       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        setTheme('dark');
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      rootEl.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      themeIcon.classList.replace('fa-moon', 'fa-sun');
     } else {
-        setTheme('light');
+      rootEl.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      themeIcon.classList.replace('fa-sun', 'fa-moon');
     }
+  }
 
-    themeToggleBtn.addEventListener('click', () => {
-        if (rootEl.classList.contains('dark')) {
-            setTheme('light');
-        } else {
-            setTheme('dark');
-        }
-    });
+  if (localStorage.getItem('theme') === 'dark' ||
+    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    setTheme('dark');
+  } else {
+    setTheme('light');
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    rootEl.classList.contains('dark') ? setTheme('light') : setTheme('dark');
+  });
 </script>
 
-<main class="pt-[5rem] md:pt-[7rem]">
+<main>
+  <!-- Hero Section -->
+  <section id="home" class="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
+    <!-- Background Slideshow -->
+    <div class="absolute inset-0">
+      <div id="bg1" class="absolute inset-0 bg-cover bg-center fade-bg opacity-100 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg');"></div>
+      <div id="bg2" class="absolute inset-0 bg-cover bg-center fade-bg opacity-0 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg');"></div>
+    </div>
+    <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+    <div class="relative z-10 px-4 max-w-4xl mx-auto space-y-6">
+      <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight">
+        Revolutionize Your <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500">IT Support</span>
+      </h1>
+      <p class="max-w-2xl mx-auto font-light text-lg md:text-xl lg:text-2xl">
+        Elevate your IT support with intelligent automation and personalized management.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="#features" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primaryBlue bg-white rounded-full shadow-lg hover:bg-gray-200 hover:shadow-xl transform hover:scale-105 transition">
+          Learn More <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        <a href="#cta" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-full shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-600 transform hover:scale-105 transition">
+          Get Started <i class="fas fa-rocket ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 
-    <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
-        <!-- Background Slideshow -->
-        <div class="absolute inset-0">
-            <div id="bg1" class="absolute inset-0 bg-cover bg-center fade-bg opacity-100 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg');"></div>
-            <div id="bg2" class="absolute inset-0 bg-cover bg-center fade-bg opacity-0 transition-opacity duration-1000" style="background-image: url('https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg');"></div>
-        </div>
-        <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+  <!-- Hero Slideshow Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const images = [
+        'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg',
+        'https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg',
+        'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg',
+        'https://images.pexels.com/photos/1181341/pexels-photo-1181341.jpeg',
+        'https://images.pexels.com/photos/7682087/pexels-photo-7682087.jpeg',
+        'https://images.pexels.com/photos/12899151/pexels-photo-12899151.jpeg',
+        'https://images.pexels.com/photos/8867427/pexels-photo-8867427.jpeg'
+      ];
+      let currentIndex = 0;
+      const bg1 = document.getElementById('bg1');
+      const bg2 = document.getElementById('bg2');
 
-        <!-- Hero Content -->
-        <div class="relative z-10 px-4 max-w-4xl mx-auto space-y-6">
-            <h1 class="text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight">
-                Revolutionize Your <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-500">IT Support</span>
-            </h1>
-            <p class="max-w-2xl mx-auto font-light text-lg md:text-xl lg:text-2xl">
-                Elevate your IT support services with intelligent automation and personalized management.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="#features" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-primaryBlue bg-white rounded-full shadow-lg hover:bg-gray-200 hover:shadow-xl transform hover:scale-105 transition">
-                    Learn More
-                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                </a>
-                <a href="#cta" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-full shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-600 transform hover:scale-105 transition">
-                    Get Started
-                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011 1v8.586l3.707-3.707a1 1 0 011.414 1.414l-5.414 5.414a1 1 0 01-1.414 0l-5.414-5.414a1 1 0 011.414-1.414L9 12.586V4a1 1 0 011-1z" clip-rule="evenodd"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Hero Slideshow Script -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const images = [
-                'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg',
-                'https://images.pexels.com/photos/845451/pexels-photo-845451.jpeg',
-                'https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg',
-                'https://images.pexels.com/photos/1181341/pexels-photo-1181341.jpeg',
-                'https://images.pexels.com/photos/7682087/pexels-photo-7682087.jpeg',
-                'https://images.pexels.com/photos/12899151/pexels-photo-12899151.jpeg',
-                'https://images.pexels.com/photos/8867427/pexels-photo-8867427.jpeg'
-            ];
-            let currentIndex = 0;
-            const bg1 = document.getElementById('bg1');
-            const bg2 = document.getElementById('bg2');
-
-            setInterval(() => {
-                currentIndex = (currentIndex + 1) % images.length;
-                if (bg1.classList.contains('opacity-100')) {
-                    bg2.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    bg1.classList.replace('opacity-100', 'opacity-0');
-                    bg2.classList.replace('opacity-0', 'opacity-100');
-                } else {
-                    bg1.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    bg2.classList.replace('opacity-100', 'opacity-0');
-                    bg1.classList.replace('opacity-0', 'opacity-100');
-                }
-            }, 4000);
-        });
-    </script>
-
-    <!-- Stats Section -->
-    <section class="dark:bg-gray-900 py-12 sm:py-20">
-        <div class="max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Trusted by Developers</h2>
-            <p class="mt-3 text-xl text-gray-600 dark:text-gray-400 sm:mt-4">Powering numerous production applications across various platforms.</p>
-        </div>
-        <div class="pb-12 mt-10 bg-gray-50 dark:bg-gray-900 sm:pb-16">
-            <div class="relative">
-                <div class="absolute inset-0 h-1/2 bg-gray-50 dark:bg-gray-900"></div>
-                <div class="relative max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
-                    <div class="max-w-4xl mx-auto">
-                        <dl class="bg-white dark:bg-gray-800 rounded-lg shadow-lg sm:grid sm:grid-cols-3">
-                            <div class="flex flex-col p-6 text-center border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-r">
-                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Stars on GitHub</dt>
-                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="starsCount">0</dd>
-                            </div>
-                            <div class="flex flex-col p-6 text-center border-t border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l sm:border-r">
-                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Downloads</dt>
-                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="downloadsCount">0</dd>
-                            </div>
-                            <div class="flex flex-col p-6 text-center border-t border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l">
-                                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Sponsors</dt>
-                                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" id="sponsorsCount">0</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <script>
-        const targets = [
-            { element: document.getElementById('starsCount'), count: 4670, suffix: '+' },
-            { element: document.getElementById('downloadsCount'), count: 80000, suffix: '+' },
-            { element: document.getElementById('sponsorsCount'), count: 100, suffix: '+' }
-        ];
-
-        const maxCount = Math.max(...targets.map(t => t.count));
-        function animateCountUp(target, duration) {
-            let currentCount = 0;
-            const increment = Math.ceil(target.count / (duration / 10));
-            const interval = setInterval(() => {
-                currentCount += increment;
-                if (currentCount >= target.count) {
-                    clearInterval(interval);
-                    target.element.textContent = target.count + target.suffix;
-                } else {
-                    target.element.textContent = currentCount;
-                }
-            }, 10);
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % images.length;
+        if (bg1.classList.contains('opacity-100')) {
+          bg2.style.backgroundImage = `url('${images[currentIndex]}')`;
+          bg1.classList.replace('opacity-100', 'opacity-0');
+          bg2.classList.replace('opacity-0', 'opacity-100');
+        } else {
+          bg1.style.backgroundImage = `url('${images[currentIndex]}')`;
+          bg2.classList.replace('opacity-100', 'opacity-0');
+          bg1.classList.replace('opacity-0', 'opacity-100');
         }
+      }, 4000);
+    });
+  </script>
 
-        targets.forEach(target => {
-            animateCountUp(target, maxCount / 100);
+  <!-- Trusted by Developers Section -->
+  <section class="dark:bg-gray-900 py-12 sm:py-20">
+    <div class="max-w-screen-xl px-4 mx-auto text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Trusted by Developers</h2>
+      <p class="mt-3 text-xl text-gray-600 dark:text-gray-400">Powering production apps across the globe.</p>
+    </div>
+    <div class="pb-12 mt-10 bg-gray-50 dark:bg-gray-900 sm:pb-16" id="trustedSection">
+      <div class="relative">
+        <div class="absolute inset-0 h-1/2 bg-gray-50 dark:bg-gray-900"></div>
+        <div class="relative max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
+          <div class="max-w-4xl mx-auto">
+            <dl class="bg-white dark:bg-gray-800 rounded-lg shadow-lg sm:grid sm:grid-cols-3">
+              <div class="flex flex-col p-6 text-center border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-r">
+                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Stars on GitHub</dt>
+                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" data-target="4670" data-suffix="+">0</dd>
+              </div>
+              <div class="flex flex-col p-6 text-center border-t border-b border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l sm:border-r">
+                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Downloads</dt>
+                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" data-target="80000" data-suffix="+">0</dd>
+              </div>
+              <div class="flex flex-col p-6 text-center border-t border-gray-100 dark:border-gray-700 sm:border-0 sm:border-l">
+                <dt class="order-2 mt-2 text-lg font-medium text-gray-500 dark:text-gray-400">Sponsors</dt>
+                <dd class="order-1 text-5xl font-extrabold text-indigo-600 dark:text-indigo-100" data-target="100" data-suffix="+">0</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function isElementInViewport(el) {
+      const rect = el.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+    }
+
+    function animateNumbers() {
+      const container = document.getElementById('trustedSection');
+      if (isElementInViewport(container)) {
+        const counters = container.querySelectorAll('dd[data-target]');
+        counters.forEach(counter => {
+          let target = parseInt(counter.getAttribute('data-target'), 10);
+          let suffix = counter.getAttribute('data-suffix') || '';
+          let count = 0;
+          const increment = Math.ceil(target / 100);
+
+          const interval = setInterval(() => {
+            count += increment;
+            if (count >= target) {
+              clearInterval(interval);
+              counter.textContent = target + suffix;
+            } else {
+              counter.textContent = count;
+            }
+          }, 20);
         });
-    </script>
+        window.removeEventListener('scroll', animateNumbers);
+      }
+    }
 
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-gray-50 dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Features That Empower</h2>
-            <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">
-                Discover how Support Pro can streamline your IT processes and improve productivity.
+    window.addEventListener('scroll', animateNumbers);
+  </script>
+
+  <!-- Features Section -->
+  <section id="features" class="py-24 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">Empower Your Team</h2>
+      <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">Key features that help you automate, optimize, and scale your IT support.</p>
+      <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transform transition hover:scale-105 hover:shadow-lg">
+          <i class="fas fa-cogs text-4xl text-primaryBlue mb-4"></i>
+          <h3 class="font-semibold text-xl dark:text-white">Intuitive Automation</h3>
+          <p class="mt-2 text-gray-600 dark:text-gray-400">Automate workflows to reduce manual effort and speed up resolutions.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transform transition hover:scale-105 hover:shadow-lg">
+          <i class="fas fa-chart-pie text-4xl text-primaryBlue mb-4"></i>
+          <h3 class="font-semibold text-xl dark:text-white">Insightful Analytics</h3>
+          <p class="mt-2 text-gray-600 dark:text-gray-400">Track KPIs, identify bottlenecks, and continuously improve performance.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transform transition hover:scale-105 hover:shadow-lg">
+          <i class="fas fa-shield-alt text-4xl text-primaryBlue mb-4"></i>
+          <h3 class="font-semibold text-xl dark:text-white">Enterprise Security</h3>
+          <p class="mt-2 text-gray-600 dark:text-gray-400">Protect sensitive data with top-tier encryption and compliance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-16 lg:py-20 xl:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-sm font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">How It Works</p>
+      <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl lg:text-5xl">Start in 4 Simple Steps</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-700 dark:text-gray-300 lg:text-xl">
+        Set up and optimize your support workflow in minutes.
+      </p>
+    </div>
+    <ul class="mx-auto mt-12 max-w-5xl grid grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:grid-cols-4">
+      <li class="flex flex-col items-center">
+        <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+          <i class="fas fa-database text-gray-600 dark:text-gray-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Integrate Systems</h3>
+        <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Connect your existing tools & services.</p>
+      </li>
+      <li class="flex flex-col items-center">
+        <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+          <i class="fas fa-project-diagram text-gray-600 dark:text-gray-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Configure Workflows</h3>
+        <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Define processes & automate support tasks.</p>
+      </li>
+      <li class="flex flex-col items-center">
+        <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+          <i class="fas fa-user-friends text-gray-600 dark:text-gray-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Onboard Team</h3>
+        <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Invite your team & set permissions.</p>
+      </li>
+      <li class="flex flex-col items-center">
+        <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
+          <i class="fas fa-rocket text-gray-600 dark:text-gray-300"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Launch & Scale</h3>
+        <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Go live and evolve as your needs grow.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="about" class="py-24 dark:bg-gray-900">
+    <div class="max-w-7xl px-4 md:px-5 mx-auto grid lg:grid-cols-2 gap-12">
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="pt-24 flex justify-end">
+          <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741205.png" alt="Team Image 1">
+        </div>
+        <div>
+          <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741215.png" alt="Team Image 2">
+        </div>
+      </div>
+      <div class="flex flex-col justify-center gap-10">
+        <div class="flex flex-col gap-8">
+          <div class="flex flex-col gap-3">
+            <h2 class="text-4xl font-bold text-gray-900 dark:text-white">About Us</h2>
+            <p class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">
+              We believe in empowering each other to succeed. Every project is a collaborative journey. Together, we create lasting solutions and meaningful success stories that stand the test of time.
             </p>
-            <div class="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
-                    <i class="fas fa-robot text-4xl text-primaryBlue mb-4"></i>
-                    <h3 class="font-semibold text-xl dark:text-white">AI-Driven Support</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">Automate repetitive tasks and quickly resolve issues with intelligent assistance.</p>
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
-                    <i class="fas fa-chart-line text-4xl text-primaryBlue mb-4"></i>
-                    <h3 class="font-semibold text-xl dark:text-white">Real-Time Analytics</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">Monitor performance and gain insights to continuously improve support operations.</p>
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 transition-all hover:scale-105 hover:shadow-lg">
-                    <i class="fas fa-user-shield text-4xl text-primaryBlue mb-4"></i>
-                    <h3 class="font-semibold text-xl dark:text-white">Robust Security</h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">Keep your data safe and compliant with advanced security measures.</p>
-                </div>
+          </div>
+          <div class="flex items-center gap-10">
+            <div class="flex flex-col">
+              <h3 class="text-4xl font-bold text-gray-900 dark:text-white">33+</h3>
+              <h6 class="text-gray-500 dark:text-gray-300 text-base">Years of Experience</h6>
             </div>
-        </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="bg-gray-50 dark:bg-gray-900 py-12 sm:py-16 lg:py-20 xl:py-24">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-sm font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300">How It Works</p>
-            <h2 class="mt-6 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl lg:text-5xl">Launch your blog in 4 easy steps</h2>
-            <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-700 dark:text-gray-300 lg:text-xl">
-                Create your blog and get it running in just a few simple steps.
-            </p>
-        </div>
-        <ul class="mx-auto mt-12 max-w-5xl grid grid-cols-1 gap-10 sm:mt-16 lg:mt-20 lg:grid-cols-4">
-            <!-- Step 1 -->
-            <li class="flex flex-col items-center">
-                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
-                    <i class="fas fa-database text-gray-600 dark:text-gray-300"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Add your databases</h3>
-                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Connect your Notion databases or use our templates.</p>
-            </li>
-            <!-- Step 2 -->
-            <li class="flex flex-col items-center">
-                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
-                    <i class="fas fa-project-diagram text-gray-600 dark:text-gray-300"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Map your fields</h3>
-                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Easily map Notion fields to your blog’s structure.</p>
-            </li>
-            <!-- Step 3 -->
-            <li class="flex flex-col items-center">
-                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
-                    <i class="fas fa-globe text-gray-600 dark:text-gray-300"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Choose your domain</h3>
-                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Pick a custom domain or a subdomain for your blog.</p>
-            </li>
-            <!-- Step 4 -->
-            <li class="flex flex-col items-center">
-                <div class="h-10 w-10 flex items-center justify-center rounded-xl border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 mb-5">
-                    <i class="fas fa-check text-gray-600 dark:text-gray-300"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Get your blog</h3>
-                <p class="mt-2 text-base text-gray-700 dark:text-gray-300">Your professional blog is now ready to go.</p>
-            </li>
-        </ul>
-    </section>
-
-    <!-- About Us (Empowering Each Other) Section -->
-    <section class="py-24 relative dark:bg-gray-900">
-        <div class="max-w-7xl px-4 md:px-5 mx-auto grid lg:grid-cols-2 gap-12">
-            <div class="grid sm:grid-cols-2 gap-6">
-                <div class="pt-24 flex justify-end">
-                    <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741205.png" alt="Image 1">
-                </div>
-                <div>
-                    <img class="rounded-xl object-cover transition-transform hover:scale-105 hover:shadow-lg" src="https://pagedone.io/asset/uploads/1717741215.png" alt="Image 2">
-                </div>
+            <div class="flex flex-col">
+              <h4 class="text-4xl font-bold text-gray-900 dark:text-white">125+</h4>
+              <h6 class="text-gray-500 dark:text-gray-300 text-base">Successful Projects</h6>
             </div>
-            <div class="flex flex-col justify-center gap-10">
-                <div class="flex flex-col gap-8">
-                    <div class="flex flex-col gap-3">
-                        <h2 class="text-4xl font-bold text-gray-900 dark:text-white">Empowering Each Other to Succeed</h2>
-                        <p class="text-gray-500 dark:text-gray-300 text-base leading-relaxed">
-                            Every project is a collaborative effort, leaving a lasting mark. Together, we build enduring solutions and connections that define our success.
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-10">
-                        <div class="flex flex-col">
-                            <h3 class="text-4xl font-bold text-gray-900 dark:text-white">33+</h3>
-                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Years of Experience</h6>
-                        </div>
-                        <div class="flex flex-col">
-                            <h4 class="text-4xl font-bold text-gray-900 dark:text-white">125+</h4>
-                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Successful Projects</h6>
-                        </div>
-                        <div class="flex flex-col">
-                            <h4 class="text-4xl font-bold text-gray-900 dark:text-white">52+</h4>
-                            <h6 class="text-gray-500 dark:text-gray-300 text-base">Happy Clients</h6>
-                        </div>
-                    </div>
-                </div>
-                <a href="#read-more" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 transition rounded-lg shadow text-white text-sm font-medium w-fit">
-                    Read More
-                </a>
+            <div class="flex flex-col">
+              <h4 class="text-4xl font-bold text-gray-900 dark:text-white">52+</h4>
+              <h6 class="text-gray-500 dark:text-gray-300 text-base">Happy Clients</h6>
             </div>
+          </div>
         </div>
-    </section>
+        <a href="#cta" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 transition rounded-lg shadow text-white text-sm font-medium w-fit">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </section>
 
-    <!-- CTA Section -->
-    <section id="cta" class="bg-white dark:bg-gray-900 py-16">
-        <div class="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">Ready to Transform Your IT Support?</h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">Join thousands of businesses streamlining their IT operations with Support Pro.</p>
-            <a href="#signup" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-primaryBlue rounded-full shadow-lg hover:bg-hoverBlue hover:shadow-xl transform hover:scale-105 transition">
-                Get Started Today
-            </a>
-        </div>
-    </section>
+  <!-- CTA Section -->
+  <section id="cta" class="bg-white dark:bg-gray-900 py-16">
+    <div class="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">Ready to Transform Your IT Support?</h2>
+      <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">Join thousands of businesses that trust Support Pro.</p>
+      <a href="#signup" class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-primaryBlue rounded-full shadow-lg hover:bg-hoverBlue hover:shadow-xl transform hover:scale-105 transition">
+        Get Started Today <i class="fas fa-arrow-right ml-2"></i>
+      </a>
+    </div>
+  </section>
 
 </main>
 
 <!-- Footer -->
 <footer class="bg-gray-100 dark:bg-gray-800 py-8 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center sm:gap-6 mb-4 sm:mb-0">
-            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">About Us</a>
-            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Contact</a>
-            <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Privacy Policy</a>
-        </div>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">&copy; <span id="year"></span> Support Pro. All rights reserved.</p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-4 sm:gap-0">
+    <div class="flex flex-col sm:flex-row items-center sm:gap-6">
+      <a href="#about" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">About Us</a>
+      <a href="#features" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Features</a>
+      <a href="#how-it-works" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">How It Works</a>
+      <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Contact</a>
+      <a href="#" class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-medium transition">Privacy Policy</a>
     </div>
+    <p class="text-gray-500 dark:text-gray-400 text-sm">&copy; <span id="year"></span> Support Pro. All rights reserved.</p>
+  </div>
 </footer>
+
 <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
 </body>
