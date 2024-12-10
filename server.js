@@ -11,7 +11,6 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import passport from 'passport';
@@ -98,24 +97,25 @@ mongoose
 // User Schema
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true }, 
+    name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
     googleId: { type: String },
     sessionID: { type: String },
     isVerified: { type: Boolean, default: false },
     lastLogin: { type: Date },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    role: { type: String, enum: ['user', 'admin', 'supporter'], default: 'user' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     theme: { type: String, default: 'light' },
     phoneNumber: { type: String },
+    profileSetUp: { type: Boolean, default: false }, // Added field to track profile setup
   },
   { timestamps: true }
 );
 
 // Response Schema for Tickets
 const responseSchema = new mongoose.Schema({
-  sender: { type: String, required: true }, 
+  sender: { type: String, required: true },
   message: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
 });
@@ -205,7 +205,7 @@ passport.use(
           googleId: profile.id,
           name: profile.displayName,
           email: email,
-          isVerified: true, 
+          isVerified: true, // Auto-verify Google users
           role: 'user',
         });
 
@@ -234,7 +234,7 @@ passport.deserializeUser(async (id, done) => {
 // =========================== Multer Configuration ======================== //
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'public', 'uploads')); 
+    cb(null, path.join(__dirname, 'public', 'uploads'));
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = `${Date.now()}-${uuidv4()}`;
@@ -244,7 +244,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
     const fileTypes = /jpeg|jpg|png|gif/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
@@ -266,7 +266,6 @@ const generateToken = (user) => {
       role: user.role,
       isVerified: user.isVerified,
       name: user.name,
-      isPremium: user.isPremium,
     },
     process.env.JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
@@ -340,18 +339,6 @@ const authenticateAdmin = (req, res, next) => {
   });
 };
 
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { error: '❌ Too many requests, please try again later.' },
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: { error: '❌ Too many authentication attempts, please try again later.' },
-});
-
 // =========================== Express App Setup ============================ //
 const app = express();
 const server = http.createServer(app);
@@ -364,7 +351,6 @@ const io = new SocketIOServer(server, {
 });
 
 // Global Middleware
-app.use(generalLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -396,13 +382,12 @@ app.use(
       secure: NODE_ENV === 'production',
       httpOnly: true,
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(['/api/login', '/api/signup'], authLimiter);
 
 // =========================== OAuth Routes =============================== //
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -416,7 +401,7 @@ app.get(
         httpOnly: true,
         secure: NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
       logger.info(`✅ User logged in via Google: ${req.user.email}`, { userId: req.user._id });
       res.redirect('/dashboard');
@@ -428,13 +413,53 @@ app.get(
 );
 
 // =========================== Static Routes ================================ //
-app.get('/login', (req, res) => {
-  res.redirect('/auth/login');
+app.get('/login', redirectIfAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth', 'login.html'));
 });
-app.get('/signup', (req, res) => {
-  res.redirect('/auth/signup');
+app.get('/signup', redirectIfAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth', 'signup.html'));
+});
+app.get('/auth', redirectIfAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth', 'auth.html'));
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+app.get('/admin/login', redirectIfAuthenticatedAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'login.html'));
 });
 
+// Middleware to redirect authenticated users
+function redirectIfAuthenticated(req, res, next) {
+  const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err) => {
+      if (!err) {
+        return res.redirect('/dashboard');
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+}
+
+// Middleware to redirect authenticated admin users
+function redirectIfAuthenticatedAdmin(req, res, next) {
+  const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+      if (!err && decodedUser.role === 'admin') {
+        return res.redirect('/admin');
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+}
+
+// Defined Static Routes
 const definedRoutes = [
   {
     route: '/auth/login',
@@ -459,28 +484,12 @@ const definedRoutes = [
   },
 ];
 
+// Apply defined routes
 definedRoutes.forEach(({ route, file, redirectIfAuthenticated: redirectIfAuth }) => {
   if (redirectIfAuth) {
-    app.get(
-      route,
-      (req, res, next) => {
-        const authHeader = req.headers.authorization;
-        const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
-        if (token) {
-          jwt.verify(token, process.env.JWT_SECRET, (err) => {
-            if (!err) {
-              return res.redirect('/dashboard');
-            }
-            next();
-          });
-        } else {
-          next();
-        }
-      },
-      (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', file));
-      }
-    );
+    app.get(route, redirectIfAuthenticated, (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', file));
+    });
   } else {
     app.get(route, (req, res) => {
       res.sendFile(path.join(__dirname, 'public', file));
@@ -488,18 +497,58 @@ definedRoutes.forEach(({ route, file, redirectIfAuthenticated: redirectIfAuth })
   }
 });
 
+// Dashboard Routes
 app.get('/dashboard', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
 });
-app.get('/dashboard/profile', authenticateToken, (req, res) => {
-  try {
-    res.sendFile(path.join(__dirname, 'public', 'dashboard', 'profile.html'));
-    logger.info(`Profile page served for user: ${req.user.email}`);
-  } catch (error) {
-    logger.error('Error serving profile page:', error);
-    res.status(500).json({ error: 'Failed to load the profile page.' });
-  }
+
+// Setup Profile Page
+app.get('/setup-profile', authenticateToken, (req, res) => {
+  // If user is already set up, redirect to dashboard/profile
+  User.findById(req.user.id).then(user => {
+    if (user && user.profileSetUp) {
+      return res.redirect('/dashboard/profile');
+    }
+    res.sendFile(path.join(__dirname, 'public', 'setup-profile.html'));
+  });
 });
+
+app.post('/api/user/setup', authenticateToken, asyncHandler(async (req, res) => {
+  const { username, fullname, email } = req.body;
+  // Validate fields as needed
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found.' });
+  }
+  // Mark profile as set up
+  user.profileSetUp = true;
+  // Update user details if provided
+  user.name = fullname || user.name;
+  user.email = email || user.email;
+  await user.save();
+  res.json({ message: "✅ Profile has been successfully set up!" });
+}));
+
+app.get('/dashboard/profile', authenticateToken, asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user.profileSetUp) {
+    // Profile not set up yet, but user tries to access profile page
+    // You can redirect or show a message prompting setup
+    return res.redirect('/setup-profile');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'profile.html'));
+  logger.info(`Profile page served for user: ${req.user.email}`);
+}));
+
+// Admin Profile Page
+app.get('/admin/profile', authenticateAdmin, asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if (!user || user.role !== 'admin') {
+    return res.status(403).send("❌ Forbidden: You are not an admin.");
+  }
+  res.sendFile(path.join(__dirname, 'public', 'admin', 'profile.html'));
+}));
+
 app.get('/dashboard/tickets', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'tickets.html'));
 });
@@ -527,7 +576,6 @@ dashboardPlatforms.forEach((platform) => {
 // User Registration Endpoint
 app.post(
   '/api/signup',
-  authLimiter,
   [
     body('name').trim().notEmpty().withMessage('❌ Name is required.'),
     body('email').isEmail().withMessage('❌ Valid email is required.'),
@@ -620,6 +668,11 @@ app.get(
           return res.status(404).json({ error: '❌ User not found.' });
         }
 
+        if (user.isVerified) {
+          logger.info(`✅ User already verified: ${user.email}`);
+          return res.redirect('/auth/login');
+        }
+
         user.isVerified = true;
         await user.save();
 
@@ -636,7 +689,6 @@ app.get(
 // User Login Endpoint
 app.post(
   '/api/login',
-  authLimiter,
   [
     body('email').isEmail().withMessage('❌ Valid email is required.'),
     body('password').notEmpty().withMessage('❌ Password is required.'),
@@ -680,7 +732,7 @@ app.post(
         httpOnly: true,
         secure: NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
       logger.info(`✅ User logged in: ${email}`, { userId: user._id });
@@ -849,12 +901,17 @@ app.get(
 app.post(
   '/api/tickets/:id/responses',
   authenticateToken,
+  [
+    body('message').trim().notEmpty().withMessage('❌ Response message is required.'),
+  ],
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: '❌ Response message is required.' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      logger.warn('Add response validation failed.', { errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -930,6 +987,8 @@ app.put(
 );
 
 // ========================= Users API (Admin) ============================= //
+
+// Get All Users
 app.get(
   '/api/users',
   authenticateAdmin,
@@ -1110,7 +1169,7 @@ app.get(
   asyncHandler(async (req, res) => {
     const { q } = req.query;
     if (!q || q.trim() === '') {
-      return res.status(400).json({ error: 'Search query is required.' });
+      return res.status(400).json({ error: '❌ Search query is required.' });
     }
 
     try {
@@ -1128,7 +1187,7 @@ app.get(
 
       res.status(200).json({ guides, total: guides.length });
     } catch (error) {
-      logger.error('Error searching guides:', error);
+      logger.error('❌ Error searching guides:', error);
       res.status(500).json({ error: 'Internal server error while searching guides.' });
     }
   })
@@ -1147,7 +1206,7 @@ app.get(
 
       res.status(200).json({ guides: popularGuides, total: popularGuides.length });
     } catch (error) {
-      logger.error('Error fetching popular guides:', error);
+      logger.error('❌ Error fetching popular guides:', error);
       res.status(500).json({ error: 'Internal server error while fetching popular guides.' });
     }
   })
@@ -1400,6 +1459,7 @@ app.get(
   })
 );
 
+// Fetch guide details
 app.get(
   '/api/articles/:category/:slug/details',
   asyncHandler(async (req, res) => {
@@ -1505,5 +1565,5 @@ app.use((err, req, res, next) => {
 
 // =========================== Start Server ================================ //
 server.listen(PORT, () => {
-  logger.info(`🚀 Server is running on port ${PORT}`);
+  logger.info(`🚀 Server is running on PORT ${PORT}`);
 });
