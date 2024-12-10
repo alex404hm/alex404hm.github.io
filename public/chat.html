@@ -15,7 +15,7 @@
   <div class="w-full max-w-md bg-gray-800 text-white rounded-xl shadow-xl flex flex-col">
     <!-- Header -->
     <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-700 rounded-t-xl">
-      <h1 class="text-lg font-bold">Support Pro</h1>
+      <h1 class="text-lg font-bold">Chat</h1>
       <button class="text-gray-400 hover:text-white">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -27,9 +27,15 @@
     <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900">
       <div class="flex items-end">
         <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 order-2 items-start">
-          <div class="px-4 py-2 rounded-xl bg-gray-700 text-gray-200">Welcome to Support Pro! How can I assist you today?</div>
+          <div class="px-4 py-2 rounded-xl bg-gray-700 text-gray-200">Hi, how can I help you today?</div>
         </div>
         <img class="w-10 h-10 rounded-full border-2 border-gray-600" src="https://i.pravatar.cc/300" alt="">
+      </div>
+      <div class="flex items-end justify-end">
+        <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 order-1 items-end">
+          <div class="px-4 py-2 rounded-xl bg-blue-600 text-white">I need assistance with my account.</div>
+        </div>
+        <img class="w-10 h-10 rounded-full border-2 border-gray-600" src="https://i.pravatar.cc/301" alt="">
       </div>
     </div>
 
@@ -45,63 +51,42 @@
   </div>
 
   <script>
-    const openaiApiKey = "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";
-
     const messageForm = document.getElementById('message-form');
     const messageInput = document.getElementById('message-input');
     const chat = document.getElementById('chat');
 
-    async function getAIResponse(userMessage) {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${openaiApiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [
-            { role: "system", content: "You are Support Pro, a helpful assistant for IT support." },
-            { role: "user", content: userMessage },
-          ],
-        }),
-      });
-      const data = await response.json();
-      return data.choices[0].message.content;
-    }
-
-    messageForm.addEventListener('submit', async (e) => {
+    messageForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const userMessage = messageInput.value.trim();
-      if (!userMessage) return;
+      const message = messageInput.value.trim();
+      if (!message) return;
 
       // Add user message
-      const userMessageElement = document.createElement('div');
-      userMessageElement.className = 'flex items-end justify-end';
-      userMessageElement.innerHTML = `
+      const userMessage = document.createElement('div');
+      userMessage.className = 'flex items-end justify-end';
+      userMessage.innerHTML = `
         <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 order-1 items-end">
-          <div class="px-4 py-2 rounded-xl bg-blue-600 text-white">${userMessage}</div>
+          <div class="px-4 py-2 rounded-xl bg-blue-600 text-white">${message}</div>
         </div>
         <img class="w-10 h-10 rounded-full border-2 border-gray-600" src="https://i.pravatar.cc/301" alt="">
       `;
-      chat.appendChild(userMessageElement);
-      messageInput.value = '';
-      chat.scrollTop = chat.scrollHeight;
+      chat.appendChild(userMessage);
 
-      // Get AI response
-      const botMessage = await getAIResponse(userMessage);
+      // Simulate bot reply
+      setTimeout(() => {
+        const botReply = document.createElement('div');
+        botReply.className = 'flex items-end';
+        botReply.innerHTML = `
+          <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 order-2 items-start">
+            <div class="px-4 py-2 rounded-xl bg-gray-700 text-gray-200">Thanks for reaching out! Let me check that for you.</div>
+          </div>
+          <img class="w-10 h-10 rounded-full border-2 border-gray-600" src="https://i.pravatar.cc/300" alt="">
+        `;
+        chat.appendChild(botReply);
+        chat.scrollTop = chat.scrollHeight;
+      }, 1000);
 
-      // Add bot response
-      const botMessageElement = document.createElement('div');
-      botMessageElement.className = 'flex items-end';
-      botMessageElement.innerHTML = `
-        <div class="flex flex-col space-y-1 text-sm max-w-xs mx-2 order-2 items-start">
-          <div class="px-4 py-2 rounded-xl bg-gray-700 text-gray-200">${botMessage}</div>
-        </div>
-        <img class="w-10 h-10 rounded-full border-2 border-gray-600" src="https://i.pravatar.cc/300" alt="">
-      `;
-      chat.appendChild(botMessageElement);
+      messageInput.value = '3';
       chat.scrollTop = chat.scrollHeight;
     });
   </script>
