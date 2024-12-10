@@ -24,6 +24,7 @@ build/
 .idea/
 .vscode/
 
+public/chat.html
 # Temp files
 *.tmp
 *.swp
