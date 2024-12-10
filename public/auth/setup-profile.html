@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="da" class="scroll-smooth" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Opsæt Profil | Support Pro</title>
+
+  <!-- Meta Description for SEO -->
+  <meta name="description" content="Opsæt eller rediger din profil på Support Pro-platformen." />
+
+  <!-- Open Graph Meta Tags for Social Sharing -->
+  <meta property="og:title" content="Opsæt Profil | Support Pro" />
+  <meta property="og:description" content="Opret eller rediger din profil på Support Pro-platformen." />
+  <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg" />
+  <meta property="og:url" content="https://yourwebsite.com/setup-profile" />
+  <meta property="og:type" content="website" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primaryBlue: '#1e3a8a',
+            secondaryGray: '#E5E7EB',
+            darkBlack: '#1E293B',
+            lightBlack: '#334155',
+            accentGreen: '#16A34A',
+            accentRed: '#DC2626',
+          },
+          animation: {
+            fadeIn: "fadeIn 0.3s ease-in-out",
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 },
+            },
+          },
+        },
+      },
+      plugins: [],
+    };
+  </script>
+</head>
+<body class="bg-gradient-to-b from-primaryBlue to-gray-900 font-inter text-white min-h-screen flex items-center justify-center">
+  <main class="w-full max-w-lg bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-10 relative">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl md:text-4xl font-extrabold">Opsæt din profil</h1>
+    </header>
+
+    <section>
+      <form id="profileForm" class="space-y-6" novalidate>
+        <!-- Profile Picture -->
+        <div class="relative text-center">
+          <label for="profilePicture" class="block text-sm font-medium text-gray-300 sr-only">Profilbillede</label>
+          <div class="group relative w-32 h-32 mx-auto">
+            <img
+              id="profilePreview"
+              src="https://via.placeholder.com/150"
+              alt="Dit nuværende profilbillede"
+              class="w-full h-full rounded-full object-cover border-4 border-primaryBlue shadow-md"
+            />
+            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+              <p class="text-sm text-white">Klik for at ændre</p>
+            </div>
+            <input
+              type="file"
+              id="profilePicture"
+              name="profilePicture"
+              accept="image/*"
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              aria-label="Vælg et nyt profilbillede"
+            />
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-300">Brugernavn</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Indtast dit brugernavn"
+            required
+            class="mt-2 p-4 w-full bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue transition-colors"
+          />
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-300">Telefonnummer</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="Indtast dit telefonnummer"
+            required
+            class="mt-2 p-4 w-full bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue transition-colors"
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full py-4 px-6 rounded-lg shadow-lg text-lg text-white bg-primaryBlue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryBlue transition-colors"
+        >
+          Gem Profil
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Success Popup -->
+  <div
+    id="successPopup"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+    aria-hidden="true"
+    aria-modal="true"
+    role="dialog"
+    aria-labelledby="popupTitle"
+    aria-describedby="popupDesc"
+  >
+    <div class="bg-white rounded-lg p-6 w-80 shadow-lg text-center animate-fadeIn">
+      <div class="text-green-500 mb-4 flex justify-center">
+        <!-- Heroicon: Check Circle -->
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h2 id="popupTitle" class="text-2xl font-bold text-gray-800">Profil Gemt!</h2>
+      <p id="popupDesc" class="text-gray-600 mt-2">Dine oplysninger er blevet opdateret med succes.</p>
+      <button
+        type="button"
+        class="mt-6 px-4 py-2 bg-primaryBlue text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-primaryBlue focus:outline-none transition-colors"
+      >
+        Luk
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript for Interactivity -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const profileForm = document.querySelector('#profileForm');
+      const profilePictureInput = document.querySelector('#profilePicture');
+      const profilePreview = document.querySelector('#profilePreview');
+      const successPopup = document.querySelector('#successPopup');
+      const closeButton = successPopup.querySelector('button[type="button"]');
+
+      // Show image preview when new profile picture is selected
+      profilePictureInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            profilePreview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Handle form submission
+      profileForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = profileForm.querySelector('#username').value.trim();
+        const phone = profileForm.querySelector('#phone').value.trim();
+
+        // Basic validation
+        if (username && phone) {
+          // Show success popup
+          successPopup.classList.remove('hidden');
+          successPopup.setAttribute('aria-hidden', 'false');
+        } else {
+          alert('Udfyld venligst alle felter.');
+        }
+      });
+
+      // Close the success popup
+      closeButton.addEventListener('click', () => {
+        successPopup.classList.add('hidden');
+        successPopup.setAttribute('aria-hidden', 'true');
+      });
+    });
+  </script>
+</body>
+</html>
