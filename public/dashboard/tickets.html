@@ -1,151 +1,186 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" data-theme="light">
+<html lang="da" class="scroll-smooth" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Dashboard - Support Pro</title>
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="User Dashboard - Support Pro" />
+  <meta property="og:description" content="Manage your support tickets efficiently." />
+  <meta property="og:image" content="https://yourwebsite.com/images/og-image.jpg" />
+  <meta property="og:url" content="https://yourwebsite.com/dashboard/tickets" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS (For development purposes only. In production, use a build process to purge unused styles) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
-
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primaryBlue: '#2563EB',
+            secondaryGray: '#E5E7EB',
+            darkBlack: '#1E293B',
+            lightBlack: '#334155',
+            accentGreen: '#16A34A',
+            accentRed: '#DC2626',
+            hoverBlue: '#1E40AF',
+            pendingYellow: '#F59E0B',
+            guidePurple: '#8B5CF6',
+          },
+        },
+      },
+    };
+  </script>
+  
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+  
+  <!-- Custom Styles -->
   <style>
-    body {
-      padding-top: 5rem; /* Offset for fixed navbar */
+    /* Loader Animation */
+    .loader {
+      border-top-color: #2563EB;
+      animation: spin 1s ease-in-out infinite;
     }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
+    /* Modal Styles */
     .modal {
-      position: fixed; 
-      top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.5); display:none; 
-      justify-content:center; align-items:center; z-index:50;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
     }
     .modal.active {
-      display:flex;
+      display: flex;
     }
     .modal-content {
-      background:white; color:black; padding:1.5rem;
-      border-radius:0.5rem; width:90%; max-width:600px; max-height:90%; overflow-y:auto;
+      background-color: white;
+      color: black;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
       transition: background-color 0.3s, color 0.3s;
     }
     .dark .modal-content {
-      background:#1E293B; color:white;
+      background-color: #1E293B;
+      color: white;
+    }
+
+    /* Alert Styles */
+    .alert {
+      position: fixed;
+      top: 1rem;
+      right: 1.25rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.375rem;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      transition: opacity 0.5s ease;
+    }
+    .alert.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Chat Scrollable Section */
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Fixed Chat Input */
+    .chat-form-container {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    .dark .chat-form-container {
+      border-top: 1px solid #4b5563;
+    }
+
+    /* Loader for Tables */
+    .table-loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (min-width: 768px) {
+      .dropdown-content {
+        width: 36rem;
+      }
     }
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300 font-inter">
 
-  <!-- Navbar -->
-  <header class="fixed inset-x-0 top-0 z-30 w-full bg-black dark:bg-white text-white dark:text-black py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
-    <div class="container mx-auto px-6 flex items-center justify-between">
-      <a href="/" class="text-2xl font-bold hover:text-blue-500 transition-colors duration-300">Support Pro</a>
-      <nav class="hidden md:flex items-center space-x-6">
-        <a href="/dashboard" class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
-          Home
-        </a>
-        <div class="relative dropdown group" onclick="toggleDropdown(this)">
-          <button class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
-            OS Options
-          </button>
-          <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
-            <div class="grid grid-cols-2 gap-4">
-              <!-- Windows -->
-              <a href="/dashboard/windows" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
-                <img src="https://img.icons8.com/color/48/000000/windows-11.png" alt="Windows" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">Windows</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Popular OS for PCs.</p>
-                </div>
-              </a>
-              <!-- macOS -->
-              <a href="/dashboard/macos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
-                <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">macOS</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Sleek design & hardware.</p>
-                </div>
-              </a>
-              <!-- Linux -->
-              <a href="/dashboard/linux" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
-                <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">Linux</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Open-source & flexible.</p>
-                </div>
-              </a>
-              <!-- iOS -->
-              <a href="/dashboard/ios" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
-                <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">iOS/iPadOS</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Mobile OS for iPhones/iPads.</p>
-                </div>
-              </a>
-              <!-- Android -->
-              <a href="/dashboard/android" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
-                <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">AndroidOS</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Customizable mobile OS.</p>
-                </div>
-              </a>
-              <!-- ChromeOS -->
-              <a href="/dashboard/chromeos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl hover:scale-105 hover:shadow-lg transition">
-                <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS" class="w-12 h-12">
-                <div class="ml-4">
-                  <h3 class="text-lg font-semibold">ChromeOS</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">Lightweight, for Chromebooks.</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-        <a href="/profile" class="px-4 py-2 rounded-md font-medium hover:bg-white/10 hover:shadow-md hover:text-blue-500 transition">
-          Profile
-        </a>
-      </nav>
-      <div class="flex items-center space-x-4">
-        <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <i id="theme-icon" class="fas fa-moon"></i>
-        </button>
-        <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
-          Logout
-        </a>
-      </div>
-    </div>
-  </header>
+  <!-- Success Alert -->
+  <div id="success-alert" class="alert bg-green-500 text-white" role="alert" aria-live="assertive">
+    <i class="fas fa-check-circle"></i>
+    <span id="alert-message">Action Successful!</span>
+  </div>
 
-  <div class="container mx-auto px-4 py-8">
+  <!-- Error Alert -->
+  <div id="error-alert" class="alert bg-red-500 text-white" role="alert" aria-live="assertive">
+    <i class="fas fa-exclamation-circle"></i>
+    <span id="error-message-content">An error occurred!</span>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 pt-12 md:pt-16 lg:px-8">
     <!-- Header -->
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
-      <h1 class="text-3xl font-bold">Your Tickets</h1>
+      <h1 class="text-3xl font-bold">Dine Billetter</h1>
       <div class="flex items-center space-x-4 w-full md:w-auto">
         <div class="relative flex-1 md:flex-none">
           <input 
             type="text" 
             id="search-input" 
-            placeholder="Search tickets..." 
+            placeholder="Søg billetter..." 
             class="w-full md:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            aria-label="Søg billetter"
           >
+          <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-500 cursor-pointer hover:text-blue-700 transition-colors" aria-hidden="true"></i>
         </div>
         <button 
           id="create-ticket-btn"
-          class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          class="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Opret Billet"
         >
-          <i class="fas fa-plus-circle mr-2"></i>
-          Create Ticket
+          <i class="fas fa-plus-circle mr-2" aria-hidden="true"></i>
+          Opret Billet
+        </button>
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <i id="theme-icon" class="fas fa-moon" aria-hidden="true"></i>
         </button>
       </div>
     </header>
@@ -157,7 +192,7 @@
           <i class="fas fa-clipboard-list"></i>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Total Tickets</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Total Billetter</p>
           <p id="total-tickets" class="text-2xl font-bold">0</p>
         </div>
       </div>
@@ -166,7 +201,7 @@
           <i class="fas fa-check-circle"></i>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Open Tickets</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Åbne Billetter</p>
           <p id="open-tickets" class="text-2xl font-bold">0</p>
         </div>
       </div>
@@ -175,7 +210,7 @@
           <i class="fas fa-hourglass-half"></i>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Pending Tickets</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Afventende Billetter</p>
           <p id="pending-tickets" class="text-2xl font-bold">0</p>
         </div>
       </div>
@@ -184,7 +219,7 @@
           <i class="fas fa-times-circle"></i>
         </div>
         <div>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Closed Tickets</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Lukkede Billetter</p>
           <p id="closed-tickets" class="text-2xl font-bold">0</p>
         </div>
       </div>
@@ -196,27 +231,28 @@
         <thead class="bg-gray-100 dark:bg-gray-700">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Emne</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Oprettet</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Handlinger</th>
           </tr>
         </thead>
         <tbody id="tickets-body" class="divide-y divide-gray-200 dark:divide-gray-700">
-          <!-- Tickets go here -->
+          <!-- Tickets will be dynamically inserted here -->
         </tbody>
       </table>
+      <div id="no-tickets" class="p-6 text-center text-gray-500 dark:text-gray-400 hidden">
+        Ingen billetter fundet.
+      </div>
     </div>
-  </div>
+  </main>
 
   <!-- Create Ticket Modal -->
-  <div id="create-ticket-modal" class="modal">
-    <div class="modal-content bg-gray-50 dark:bg-gray-900 rounded-lg p-6 shadow-lg transition-colors duration-300">
+  <div id="create-ticket-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="create-ticket-title">
+    <div class="modal-content">
       <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
-        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Create New Ticket</h2>
-        <button id="cancel-create-ticket"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded-full p-1 transition"
-          aria-label="Close Modal">
+        <h2 id="create-ticket-title" class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Opret Ny Billet</h2>
+        <button id="cancel-create-ticket" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1 transition" aria-label="Luk Modal">
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
@@ -224,52 +260,63 @@
       <form id="create-ticket-form" class="space-y-6">
         <!-- Subject -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+          <label for="ticket-subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Emne</label>
           <input type="text" id="ticket-subject" required
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            placeholder="Enter the ticket subject...">
+            placeholder="Indtast billetterens emne..."
+            aria-required="true"
+          >
         </div>
 
         <!-- Description -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+          <label for="ticket-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Beskrivelse</label>
           <textarea id="ticket-description" required
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            placeholder="Describe your issue or request..."></textarea>
+            placeholder="Beskriv dit problem eller anmodning..."
+            aria-required="true"
+          ></textarea>
         </div>
 
         <!-- Category -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+          <label for="ticket-category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kategori</label>
           <select id="ticket-category"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            aria-label="Vælg kategori"
+          >
             <option value="Windows">Windows</option>
             <option value="macOS">macOS</option>
             <option value="Linux">Linux</option>
             <option value="Android">Android</option>
             <option value="iOS">iOS/iPadOS</option>
             <option value="ChromeOS">ChromeOS</option>
-            <option value="Other">Other</option>
+            <option value="Other">Andet</option>
           </select>
         </div>
 
         <!-- Other Category Field -->
         <div id="other-category-container" class="hidden">
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Category</label>
+          <label for="other-category-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Brugerdefineret Kategori</label>
           <input type="text" id="other-category-input"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            placeholder="Specify your custom category...">
+            placeholder="Angiv din egen kategori..."
+          >
         </div>
 
         <!-- Form Actions -->
         <div class="flex justify-end space-x-2 pt-2 border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
           <button type="button" id="cancel-create-ticket-2"
-            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-            Cancel
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            aria-label="Annuller"
+          >
+            Annuller
           </button>
           <button type="submit"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900">
-            Create Ticket
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Opret Billet"
+          >
+            Opret Billet
           </button>
         </div>
       </form>
@@ -277,294 +324,484 @@
   </div>
 
   <!-- View Ticket Modal -->
-  <div id="view-ticket-modal" class="modal">
-    <div class="modal-content bg-gray-50 dark:bg-gray-900 rounded-lg p-6 shadow-lg transition-colors duration-300">
+  <div id="view-ticket-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="view-ticket-title">
+    <div class="modal-content">
       <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
-        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Ticket Details</h2>
-        <button id="close-view-modal"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded-full p-1 transition"
-          aria-label="Close Modal">
+        <h2 id="view-ticket-title" class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Billet Detaljer</h2>
+        <button id="close-view-modal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1 transition" aria-label="Luk Modal">
           <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-      <div id="view-modal-body" class="mb-8 space-y-4"></div>
+      <div id="view-modal-body" class="mb-8 space-y-4">
+        <!-- Ticket details will be dynamically inserted here -->
+      </div>
 
-      <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Conversation</h3>
-      <div id="chat-messages" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-6"></div>
+      <!-- Conversation Section -->
+      <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Samtale</h3>
+      <div id="chat-messages" class="chat-container bg-gray-100 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto mb-6" aria-live="polite">
+        <!-- Chat messages will be dynamically inserted here -->
+      </div>
       <form id="chat-form" class="flex">
-        <input type="text" id="chat-input" placeholder="Type your message..."
+        <input type="text" id="chat-input" placeholder="Skriv din besked..."
           class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition"
+          aria-label="Skriv din besked"
         >
         <button type="submit"
-          class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900">
+          class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-900"
+          aria-label="Send Besked"
+        >
           <i class="fas fa-paper-plane"></i>
         </button>
       </form>
     </div>
   </div>
 
+  <!-- JavaScript -->
   <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const currentTheme = localStorage.getItem("theme") || (prefersDarkScheme.matches ? "dark" : "light");
-    if (currentTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      themeIcon.classList.remove("fa-moon");
-      themeIcon.classList.add("fa-sun");
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE_URL = 'http://localhost:3000'; // Set your API base URL here
 
-    themeToggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle("dark");
-      let theme = "light";
-      if (document.documentElement.classList.contains("dark")) {
-        theme = "dark";
-        themeIcon.classList.remove("fa-moon");
-        themeIcon.classList.add("fa-sun");
-      } else {
-        themeIcon.classList.remove("fa-sun");
-        themeIcon.classList.add("fa-moon");
-      }
-      localStorage.setItem("theme", theme);
-    });
+      // Elements
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = document.getElementById('theme-icon');
+      const createTicketBtn = document.getElementById('create-ticket-btn');
+      const createTicketModal = document.getElementById('create-ticket-modal');
+      const cancelCreateTicketBtn = document.getElementById('cancel-create-ticket');
+      const cancelCreateTicketBtn2 = document.getElementById('cancel-create-ticket-2');
+      const createTicketForm = document.getElementById('create-ticket-form');
+      const ticketSubjectInput = document.getElementById('ticket-subject');
+      const ticketDescriptionInput = document.getElementById('ticket-description');
+      const ticketCategorySelect = document.getElementById('ticket-category');
+      const otherCategoryContainer = document.getElementById('other-category-container');
+      const otherCategoryInput = document.getElementById('other-category-input');
+      const ticketsBody = document.getElementById('tickets-body');
+      const searchInput = document.getElementById('search-input');
+      const totalTicketsEl = document.getElementById('total-tickets');
+      const openTicketsEl = document.getElementById('open-tickets');
+      const pendingTicketsEl = document.getElementById('pending-tickets');
+      const closedTicketsEl = document.getElementById('closed-tickets');
+      const viewTicketModal = document.getElementById('view-ticket-modal');
+      const closeViewModalBtn = document.getElementById('close-view-modal');
+      const viewModalBody = document.getElementById('view-modal-body');
+      const chatForm = document.getElementById('chat-form');
+      const chatInput = document.getElementById('chat-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const successAlert = document.getElementById('success-alert');
+      const alertMessage = document.getElementById('alert-message');
+      const errorAlert = document.getElementById('error-alert');
+      const errorMessageContent = document.getElementById('error-message-content');
 
-    function toggleDropdown(el) {
-      // If you need manual toggle on mobile, implement logic here.
-    }
+      let tickets = [];
+      let currentTicketId = null;
 
-    const ticketsBody = document.getElementById('tickets-body');
-    const searchInput = document.getElementById('search-input');
+      // Initialize Theme
+      const initializeTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+          themeIcon.classList.remove('fa-moon');
+          themeIcon.classList.add('fa-sun');
+        }
+      };
+      initializeTheme();
 
-    const totalTicketsEl = document.getElementById('total-tickets');
-    const openTicketsEl = document.getElementById('open-tickets');
-    const pendingTicketsEl = document.getElementById('pending-tickets');
-    const closedTicketsEl = document.getElementById('closed-tickets');
+      // Theme Toggle
+      themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        themeIcon.classList.toggle('fa-moon', !isDark);
+        themeIcon.classList.toggle('fa-sun', isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
 
-    const createTicketBtn = document.getElementById('create-ticket-btn');
-    const createTicketModal = document.getElementById('create-ticket-modal');
-    const createTicketForm = document.getElementById('create-ticket-form');
-    const cancelCreateTicketBtn = document.getElementById('cancel-create-ticket');
-    const cancelCreateTicketBtn2 = document.getElementById('cancel-create-ticket-2');
-    const ticketSubjectInput = document.getElementById('ticket-subject');
-    const ticketDescriptionInput = document.getElementById('ticket-description');
-    const ticketCategorySelect = document.getElementById('ticket-category');
-    const otherCategoryContainer = document.getElementById('other-category-container');
-    const otherCategoryInput = document.getElementById('other-category-input');
+      // Open Create Ticket Modal
+      createTicketBtn.addEventListener('click', () => showModal(createTicketModal));
 
-    const viewTicketModal = document.getElementById('view-ticket-modal');
-    const closeViewModal = document.getElementById('close-view-modal');
-    const viewModalBody = document.getElementById('view-modal-body');
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
-    const chatMessages = document.getElementById('chat-messages');
+      // Close Create Ticket Modal
+      [cancelCreateTicketBtn, cancelCreateTicketBtn2].forEach(btn => {
+        btn.addEventListener('click', () => hideModal(createTicketModal));
+      });
 
-    let tickets = [];
-    let currentTicketId = null;
+      // Handle Category Selection
+      ticketCategorySelect.addEventListener('change', (e) => {
+        if (e.target.value === 'Other') {
+          otherCategoryContainer.classList.remove('hidden');
+        } else {
+          otherCategoryContainer.classList.add('hidden');
+        }
+      });
 
-    const showModal = (modal) => modal.classList.add('active');
-    const hideModal = (modal) => modal.classList.remove('active');
+      // Handle Create Ticket Form Submission
+      createTicketForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const subject = sanitizeHTML(ticketSubjectInput.value.trim());
+        const description = sanitizeHTML(ticketDescriptionInput.value.trim());
+        let category = ticketCategorySelect.value;
+        if (category === 'Other') {
+          category = sanitizeHTML(otherCategoryInput.value.trim());
+          if (!category) {
+            displayErrorMessage('Venligst angiv en kategori.');
+            return;
+          }
+        }
 
-    const updateStats = (ticketList) => {
-      totalTicketsEl.textContent = ticketList.length;
-      const open = ticketList.filter(t => t.status === 'open').length;
-      const pending = ticketList.filter(t => t.status === 'pending').length;
-      const closed = ticketList.filter(t => t.status === 'closed').length;
-      openTicketsEl.textContent = open;
-      pendingTicketsEl.textContent = pending;
-      closedTicketsEl.textContent = closed;
-    };
+        if (!subject || !description || !category) {
+          displayErrorMessage('Alle felter skal udfyldes.');
+          return;
+        }
 
-    const renderTable = (ticketList) => {
-      ticketsBody.innerHTML = "";
-      ticketList.forEach(ticket => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap text-sm">${ticket._id}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm">${ticket.subject}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm">
-            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-              ticket.status === 'open' ? 'bg-green-100 text-green-800' :
-              ticket.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
-            }">${ticket.status}</span>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${new Date(ticket.createdDate).toLocaleString()}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm">
-            <button class="view-ticket-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex items-center space-x-2"
-              data-id="${ticket._id}">
-              <i class="fas fa-eye"></i>
-              <span>View</span>
-            </button>
+        try {
+          showLoadingIndicator(createTicketForm);
+          const response = await fetch(`${API_BASE_URL}/api/tickets`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ subject, description, category })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Kunne ikke oprette billet.');
+          }
+
+          const newTicket = await response.json();
+          tickets.unshift(newTicket); // Add to the beginning
+          renderTable(tickets);
+          updateStats(tickets);
+          showSuccessAlert('Billet oprettet succesfuldt!');
+          hideModal(createTicketModal);
+          createTicketForm.reset();
+          otherCategoryContainer.classList.add('hidden');
+        } catch (error) {
+          console.error('Error creating ticket:', error);
+          displayErrorMessage(`Fejl: ${error.message}`);
+        } finally {
+          hideLoadingIndicator(createTicketForm);
+        }
+      });
+
+      // Sanitize HTML to Prevent XSS
+      const sanitizeHTML = (str) => {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+      };
+
+      // Display Success Alert
+      const showSuccessAlert = (msg) => {
+        alertMessage.textContent = msg;
+        successAlert.classList.add('show');
+        setTimeout(() => {
+          successAlert.classList.remove('show');
+        }, 3000);
+      };
+
+      // Display Error Alert
+      const displayErrorMessage = (msg) => {
+        errorMessageContent.textContent = msg;
+        errorAlert.classList.add('show');
+        setTimeout(() => {
+          errorAlert.classList.remove('show');
+        }, 5000);
+      };
+
+      // Show Modal
+      const showModal = (modal) => {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        // Focus the first input in the modal for accessibility
+        const firstInput = modal.querySelector('input, textarea, select, button');
+        if (firstInput) firstInput.focus();
+      };
+
+      // Hide Modal
+      const hideModal = (modal) => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      };
+
+      // Show Loading Indicator
+      const showLoadingIndicator = (element) => {
+        const loader = document.createElement('div');
+        loader.className = 'loader border-4 border-blue-300 border-t-transparent rounded-full w-6 h-6 animate-spin';
+        loader.id = 'form-loader';
+        const submitButton = element.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.appendChild(loader);
+        }
+      };
+
+      // Hide Loading Indicator
+      const hideLoadingIndicator = (element) => {
+        const loader = document.getElementById('form-loader');
+        if (loader) {
+          loader.remove();
+          const submitButton = element.querySelector('button[type="submit"]');
+          if (submitButton) submitButton.disabled = false;
+        }
+      };
+
+      // Fetch Tickets from API
+      const fetchTickets = async (searchTerm = "") => {
+        try {
+          showTableLoader();
+          let url = `${API_BASE_URL}/api/tickets`;
+          if (searchTerm.trim()) {
+            url += `?search=${encodeURIComponent(searchTerm)}`;
+          }
+
+          const res = await fetch(url, {
+            credentials: 'include'
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Kunne ikke hente billetter.');
+          }
+
+          const data = await res.json();
+          tickets = data.tickets || data;
+          renderTable(tickets);
+          updateStats(tickets);
+        } catch (error) {
+          console.error('Error fetching tickets:', error);
+          displayErrorMessage(`Fejl: ${error.message}`);
+        } finally {
+          hideTableLoader();
+        }
+      };
+
+      // Show Table Loader
+      const showTableLoader = () => {
+        const loaderRow = document.createElement('tr');
+        loaderRow.id = 'table-loader';
+        loaderRow.innerHTML = `
+          <td colspan="5" class="px-6 py-4 text-center">
+            <div class="loader border-4 border-blue-300 border-t-transparent rounded-full w-8 h-8 animate-spin"></div>
           </td>
         `;
-        const viewBtn = tr.querySelector('.view-ticket-btn');
-        viewBtn.addEventListener('click', () => viewTicket(ticket._id));
-        ticketsBody.appendChild(tr);
-      });
-    };
+        ticketsBody.innerHTML = '';
+        ticketsBody.appendChild(loaderRow);
+      };
 
-    async function fetchTickets(searchTerm = "") {
-      let url = '/api/tickets';
-      if (searchTerm.trim()) {
-        url += `?search=${encodeURIComponent(searchTerm)}`;
-      }
-      const res = await fetch(url, { credentials: 'include' });
-      if (!res.ok) {
-        console.error('Failed to fetch tickets');
-        return;
-      }
-      const data = await res.json();
-      tickets = data.tickets || data; 
-      renderTable(tickets);
-      updateStats(tickets);
-    }
+      // Hide Table Loader
+      const hideTableLoader = () => {
+        const loaderRow = document.getElementById('table-loader');
+        if (loaderRow) loaderRow.remove();
+      };
 
-    async function createTicket(subject, description, category) {
-      const res = await fetch('/api/tickets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ subject, description, category })
-      });
-      if (!res.ok) {
-        console.error('Failed to create ticket');
-        return;
-      }
-      await fetchTickets(searchInput.value);
-    }
+      // Update Stats
+      const updateStats = (ticketList) => {
+        totalTicketsEl.textContent = ticketList.length;
+        const open = ticketList.filter(t => t.status && t.status.toLowerCase() === 'open').length;
+        const pending = ticketList.filter(t => t.status && t.status.toLowerCase() === 'pending').length;
+        const closed = ticketList.filter(t => t.status && t.status.toLowerCase() === 'closed').length;
+        openTicketsEl.textContent = open;
+        pendingTicketsEl.textContent = pending;
+        closedTicketsEl.textContent = closed;
+      };
 
-    async function viewTicket(ticketId) {
-      try {
-        const res = await fetch(`/api/tickets/${ticketId}`, { credentials: 'include' });
-        if (!res.ok) {
-          console.error('Failed to fetch ticket details');
+      // Render Tickets Table
+      const renderTable = (ticketList) => {
+        ticketsBody.innerHTML = "";
+        if (ticketList.length === 0) {
+          document.getElementById('no-tickets').classList.remove('hidden');
           return;
+        } else {
+          document.getElementById('no-tickets').classList.add('hidden');
         }
-        const ticket = await res.json();
-        currentTicketId = ticket._id;
-        populateViewModal(ticket);
-        showModal(viewTicketModal);
-      } catch (err) {
-        console.error('Error viewing ticket:', err);
-      }
-    }
 
-    function populateViewModal(ticket) {
-      // Populate ticket details
-      viewModalBody.innerHTML = `
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Ticket ID:</label>
-            <p class="text-lg font-medium">${ticket._id}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Subject:</label>
-            <p class="text-lg font-medium">${ticket.subject}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Status:</label>
-            <p class="text-lg font-medium">${ticket.status}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Created:</label>
-            <p class="text-lg font-medium">${new Date(ticket.createdDate).toLocaleString()}</p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Description:</label>
-            <p class="text-lg font-medium">${ticket.description || 'No description'}</p>
-          </div>
-        </div>
-      `;
-
-      // Populate conversation
-      chatMessages.innerHTML = '';
-      if (ticket.conversation && ticket.conversation.length > 0) {
-        ticket.conversation.forEach(msg => appendChatMessage(msg.message, msg.sender));
-      } else {
-        // Optional placeholder
-        // chatMessages.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-300">No conversation yet. Start by sending a message.</p>`;
-      }
-    }
-
-    function appendChatMessage(message, sender) {
-      const div = document.createElement('div');
-      div.classList.add('mb-2', 'p-2', 'rounded-lg', 'max-w-xs', 'break-words');
-      if (sender.toLowerCase() === 'user') {
-        div.classList.add('bg-blue-200', 'dark:bg-blue-600', 'ml-auto');
-      } else {
-        div.classList.add('bg-gray-300', 'dark:bg-gray-600');
-      }
-      div.textContent = message;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    chatForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const message = chatInput.value.trim();
-      if (!message) return;
-
-      appendChatMessage(message, 'User');
-      chatInput.value = '';
-
-      try {
-        const res = await fetch(`/api/tickets/${currentTicketId}/responses`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message })
+        ticketList.forEach(ticket => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${sanitizeHTML(ticket._id)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${sanitizeHTML(ticket.subject)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                ticket.status && ticket.status.toLowerCase() === 'open' ? 'bg-green-100 text-green-800' :
+                ticket.status && ticket.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }">${sanitizeHTML(ticket.status)}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${ticket.createdDate ? new Date(ticket.createdDate).toLocaleString() : 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <button class="view-ticket-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-1 rounded hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition flex items-center space-x-2" data-id="${sanitizeHTML(ticket._id)}" aria-label="Se Billet">
+                <i class="fas fa-eye"></i>
+                <span>Se</span>
+              </button>
+            </td>
+          `;
+          const viewBtn = tr.querySelector('.view-ticket-btn');
+          viewBtn.addEventListener('click', () => viewTicket(ticket._id));
+          ticketsBody.appendChild(tr);
         });
-        if (!res.ok) {
-          console.error('Failed to send message');
-          appendChatMessage('Error sending your message.', 'Support');
-          return;
+      };
+
+      // View Ticket Details
+      const viewTicket = async (ticketId) => {
+        try {
+          showModal(viewTicketModal);
+          showChatLoader();
+
+          const res = await fetch(`${API_BASE_URL}/api/tickets/${ticketId}`, {
+            credentials: 'include'
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Kunne ikke hente billetdetaljer.');
+          }
+
+          const ticket = await res.json();
+          currentTicketId = ticket._id;
+          populateViewModal(ticket);
+        } catch (error) {
+          console.error('Error viewing ticket:', error);
+          displayErrorMessage(`Fejl: ${error.message}`);
+          hideModal(viewTicketModal);
         }
-        const data = await res.json();
-        if (data.reply) {
-          appendChatMessage(data.reply, 'Support');
+      };
+
+      // Populate View Modal with Ticket Details
+      const populateViewModal = (ticket) => {
+        viewModalBody.innerHTML = `
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Billet ID:</label>
+              <p class="text-lg font-medium">${sanitizeHTML(ticket._id)}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Emne:</label>
+              <p class="text-lg font-medium">${sanitizeHTML(ticket.subject)}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Status:</label>
+              <p class="text-lg font-medium">${sanitizeHTML(ticket.status)}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Oprettet:</label>
+              <p class="text-lg font-medium">${ticket.createdDate ? new Date(ticket.createdDate).toLocaleString() : 'N/A'}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Beskrivelse:</label>
+              <p class="text-lg font-medium">${sanitizeHTML(ticket.description) || 'Ingen beskrivelse.'}</p>
+            </div>
+          </div>
+        `;
+
+        // Populate conversation
+        chatMessages.innerHTML = '';
+        if (ticket.conversation && ticket.conversation.length > 0) {
+          ticket.conversation.forEach(msg => appendChatMessage(msg.message, msg.sender));
+        } else {
+          chatMessages.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Ingen samtaler endnu.</p>';
         }
-      } catch (error) {
-        console.error('Error sending message:', error);
-        appendChatMessage('Error sending your message.', 'Support');
-      }
+      };
+
+      // Append Chat Message to Conversation
+      const appendChatMessage = (message, sender) => {
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('flex', 'items-start', 'space-x-3', 'mb-2');
+        
+        if (sender.toLowerCase() === 'user') {
+          messageContainer.innerHTML = `
+            <img src="https://via.placeholder.com/40" alt="User Avatar" class="w-10 h-10 rounded-full">
+            <div class="bg-blue-200 dark:bg-blue-600 p-2 rounded-lg max-w-xs">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">Bruger</p>
+              <p class="text-gray-700 dark:text-gray-300">${sanitizeHTML(message)}</p>
+            </div>
+          `;
+        } else if (sender.toLowerCase() === 'support') {
+          messageContainer.classList.add('justify-end');
+          messageContainer.innerHTML = `
+            <div class="bg-gray-300 dark:bg-gray-600 p-2 rounded-lg max-w-xs text-right">
+              <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Support</p>
+              <p class="text-gray-700 dark:text-gray-300">${sanitizeHTML(message)}</p>
+            </div>
+            <img src="https://via.placeholder.com/40" alt="Support Avatar" class="w-10 h-10 rounded-full">
+          `;
+        }
+
+        chatMessages.appendChild(messageContainer);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+      // Show Chat Loader
+      const showChatLoader = () => {
+        chatMessages.innerHTML = `
+          <div class="flex justify-center items-center">
+            <div class="loader border-4 border-blue-300 border-t-transparent rounded-full w-8 h-8 animate-spin"></div>
+          </div>
+        `;
+      };
+
+      // Handle Chat Form Submission
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = sanitizeHTML(chatInput.value.trim());
+        if (!message) return;
+
+        appendChatMessage(message, 'user');
+        chatInput.value = '';
+
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/tickets/${currentTicketId}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ message })
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Kunne ikke sende besked.');
+          }
+
+          const data = await res.json();
+          if (data.reply) {
+            appendChatMessage(data.reply, 'support');
+          }
+        } catch (error) {
+          console.error('Error sending message:', error);
+          appendChatMessage('Der opstod en fejl under afsendelse af din besked.', 'support');
+          displayErrorMessage(`Fejl: ${error.message}`);
+        }
+      });
+
+      // Close View Ticket Modal
+      closeViewModalBtn.addEventListener('click', () => {
+        hideModal(viewTicketModal);
+        currentTicketId = null;
+        chatMessages.innerHTML = '';
+      });
+
+      // Close Modals When Clicking Outside
+      window.addEventListener('click', (e) => {
+        if (e.target === createTicketModal) hideModal(createTicketModal);
+        if (e.target === viewTicketModal) hideModal(viewTicketModal);
+      });
+
+      // Close Modals with Escape Key
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hideModal(createTicketModal);
+          hideModal(viewTicketModal);
+        }
+      });
+
+      // Debounced Search
+      let debounceTimer;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          fetchTickets(e.target.value);
+        }, 300);
+      });
+
+      // Initial Load
+      fetchTickets();
     });
-
-    createTicketBtn.addEventListener('click', () => showModal(createTicketModal));
-    [cancelCreateTicketBtn, cancelCreateTicketBtn2].forEach(btn => btn.addEventListener('click', () => hideModal(createTicketModal)));
-
-    createTicketForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const subject = ticketSubjectInput.value.trim();
-      const description = ticketDescriptionInput.value.trim();
-      let category = ticketCategorySelect.value;
-      if (category === 'Other') category = otherCategoryInput.value.trim();
-      if (!subject || !description || !category) return;
-      await createTicket(subject, description, category);
-      hideModal(createTicketModal);
-    });
-
-    ticketCategorySelect.addEventListener('change', (e) => {
-      if (e.target.value === 'Other') {
-        otherCategoryContainer.classList.remove('hidden');
-      } else {
-        otherCategoryContainer.classList.add('hidden');
-      }
-    });
-
-    searchInput.addEventListener('input', (e) => fetchTickets(e.target.value));
-    closeViewModal.addEventListener('click', () => {
-      hideModal(viewTicketModal);
-      currentTicketId = null;
-      chatMessages.innerHTML = '';
-    });
-
-    window.addEventListener('click', (e) => {
-      if (e.target === createTicketModal) hideModal(createTicketModal);
-      if (e.target === viewTicketModal) hideModal(viewTicketModal);
-    });
-
-    // Initial load
-    fetchTickets();
   </script>
 </body>
 </html>
