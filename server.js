@@ -549,10 +549,6 @@ app.get('/admin/profile', authenticateAdmin, asyncHandler(async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'profile.html'));
 }));
 
-app.get('/dashboard/tickets', authenticateToken, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'tickets.html'));
-});
-
 app.get('/admin', authenticateAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
 });
@@ -567,7 +563,7 @@ adminDashboardPages.forEach((page) => {
 const dashboardPlatforms = ['macos', 'android', 'chromeos', 'ios', 'linux', 'windows'];
 dashboardPlatforms.forEach((platform) => {
   app.get(`/dashboard/${platform}`, authenticateToken, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'dashboard', `${platform}.html`));
+    res.sendFile(path.join(__dirname, 'public', 'dashboard', `pages/${platform}.html`));
   });
 });
 

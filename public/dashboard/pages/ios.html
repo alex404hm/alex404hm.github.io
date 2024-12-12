@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS/iPadOS Support - Support Pro</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        primaryBlue: '#2563EB',
+                        secondaryGray: '#E5E7EB',
+                        darkBlack: '#1E293B',
+                        lightBlack: '#334155',
+                        accentGreen: '#16A34A',
+                        accentRed: '#DC2626',
+                        hoverBlue: '#1E40AF',
+                        pendingYellow: '#F59E0B',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'hover': '0 12px 20px -4px rgba(0, 0, 0, 0.2)',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        /* Dropdown Styles */
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .group:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Search Suggestions Styles */
+        #searchSuggestions {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar Styling */
+        #searchSuggestions::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
+
+    <!-- Navbar Section -->
+    <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                    Home
+                </a>
+                <div class="relative group">
+                    <button class="flex items-center nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue focus:outline-none" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-chevron-down dropdown-icon mr-2"></i> OS Options
+                    </button>
+                    <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Windows -->
+                            <a href="/dashboard/windows" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img src="https://img.icons8.com/color/48/000000/windows-11.png" alt="Windows Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The most popular OS for PC users, providing a wide range of features.</p>
+                                </div>
+                            </a>
+                            <!-- macOS -->
+                            <a href="/dashboard/macos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img id="macos-icon" src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Known for its sleek design and high-quality hardware integration.</p>
+                                </div>
+                            </a>
+                            <!-- Linux -->
+                            <a href="/dashboard/linux" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A flexible and open-source OS favored by developers and power users.</p>
+                                </div>
+                            </a>
+                            <!-- iOS -->
+                            <a href="/dashboard/ios" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img id="ios-icon" src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">The operating system for Apple's mobile devices like iPhones and iPads.</p>
+                                </div>
+                            </a>
+                            <!-- Android -->
+                            <a href="/dashboard/android" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A highly customizable OS widely used across many smartphones and tablets.</p>
+                                </div>
+                            </a>
+                            <!-- ChromeOS -->
+                            <a href="/dashboard/chromeos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">A lightweight OS optimized for Chromebooks, focusing on simplicity.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <!-- Removed the Profile link as per the request -->
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                        <i id="theme-icon" class="fas fa-sun" aria-hidden="true"></i>
+                    </button>
+                    <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main class="pt-36 container mx-auto px-6 mb-16">
+            <header class="text-center mb-16">
+                <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray mb-6">iOS/iPadOS Support</h1>
+                <p class="text-lg text-gray-700 dark:text-gray-300">Find answers to your questions and solutions to your iOS and iPadOS issues.</p>
+            </header>
+
+            <!-- Search Bar Section -->
+            <div class="relative max-w-3xl mx-auto mb-12">
+                <input id="searchInput" type="text" placeholder="Search for help..." class="w-full py-4 pl-14 pr-4 text-lg rounded-full shadow-md focus:outline-none focus:ring-4 focus:ring-primaryBlue transition-all duration-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-300" aria-label="Search for help" autocomplete="off">
+                <i class="fas fa-search absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-200" aria-hidden="true"></i>
+                <div id="searchSuggestions" class="absolute w-full bg-white dark:bg-gray-800 rounded-lg shadow-md mt-2 p-2 hidden z-10">
+                    <!-- Suggestions will appear here -->
+                </div>
+            </div>
+
+            <!-- Popular Guides Section -->
+            <section id="mostPopularGuides" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-8">Most Popular iOS/iPadOS Guides</h2>
+                <div id="popularGuidesContainer" class="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    <!-- Most popular guides will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Search Results Section -->
+            <section id="searchResults" class="hidden">
+                <h2 class="text-3xl font-bold text-center mb-8">Search Results</h2>
+                <div id="resultsContainer" class="space-y-8">
+                    <!-- Search results will be dynamically added here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- JavaScript for Dark Mode and Data Fetching -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Dark mode setup
+                initializeDarkMode();
+
+                // Fetch and display the most popular guides with limit=3
+                fetchGuides('/api/guides?category=iOS&limit=3', displayPopularGuides);
+
+                // Search functionality
+                initializeSearch();
+
+                // Dark Mode Initialization
+                function initializeDarkMode() {
+                    const theme = localStorage.getItem('theme'); // Get theme from localStorage
+                    if (theme === 'dark') { // Check if theme is 'dark'
+                        document.documentElement.classList.add('dark');
+                        updateThemeIcon('dark');
+                        updateLogoColors('dark');
+                    } else if (theme === 'light') { // Check if theme is 'light'
+                        document.documentElement.classList.remove('dark');
+                        updateThemeIcon('light');
+                        updateLogoColors('light');
+                    } else {
+                        // If no theme is set, default to light mode
+                        localStorage.setItem('theme', 'light');
+                        updateThemeIcon('light');
+                        updateLogoColors('light');
+                    }
+
+                    document.getElementById('theme-toggle').addEventListener('click', () => {
+                        if (document.documentElement.classList.toggle('dark')) {
+                            localStorage.setItem('theme', 'dark'); // Save 'dark' to localStorage
+                            updateThemeIcon('dark');
+                            updateLogoColors('dark');
+                        } else {
+                            localStorage.setItem('theme', 'light'); // Save 'light' to localStorage
+                            updateThemeIcon('light');
+                            updateLogoColors('light');
+                        }
+                    });
+                }
+
+                function updateThemeIcon(mode) {
+                    const themeIcon = document.getElementById('theme-icon');
+                    if (mode === 'dark') {
+                        themeIcon.classList.replace('fa-sun', 'fa-moon');
+                        themeIcon.setAttribute('aria-label', 'Switch to light mode');
+                    } else {
+                        themeIcon.classList.replace('fa-moon', 'fa-sun');
+                        themeIcon.setAttribute('aria-label', 'Switch to dark mode');
+                    }
+                }
+
+                function updateLogoColors(mode) {
+                    const macosIcon = document.getElementById('macos-icon');
+                    const iosIcon = document.getElementById('ios-icon');
+                    if (mode === 'dark') {
+                        macosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/mac-os.png";
+                        iosIcon.src = "https://img.icons8.com/ios-filled/48/ffffff/ios-logo.png";
+                    } else {
+                        macosIcon.src = "https://img.icons8.com/ios-filled/48/000000/mac-os.png";
+                        iosIcon.src = "https://img.icons8.com/ios-filled/48/000000/ios-logo.png";
+                    }
+                }
+
+                // Fetch Guides from API
+                async function fetchGuides(apiUrl, callback) {
+                    try {
+                        const response = await fetch(apiUrl);
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const data = await response.json();
+                        if (data.guides) {
+                            callback(data.guides);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching guides:', error);
+                        displayError('Failed to load guides. Please try again later.');
+                    }
+                }
+
+                // Display Error Message
+                function displayError(message) {
+                    const container = document.getElementById('popularGuidesContainer');
+                    container.innerHTML = `<p class="text-center text-red-500">${message}</p>`;
+                }
+
+                // Display Popular Guides
+                function displayPopularGuides(guides) {
+                    const container = document.getElementById('popularGuidesContainer');
+                    container.innerHTML = guides.map(createGuideCard).join('');
+                }
+
+                // Display Search Results
+                function displaySearchResults(guides) {
+                    const resultsContainer = document.getElementById('resultsContainer');
+                    if (guides.length === 0) {
+                        resultsContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">No results found for your query.</p>`;
+                    } else {
+                        resultsContainer.innerHTML = guides.map(createSearchResultCard).join('');
+                    }
+                    toggleVisibility('mostPopularGuides', false);
+                    toggleVisibility('searchResults', true);
+                }
+
+                // Helper to toggle section visibility
+                function toggleVisibility(sectionId, visible) {
+                    document.getElementById(sectionId).classList.toggle('hidden', !visible);
+                }
+
+                // Helper function to create a guide card
+                function createGuideCard(guide) {
+                    const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                    const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                    return `
+                        <a href="/articles/${encodeURIComponent(category.toLowerCase())}/${encodeURIComponent(slug)}" class="block bg-white dark:bg-darkBlack rounded-2xl shadow-soft p-6 transition-transform duration-300 hover:shadow-hover hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                            <img src="${imageUrl}" alt="${title} Image" class="w-full h-40 object-cover rounded-lg mb-4">
+                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                            <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">${summary}</p>
+                            <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                <p>Author: ${author.name}</p>
+                                <p>Published on: ${new Date(publishDate).toLocaleDateString()}</p>
+                            </div>
+                        </a>`;
+                }
+
+                // Helper function to create a search result card
+                function createSearchResultCard(guide) {
+                    const { title, summary, subtitle, author, category, publishDate, bannerImage, slug } = guide;
+                    const imageUrl = bannerImage || 'https://via.placeholder.com/150';
+                    return `
+                        <a href="/articles/${encodeURIComponent(category.toLowerCase())}/${encodeURIComponent(slug)}" class="block bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 transition-transform duration-300 hover:shadow-hover hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                            <div class="flex items-start space-x-4">
+                                <img src="${imageUrl}" alt="${title} Image" class="w-32 h-32 rounded-lg object-cover">
+                                <div>
+                                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-secondaryGray">${title}</h2>
+                                    <p class="text-md font-medium text-gray-700 dark:text-gray-400">${subtitle}</p>
+                                    <p class="mt-2 text-gray-600 dark:text-gray-400">${summary}</p>
+                                    <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                        <p>Author: ${author.name}</p>
+                                        <p>Published on: ${new Date(publishDate).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>`;
+                }
+
+                // Search Initialization with Debounce and Autocomplete
+                function initializeSearch() {
+                    const searchInput = document.getElementById('searchInput');
+                    const searchSuggestions = document.getElementById('searchSuggestions');
+                    let debounceTimeout = null;
+
+                    searchInput.addEventListener('input', (e) => {
+                        const query = e.target.value.trim();
+                        clearTimeout(debounceTimeout);
+
+                        if (query.length === 0) {
+                            searchSuggestions.classList.add('hidden');
+                            toggleVisibility('mostPopularGuides', true);
+                            toggleVisibility('searchResults', false);
+                            return;
+                        }
+
+                        debounceTimeout = setTimeout(() => {
+                            fetchGuides(`/api/guides/search?q=${encodeURIComponent(query)}&category=iOS`, (guides) => {
+                                displaySuggestions(guides, query);
+                            });
+                        }, 300); // 300ms debounce delay
+                    });
+
+                    // Handle clicking outside to close suggestions
+                    document.addEventListener('click', (e) => {
+                        if (!searchSuggestions.contains(e.target) && e.target !== searchInput) {
+                            searchSuggestions.classList.add('hidden');
+                        }
+                    });
+
+                    // Search Results on Enter Key
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const query = e.target.value.trim();
+                            if (query.length > 0) {
+                                fetchGuides(`/api/guides/search?q=${encodeURIComponent(query)}&category=iOS`, displaySearchResults);
+                                searchSuggestions.classList.add('hidden');
+                            }
+                        }
+                    });
+                }
+
+                // Display Autocomplete Suggestions
+                function displaySuggestions(guides, query) {
+                    const searchSuggestions = document.getElementById('searchSuggestions');
+                    if (guides.length === 0) {
+                        searchSuggestions.innerHTML = `<p class="text-gray-500 dark:text-gray-400 px-4 py-2">No suggestions found.</p>`;
+                    } else {
+                        searchSuggestions.innerHTML = guides.map(guide => `
+                            <a href="/articles/${encodeURIComponent(guide.category.toLowerCase())}/${encodeURIComponent(guide.slug)}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                                ${highlightMatch(guide.title, query)}
+                            </a>
+                        `).join('');
+                    }
+                    searchSuggestions.classList.remove('hidden');
+                    toggleVisibility('mostPopularGuides', false);
+                    toggleVisibility('searchResults', true);
+                }
+
+                // Highlight Matching Text in Suggestions
+                function highlightMatch(text, query) {
+                    const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+                    return text.replace(regex, '<span class="bg-yellow-200 dark:bg-yellow-700">$1</span>');
+                }
+
+                // Escape RegExp Special Characters
+                function escapeRegExp(string) {
+                    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }
+            });
+        </script>
+    </body>
+
+</html>

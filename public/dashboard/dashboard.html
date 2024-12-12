@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <!-- Existing head content -->
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Support Pro</title>
@@ -39,178 +39,202 @@
                         hoverBlue: '#1E40AF',
                         pendingYellow: '#F59E0B',
                     },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'hover': '0 12px 20px -4px rgba(0, 0, 0, 0.2)',
+                    },
                 },
             },
         };
     </script>
+
+    <style>
+        /* Dropdown Styles */
+        .dropdown-content {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Scrollbar Styling for Search Suggestions */
+        #searchSuggestions::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        #searchSuggestions::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
 
     <!-- Loading Screen -->
-    <!-- Removed 'hidden' to display the loading screen initially -->
     <div id="loadingScreen" class="fixed inset-0 flex items-center justify-center bg-black/75 backdrop-blur-md z-50 transition-opacity duration-500">
-        <i id="loadingIcon" class="fas fa-tools text-4xl text-white animate-pulse"></i>
+        <i id="loadingIcon" class="fas fa-tools text-4xl text-white animate-pulse" aria-hidden="true"></i>
+        <span class="sr-only">Loading...</span>
     </div>
 
-    <!-- Modern Navbar for Dashboard -->
+    <!-- Navbar Section -->
     <header class="fixed inset-x-0 top-0 z-30 w-full bg-white/90 dark:bg-gray-900/80 py-4 shadow-md backdrop-blur-lg transition-all duration-500 ease-in-out md:top-6 md:rounded-3xl lg:max-w-screen-lg mx-auto">
         <div class="container mx-auto px-6 flex items-center justify-between">
+            <!-- Logo -->
             <a href="/" class="text-2xl font-bold text-primaryBlue dark:text-secondaryGray hover:text-hoverBlue transition-colors duration-300">Support Pro</a>
+
+            <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-6">
-                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-primaryBlue dark:text-secondaryGray transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
                     Home
                 </a>
-                <div class="relative dropdown group" onclick="toggleDropdown(this)">
-                    <button class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                        OS Options
+
+                <!-- OS Options Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue focus:outline-none focus:ring-2 focus:ring-primaryBlue" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-chevron-down dropdown-icon mr-2"></i> OS Options
                     </button>
                     <div class="dropdown-content opacity-0 invisible group-hover:visible group-hover:opacity-100 flex flex-col absolute left-0 top-full mt-2 w-full md:w-[36rem] p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300 ease-in-out z-50">
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Windows -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/windows" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
                                 <img src="https://img.icons8.com/color/48/000000/windows-11.png" alt="Windows Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Windows</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">The most popular OS for PC users, providing a wide range of features.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- macOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
-                                <img src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
+                            <a href="/dashboard/macos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img id="macos-icon" src="https://img.icons8.com/ios-filled/48/000000/mac-os.png" alt="macOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">macOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Known for its sleek design and high-quality hardware integration.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- Linux -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/linux" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
                                 <img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Linux</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A flexible and open-source OS favored by developers and power users.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- iOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
-                                <img src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
+                            <a href="/dashboard/ios" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
+                                <img id="ios-icon" src="https://img.icons8.com/ios-filled/48/000000/ios-logo.png" alt="iOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">The operating system for Apple's mobile devices like iPhones and iPads.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- Android -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/android" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
                                 <img src="https://img.icons8.com/color/48/000000/android-os.png" alt="Android Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A highly customizable OS widely used across many smartphones and tablets.</p>
                                 </div>
-                            </div>
+                            </a>
                             <!-- ChromeOS -->
-                            <div class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50">
+                            <a href="/dashboard/chromeos" class="flex items-start p-4 bg-gray-100 dark:bg-gray-700 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:dark:shadow-black/50 focus:outline-none focus:ring-2 focus:ring-primaryBlue">
                                 <img src="https://img.icons8.com/color/48/000000/chrome.png" alt="ChromeOS Icon" class="w-12 h-12">
                                 <div class="ml-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">A lightweight OS optimized for Chromebooks, focusing on simplicity.</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <a href="/profile" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                    Profile
-                </a>
             </nav>
+
+            <!-- Theme Toggle & Logout -->
             <div class="flex items-center space-x-4">
                 <button id="theme-toggle" aria-label="Toggle Dark Mode" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primaryBlue">
-                    <!-- Removed 'dark:fa-moon' and set initial icon to sun -->
                     <i id="theme-icon" class="fas fa-sun" aria-hidden="true"></i>
+                    <span class="sr-only">Toggle Dark Mode</span>
                 </button>
                 <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
             </div>
-        </div>
-    </header>
-
-    <!-- Main Content Section -->
-    <!-- Added 'hidden' to hide main content initially -->
-    <main id="mainContent" class="hidden pt-36 container mx-auto px-6 mb-16">
-        <header class="text-center mb-16">
-            <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray mb-6">Welcome to Support Pro</h1>
-            <p class="text-lg text-gray-700 dark:text-gray-300">Select your operating system to continue</p>
         </header>
-        <!-- Grid OS Selection -->
-        <div id="os-grid" class="grid gap-10 grid-cols-1 md:grid-cols-3">
-            <!-- Windows Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="windows" class="block text-center">
-                    <img src="https://img.icons8.com/color/96/000000/windows-10.png" alt="Windows Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Windows</h2>
-                </a>
+
+        <!-- Main Content Section -->
+        <main id="mainContent" class="hidden pt-36 container mx-auto px-6 mb-16">
+            <!-- Page Title -->
+            <header class="text-center mb-12">
+                <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray">Welcome to Support Pro</h1>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mt-4">Select your operating system to continue</p>
+            </header>
+            <!-- Grid OS Selection -->
+            <div id="os-grid" class="grid gap-10 grid-cols-1 md:grid-cols-3">
+                <!-- Windows Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="windows" class="block text-center">
+                        <img src="https://img.icons8.com/color/96/000000/windows-10.png" alt="Windows Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Windows</h2>
+                    </a>
+                </div>
+
+                <!-- macOS Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="macos" class="block text-center">
+                        <img id="macos-logo" src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
+                    </a>
+                </div>
+
+                <!-- Linux Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="linux" class="block text-center">
+                        <img src="https://img.icons8.com/color/96/000000/linux.png" alt="Linux Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Linux</h2>
+                    </a>
+                </div>
+
+                <!-- iOS/iPadOS Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="ios" class="block text-center">
+                        <img id="ios-logo" src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
+                    </a>
+                </div>
+
+                <!-- AndroidOS Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="android" class="block text-center">
+                        <img src="https://img.icons8.com/color/96/000000/android-os.png" alt="Android Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h2>
+                    </a>
+                </div>
+
+                <!-- ChromeOS Tile -->
+                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                    <a href="chromeos" class="block text-center">
+                        <img src="https://img.icons8.com/color/96/000000/chrome.png" alt="ChromeOS Logo" class="mx-auto mb-4">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h2>
+                    </a>
+                </div>
             </div>
+        </main>
 
-            <!-- macOS Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="macos" class="block text-center">
-                    <!-- Added ID for JavaScript manipulation -->
-                    <img id="macos-logo" src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
-                </a>
-            </div>
+    </body>
 
-            <!-- Linux Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="linux" class="block text-center">
-                    <img src="https://img.icons8.com/color/96/000000/linux.png" alt="Linux Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Linux</h2>
-                </a>
-            </div>
-
-            <!-- iOS/iPadOS Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="ios" class="block text-center">
-                    <!-- Added ID for JavaScript manipulation -->
-                    <img id="ios-logo" src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
-                </a>
-            </div>
-
-            <!-- AndroidOS Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="android" class="block text-center">
-                    <img src="https://img.icons8.com/color/96/000000/android-os.png" alt="Android Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h2>
-                </a>
-            </div>
-
-            <!-- ChromeOS Tile -->
-            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                <a href="chromeos" class="block text-center">
-                    <img src="https://img.icons8.com/color/96/000000/chrome.png" alt="ChromeOS Logo" class="mx-auto mb-4">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h2>
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <!-- Verification Overlay -->
-    <div id="verification-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center max-w-md mx-auto">
-            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Email Verification Required</h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">Please verify your email address to access all dashboard features.</p>
-            <button id="resend-verification-btn" class="px-4 py-2 bg-primaryBlue text-white rounded-md hover:bg-hoverBlue transition-colors duration-300">Resend Verification Email</button>
-        </div>
-    </div>
-
-    <!-- Link to Main JavaScript File -->
+    <!-- JavaScript for Dark Mode and Loading Screen -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Define and cache elements to prevent multiple DOM queries
+            // Cache DOM elements for better performance
             const elements = {
                 loadingScreen: document.getElementById('loadingScreen'),
                 mainContent: document.getElementById('mainContent'),
                 themeToggle: document.getElementById('theme-toggle'),
-                darkModeIcon: document.getElementById('theme-icon'), // Updated selector
+                themeIcon: document.getElementById('theme-icon'),
                 logos: {
                     macos: document.getElementById('macos-logo'),
                     ios: document.getElementById('ios-logo')
@@ -229,7 +253,7 @@
                 }
             };
 
-            // Function to hide the loading screen after a short delay and show the main content
+            // Function to hide the loading screen and show main content
             const hideLoadingScreen = () => {
                 setTimeout(() => {
                     if (elements.loadingScreen) {
@@ -238,64 +262,55 @@
                     if (elements.mainContent) {
                         elements.mainContent.classList.remove('hidden');
                     }
-                }, 2000); // Adjust loading time as needed
+                }, 2000); // Adjust the delay as needed
             };
 
-            // Function to update theme-related elements (icons, logos)
+            // Function to update theme-related elements (icon and logos)
             const updateThemeElements = (isDark) => {
-                // Update dark mode icon
-                elements.darkModeIcon.classList.remove('fa-sun', 'fa-moon');
-                elements.darkModeIcon.classList.add(isDark ? 'fa-moon' : 'fa-sun');
-
-                // Set the correct logo sources based on the theme
-                if (elements.logos.macos) {
-                    elements.logos.macos.src = isDark ? logoUrls.macos.dark : logoUrls.macos.light;
+                // Update theme icon
+                if (isDark) {
+                    elements.themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    elements.themeIcon.setAttribute('aria-label', 'Switch to light mode');
+                } else {
+                    elements.themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    elements.themeIcon.setAttribute('aria-label', 'Switch to dark mode');
                 }
-                if (elements.logos.ios) {
+
+                // Update logos based on theme
+                if (elements.logos.macos && elements.logos.ios) {
+                    elements.logos.macos.src = isDark ? logoUrls.macos.dark : logoUrls.macos.light;
                     elements.logos.ios.src = isDark ? logoUrls.ios.dark : logoUrls.ios.light;
                 }
             };
 
-            // Function to initialize theme based on the saved preference in localStorage
+            // Function to initialize theme based on localStorage
             const initializeTheme = () => {
-                const isDark = localStorage.getItem('theme') === 'dark';
-                if (isDark) {
+                const storedTheme = localStorage.getItem('theme');
+                if (storedTheme === 'dark') {
                     document.documentElement.classList.add('dark');
+                    updateThemeElements(true);
                 } else {
                     document.documentElement.classList.remove('dark');
+                    updateThemeElements(false);
                 }
-                updateThemeElements(isDark);
             };
 
-            // Function to toggle theme and update elements
+            // Function to toggle theme
             const toggleTheme = () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
                 updateThemeElements(isDark);
             };
 
-            // Add event listener to the theme toggle button
+            // Event listener for theme toggle button
             if (elements.themeToggle) {
                 elements.themeToggle.addEventListener('click', toggleTheme);
             }
 
-            // Show loading screen initially is handled by HTML (no need to manipulate here)
-
-            // Initial setup calls
-            hideLoadingScreen();
+            // Initialize theme and hide loading screen
             initializeTheme();
+            hideLoadingScreen();
         });
-
-        // Function to toggle dropdown visibility
-        function toggleDropdown(element) {
-            const dropdownContent = element.querySelector('.dropdown-content');
-            if (dropdownContent) {
-                dropdownContent.classList.toggle('invisible');
-                dropdownContent.classList.toggle('opacity-0');
-                dropdownContent.classList.toggle('opacity-100');
-            }
-        }
     </script>
-</body>
 
 </html>
