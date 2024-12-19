@@ -108,30 +108,7 @@ const userSchema = new mongoose.Schema(
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     theme: { type: String, default: 'light' },
     phoneNumber: { type: String },
-    profileSetUp: { type: Boolean, default: false }, // Added field to track profile setup
-  },
-  { timestamps: true }
-);
-
-// Response Schema for Tickets
-const responseSchema = new mongoose.Schema({
-  sender: { type: String, required: true },
-  message: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now },
-});
-
-// Ticket Schema
-const ticketSchema = new mongoose.Schema(
-  {
-    ticketId: { type: String, default: () => uuidv4(), unique: true },
-    subject: { type: String, required: true, maxlength: 100 },
-    description: { type: String, required: true, maxlength: 1000 },
-    imageUrl: { type: String },
-    status: { type: String, enum: ['open', 'pending', 'closed'], default: 'open' },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    category: { type: String },
-    createdDate: { type: Date, default: Date.now },
-    responses: [responseSchema],
+    // Removed profileSetUp as setup-profile functionality is removed
   },
   { timestamps: true }
 );
@@ -160,7 +137,6 @@ const guideSchema = new mongoose.Schema(
 guideSchema.index({ slug: 1, category: 1 }, { unique: true });
 
 const User = mongoose.model('User', userSchema);
-const Ticket = mongoose.model('Ticket', ticketSchema);
 const Guide = mongoose.model('Guide', guideSchema);
 
 // ========================= Nodemailer Configuration ====================== //
@@ -502,44 +478,6 @@ app.get('/dashboard', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
 });
 
-// Setup Profile Page
-app.get('/setup-profile', authenticateToken, (req, res) => {
-  // If user is already set up, redirect to dashboard/profile
-  User.findById(req.user.id).then(user => {
-    if (user && user.profileSetUp) {
-      return res.redirect('/dashboard/profile');
-    }
-    res.sendFile(path.join(__dirname, 'public', 'setup-profile.html'));
-  });
-});
-
-app.post('/api/user/setup', authenticateToken, asyncHandler(async (req, res) => {
-  const { username, fullname, email } = req.body;
-  // Validate fields as needed
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    return res.status(404).json({ error: 'User not found.' });
-  }
-  // Mark profile as set up
-  user.profileSetUp = true;
-  // Update user details if provided
-  user.name = fullname || user.name;
-  user.email = email || user.email;
-  await user.save();
-  res.json({ message: "✅ Profile has been successfully set up!" });
-}));
-
-app.get('/dashboard/profile', authenticateToken, asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-  if (!user.profileSetUp) {
-    // Profile not set up yet, but user tries to access profile page
-    // You can redirect or show a message prompting setup
-    return res.redirect('/setup-profile');
-  }
-  res.sendFile(path.join(__dirname, 'public', 'dashboard', 'profile.html'));
-  logger.info(`Profile page served for user: ${req.user.email}`);
-}));
-
 // Admin Profile Page
 app.get('/admin/profile', authenticateAdmin, asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
@@ -553,14 +491,14 @@ app.get('/admin', authenticateAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
 });
 
-const adminDashboardPages = ['guides', 'tickets', 'logs', 'users', 'dashboard'];
+const adminDashboardPages = ['guides', 'users', 'dashboard']; // Removed 'logs'
 adminDashboardPages.forEach((page) => {
   app.get(`/admin/${page}`, authenticateAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin', `${page}.html`));
   });
 });
 
-const dashboardPlatforms = ['macos', 'android', 'chromeos', 'ios', 'linux', 'windows'];
+const dashboardPlatforms = ['macos', 'android', 'chromeos', 'ios', 'linux', 'windows', 'chat'];
 dashboardPlatforms.forEach((platform) => {
   app.get(`/dashboard/${platform}`, authenticateToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard', `pages/${platform}.html`));
@@ -763,225 +701,6 @@ app.post('/api/logout', authenticateToken, (req, res) => {
   res.status(200).json({ message: '✅ Logout successful.' });
 });
 
-// ========================= Ticketing System ============================= //
-
-// Create a New Ticket
-app.post(
-  '/api/tickets',
-  authenticateToken,
-  upload.single('image'),
-  [
-    body('subject').trim().notEmpty().withMessage('❌ Subject is required.'),
-    body('description').trim().notEmpty().withMessage('❌ Description is required.'),
-    body('category').trim().notEmpty().withMessage('❌ Category is required.'),
-    body('priority')
-      .optional()
-      .isIn(['low', 'medium', 'high'])
-      .withMessage('❌ Invalid priority.'),
-  ],
-  asyncHandler(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.warn('Ticket creation validation failed.', { errors: errors.array() });
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { subject, description, category, priority } = req.body;
-    let imageUrl = null;
-
-    if (req.file) {
-      imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-    }
-
-    try {
-      const ticket = new Ticket({
-        subject,
-        description,
-        category,
-        priority: priority || 'medium',
-        user: req.user.id,
-        imageUrl,
-      });
-
-      await ticket.save();
-      logger.info(`✅ Ticket created: ${subject} by ${req.user.email}`, {
-        ticketId: ticket.ticketId,
-        userId: req.user.id,
-      });
-      res.status(201).json({ message: '✅ Ticket created successfully.', ticket });
-    } catch (error) {
-      logger.error('❌ Error creating ticket:', error);
-      res.status(500).json({ error: '❌ Error creating ticket.' });
-    }
-  })
-);
-
-// Get All Tickets (Admin Only)
-app.get(
-  '/api/tickets/admin',
-  authenticateAdmin,
-  asyncHandler(async (req, res) => {
-    try {
-      const tickets = await Ticket.find()
-        .populate('user', 'name email')
-        .sort({ createdAt: -1 });
-      res.json({ tickets });
-    } catch (error) {
-      logger.error('❌ Error fetching tickets:', error);
-      res.status(500).json({ error: '❌ Error fetching tickets.' });
-    }
-  })
-);
-
-// Get User's Tickets with Pagination and Search
-app.get(
-  '/api/tickets',
-  authenticateToken,
-  asyncHandler(async (req, res) => {
-    const { page = 1, limit = 5, search = '' } = req.query;
-
-    const query = {
-      user: req.user.id,
-      $or: [
-        { subject: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-      ],
-    };
-
-    try {
-      const tickets = await Ticket.find(query)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
-
-      const total = await Ticket.countDocuments(query);
-
-      res.json({
-        total,
-        page: parseInt(page),
-        pages: Math.ceil(total / limit),
-        tickets,
-      });
-    } catch (error) {
-      logger.error('❌ Error fetching tickets:', error);
-      res.status(500).json({ error: '❌ Error fetching tickets.' });
-    }
-  })
-);
-
-// Get a Single Ticket by ID
-app.get(
-  '/api/tickets/:id',
-  authenticateToken,
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: '❌ Invalid ticket ID.' });
-    }
-
-    try {
-      const ticket = await Ticket.findOne({ _id: id, user: req.user.id });
-      if (!ticket) {
-        return res.status(404).json({ error: '❌ Ticket not found.' });
-      }
-
-      res.json(ticket);
-    } catch (error) {
-      logger.error('❌ Error fetching ticket:', error);
-      res.status(500).json({ error: '❌ Error fetching ticket.' });
-    }
-  })
-);
-
-// Add a Response to a Ticket
-app.post(
-  '/api/tickets/:id/responses',
-  authenticateToken,
-  [
-    body('message').trim().notEmpty().withMessage('❌ Response message is required.'),
-  ],
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const { message } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.warn('Add response validation failed.', { errors: errors.array() });
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: '❌ Invalid ticket ID.' });
-    }
-
-    try {
-      const ticket = await Ticket.findOne({ _id: id, user: req.user.id });
-      if (!ticket) {
-        return res.status(404).json({ error: '❌ Ticket not found.' });
-      }
-
-      ticket.responses.push({
-        sender: 'User',
-        message,
-      });
-
-      await ticket.save();
-
-      logger.info(`✅ Response added to ticket: ${ticket.ticketId} by ${req.user.email}`, {
-        ticketId: ticket.ticketId,
-        userId: req.user.id,
-      });
-
-      res.json({ message: '✅ Response added successfully.', ticket });
-    } catch (error) {
-      logger.error('❌ Add Response Error:', error);
-      res.status(500).json({ error: '❌ Error adding response.' });
-    }
-  })
-);
-
-// Update Ticket Status (Admin Only)
-app.put(
-  '/api/tickets/:id/status',
-  authenticateAdmin,
-  [
-    body('status')
-      .isIn(['open', 'pending', 'closed'])
-      .withMessage('❌ Status must be open, pending, or closed.'),
-  ],
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.warn('Ticket status update validation failed.', { errors: errors.array() });
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ error: '❌ Invalid ticket ID.' });
-    }
-
-    try {
-      const ticket = await Ticket.findByIdAndUpdate(id, { status }, { new: true });
-      if (!ticket) {
-        return res.status(404).json({ error: '❌ Ticket not found.' });
-      }
-
-      logger.info(`✅ Ticket status updated: ${ticket.ticketId} to ${status} by Admin`, {
-        ticketId: ticket.ticketId,
-        adminId: req.user.id,
-      });
-
-      res.json({ message: `✅ Ticket status updated to ${status}.`, ticket });
-    } catch (error) {
-      logger.error('❌ Update Ticket Status Error:', error);
-      res.status(500).json({ error: '❌ Error updating ticket status.' });
-    }
-  })
-);
-
 // ========================= Users API (Admin) ============================= //
 
 // Get All Users
@@ -1127,25 +846,21 @@ app.get(
   asyncHandler(async (req, res) => {
     try {
       const totalUsers = await User.countDocuments({ role: { $ne: 'admin' }, status: 'active' });
-      const openTickets = await Ticket.countDocuments({ status: 'open' });
-      const pendingTickets = await Ticket.countDocuments({ status: 'pending' });
       const guides = await Guide.countDocuments();
 
       const chartData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        openTickets: [12, 19, 3, 5, 2, 3],
-        closedTickets: [7, 11, 5, 8, 3, 7],
+        guideViews: [120, 190, 300, 500, 200, 300],
+        newGuides: [12, 19, 3, 5, 2, 3],
       };
 
       const recentActivities = [
         { description: 'User John Doe created a new guide.', timestamp: '2024-04-01 10:00' },
-        { description: 'Admin Jane Smith closed ticket #123.', timestamp: '2024-04-01 09:30' },
+        { description: 'Admin Jane Smith updated the dashboard settings.', timestamp: '2024-04-01 09:30' },
       ];
 
       res.json({
         totalUsers,
-        openTickets,
-        pendingTickets,
         guides,
         chartData,
         recentActivities,
@@ -1159,28 +874,46 @@ app.get(
 
 // ========================= Guides API ========================= //
 
-// Search Guides (Public)
+// Search Guides with query and category (Public)
 app.get(
   '/api/guides/search',
   asyncHandler(async (req, res) => {
-    const { q } = req.query;
+    const { q, category, limit } = req.query;
+
     if (!q || q.trim() === '') {
       return res.status(400).json({ error: '❌ Search query is required.' });
     }
 
     try {
       const searchRegex = new RegExp(q, 'i');
-      const guides = await Guide.find({
+      let searchConditions = {
         $or: [
           { title: searchRegex },
           { summary: searchRegex },
           { content: searchRegex },
           { tags: searchRegex },
         ],
-      })
+      };
+
+      if (category) {
+        searchConditions.category = new RegExp(category, 'i');
+      }
+
+      let queryExec = Guide.find(searchConditions)
         .sort({ views: -1 })
         .select('title summary tags category views');
 
+      // Handle limit parameter
+      if (limit) {
+        const limitNumber = parseInt(limit);
+        if (!isNaN(limitNumber) && limitNumber > 0) {
+          queryExec = queryExec.limit(limitNumber);
+        } else {
+          return res.status(400).json({ error: '❌ Invalid limit parameter.' });
+        }
+      }
+
+      const guides = await queryExec;
       res.status(200).json({ guides, total: guides.length });
     } catch (error) {
       logger.error('❌ Error searching guides:', error);
@@ -1257,19 +990,32 @@ app.get(
   '/api/guides',
   asyncHandler(async (req, res) => {
     try {
-      const { category, tag, search } = req.query;
+      const { category, tag, search, limit } = req.query;
       let query = {};
 
       if (category) query.category = new RegExp(category, 'i');
       if (tag) query.tags = new RegExp(tag, 'i');
-      if (search)
+      if (search) {
         query.$or = [
           { title: new RegExp(search, 'i') },
           { summary: new RegExp(search, 'i') },
           { content: new RegExp(search, 'i') },
         ];
+      }
 
-      const guides = await Guide.find(query);
+      let queryExec = Guide.find(query);
+
+      // Handle limit parameter
+      if (limit) {
+        const limitNumber = parseInt(limit);
+        if (!isNaN(limitNumber) && limitNumber > 0) {
+          queryExec = queryExec.limit(limitNumber);
+        } else {
+          return res.status(400).json({ error: '❌ Invalid limit parameter.' });
+        }
+      }
+
+      const guides = await queryExec;
       res.json({ guides });
     } catch (error) {
       logger.error('❌ Error fetching guides:', error);
@@ -1503,32 +1249,7 @@ io.on('connection', (socket) => {
   logger.info(`🟢 User connected: ${socket.user.name} (${socket.user.email})`);
   socket.join(socket.user.id);
 
-  socket.on('chatMessage', async (msg) => {
-    logger.info(`💬 Message from ${socket.user.name}: ${msg}`);
-
-    try {
-      const ticket = await Ticket.findOne({ user: socket.user.id, status: 'open' }).sort({ createdAt: -1 });
-      if (ticket) {
-        ticket.responses.push({ sender: 'User', message: msg });
-        await ticket.save();
-
-        setTimeout(async () => {
-          const supportMessage = `Support: We have received your message regarding "${ticket.subject}". Our team is looking into it.`;
-          ticket.responses.push({ sender: 'Support', message: supportMessage });
-          await ticket.save();
-          io.to(socket.user.id).emit('chatMessage', supportMessage);
-          logger.info(`✅ Support responded to ticket: ${ticket.ticketId}`);
-        }, 1500);
-
-        io.to(socket.user.id).emit('chatMessage', `You: ${msg}`);
-      } else {
-        socket.emit('chatMessage', 'Support: You have no open tickets. Please create a ticket.');
-      }
-    } catch (error) {
-      logger.error('❌ Live Chat Error:', error);
-      socket.emit('chatMessage', 'Support: An error occurred while processing your message.');
-    }
-  });
+  // Removed 'message' event handler as per instructions
 
   socket.on('disconnect', () => {
     logger.info(`🔴 User disconnected: ${socket.user.name} (${socket.user.email})`);

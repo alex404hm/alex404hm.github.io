@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" data-theme="light">
+<html lang="en" class="scroll-smooth" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guide Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Stay ahead with Modern IT Guide" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-  <!-- Meta Description for SEO -->
-  <meta name="description" content="Guide Description">
+  <!-- Preload critical assets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <title>Modern IT Guide</title>
+
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous" defer></script>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -16,239 +24,206 @@
       theme: {
         extend: {
           colors: {
-            primary: '#1e3a8a',
-            secondary: '#3b82f6',
-            dark: '#0f172a',
-            light: '#f8fafc',
+            primary: {
+              50: '#f0f9ff',
+              500: '#4F46E5',
+              600: '#4338ca',
+            },
+            secondary: {
+              400: '#22D3EE',
+              500: '#06b6d4',
+            },
           },
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
           },
-        }
-      }
+        },
+      },
     };
   </script>
 
-  <!-- Font Awesome for Icons -->
-  <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
-
   <style>
-    .fade-bg {
-      transition: opacity 1s ease-in-out;
+    .modern-banner {
+      background: url('https://source.unsplash.com/1920x1080/?technology,abstract') center/cover no-repeat;
     }
 
-    .tooltip-content {
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s;
-      position: absolute;
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transform: translateX(-50%);
-      left: 50%;
-      bottom: 100%;
-      margin-bottom: 0.5rem;
-      white-space: nowrap;
-      z-index: 50;
+    /* Progress bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 5px;
+      background-color: #4F46E5;
+      z-index: 100;
+      transition: width 0.3s ease-in-out;
     }
 
-    .tooltip:hover .tooltip-content {
-      opacity: 1;
+    /* Fade-in animation */
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    .chatbot-button {
+    /* Alert styles */
+    .alert {
       position: fixed;
       bottom: 20px;
-      right: 20px;
-      background-color: #1e3a8a;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 64px;
-      height: 64px;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .chatbot-button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #DC2626;
+      color: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      z-index: 1000;
     }
   </style>
-</head>
 
-<body class="bg-gray-900 text-gray-100 font-sans antialiased">
-  <div class="flex flex-col min-h-screen">
-
-    <!-- Header Section -->
-    <header id="header-section" class="relative bg-cover bg-center h-[400px] md:h-[500px] flex items-center justify-center">
-      <div class="text-center max-w-3xl px-6 relative z-10">
-        <h1 id="article-title" class="text-5xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-lg">Guide Title</h1>
-        <p id="article-subtitle" class="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto">Guide Subtitle</p>
-      </div>
-      <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-    </header>
-
-    <!-- Author Section -->
-    <section id="author-section" class="container mx-auto px-4 -mt-16 relative z-20">
-      <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
-        <div class="flex flex-col md:flex-row items-center justify-between border-b border-gray-700 pb-6 mb-6">
-          <div class="flex items-center space-x-6 mb-4 md:mb-0">
-            <img id="author-photo" class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-gray-600 object-cover" alt="Author Photo" src="https://example.com/default-author.jpg">
-            <div>
-              <h2 id="author-name" class="text-3xl font-bold text-white">Author Name</h2>
-              <p id="author-title" class="text-gray-400 text-sm">Author Title</p>
-              <div class="mt-2 text-sm text-gray-500">
-                Published: <span id="publish-date">Publish Date</span> | <span id="reading-time">0</span> min read
-              </div>
-            </div>
-          </div>
-          <div class="flex space-x-4">
-            <button class="text-gray-400 hover:text-white transition-colors" onclick="saveArticle()" aria-label="Save article">
-              <i class="fas fa-bookmark mr-2"></i>Save
-            </button>
-            <button class="text-gray-400 hover:text-white transition-colors" onclick="shareArticle()" aria-label="Share article">
-              <i class="fas fa-share-alt mr-2"></i>Share
-            </button>
-          </div>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <p id="author-quote" class="text-gray-300 italic">"Author Quote"</p>
-          <div class="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" class="text-gray-400 hover:text-blue-500 transition-colors" aria-label="Share on Facebook">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors" aria-label="Share on Twitter">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors" aria-label="Share on LinkedIn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Main Content Section -->
-    <main id="main-content" class="container mx-auto px-4 mt-8 flex-grow">
-      <article id="article-content" class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 prose prose-invert max-w-none">
-        Loading content...
-      </article>
-    </main>
-
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-gray-400 py-10 mt-12">
-      <div class="container mx-auto px-4 text-center">
-        <p class="mb-2">&copy; <span id="year"></span> IT Support Guide. All Rights Reserved.</p>
-        <p class="mb-4">Stay connected: 
-          <a href="#" class="text-secondary hover:text-white transition-colors underline">
-            Subscribe to our newsletter
-          </a>
-          for the latest insights.
-        </p>
-        <p class="text-sm text-gray-500">Designed with <i class="fas fa-heart text-red-500"></i> for IT professionals.</p>
-      </div>
-    </footer>
-  </div>
-
-  <!-- Chatbot Button -->
-  <button class="chatbot-button" onclick="openChatbot()" aria-label="Open chatbot">
-    <i class="fas fa-comments"></i>
-  </button>
-
-  <!-- JavaScript Enhancements -->
   <script>
     // Fetch article data using an API
-    async function fetchArticleData() {
+    const fetchArticleData = async () => {
       try {
-        const pathParts = window.location.pathname.split('/');
-        const category = pathParts[2];
-        const slug = pathParts[3];
+        const [,, category, slug] = window.location.pathname.split('/');
 
         if (!category || !slug) {
-          console.error('Category or slug not found in URL.');
-          alert('Unable to load the article. Please check the URL.');
+          displayAlert('Invalid URL structure. Missing category or slug.');
           return;
         }
 
         const response = await fetch(`/api/guides/${category}/${slug}`);
-        if (!response.ok) throw new Error("Network response was not ok");
+        if (!response.ok) throw new Error('Failed to fetch article data.');
+
         const data = await response.json();
-
-        document.title = data.title;
-        document.querySelector('meta[name="description"]').setAttribute('content', data.summary || data.subtitle || '');
-
-        document.getElementById('article-title').textContent = data.title;
-        document.getElementById('article-subtitle').textContent = data.subtitle || '';
-
-        const headerSection = document.getElementById('header-section');
-        if (data.bannerImage) {
-          headerSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${data.bannerImage}')`;
-        } else {
-          headerSection.style.backgroundColor = '#1e3a8a';
-        }
-
-        if (data.author) {
-          document.getElementById('author-photo').src = data.author.photo || 'https://example.com/default-author.jpg';
-          document.getElementById('author-name').textContent = data.author.name || 'Unknown Author';
-          document.getElementById('author-title').textContent = data.author.title || '';
-          document.getElementById('author-quote').textContent = data.author.quote || '';
-        }
-        document.getElementById('publish-date').textContent = data.publishDate || '';
-        document.getElementById('article-content').innerHTML = data.content;
-
-        calculateReadingTime();
+        updatePageContent(data);
       } catch (error) {
-        console.error('Error fetching article data:', error);
-        alert('Unable to load the article. Please try again later.');
+        console.error('Error:', error);
+        displayAlert('Failed to load article. Please try again later.');
       }
-    }
+    };
 
-    // Reading time calculator
-    function calculateReadingTime() {
-      const wordsPerMinute = 200;
-      const textContent = document.getElementById('article-content').innerText;
-      const wordCount = textContent.trim().split(/\s+/).length;
-      const readingTime = Math.ceil(wordCount / wordsPerMinute);
-      document.getElementById('reading-time').innerText = `${readingTime}`;
-    }
+    // Update page content dynamically
+    const updatePageContent = (data) => {
+      document.title = data.title || 'Modern IT Guide';
+      document.querySelector('meta[name="description"]').setAttribute(
+        'content',
+        data.summary || data.subtitle || ''
+      );
 
-    // Save Article
-    function saveArticle() {
-      alert('Article saved for later reading!');
-    }
+      document.getElementById('article-title').textContent = data.title || '';
+      document.getElementById('article-subtitle').textContent = data.subtitle || '';
+      document.getElementById('header-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${data.bannerImage || ''}')`;
 
-    // Share Article
-    function shareArticle() {
-      const url = window.location.href;
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          url: url
-        }).then(() => console.log('Thanks for sharing!'))
-          .catch(console.error);
-      } else {
-        prompt('Copy this link to share:', url);
-      }
-    }
+      document.getElementById('author-name').textContent = data.author?.name || '';
+      document.getElementById('author-photo').src = data.author?.photo || 'https://via.placeholder.com/150';
+      document.getElementById('publish-date').textContent = data.publishDate || '';
 
-    // Open chatbot
-    function openChatbot() {
-      alert('Chatbot feature coming soon!');
-    }
+      document.getElementById('article-content').innerHTML = data.content || '';
+    };
 
+    // Display alert
+    const displayAlert = (message) => {
+      const alertBox = document.createElement('div');
+      alertBox.className = 'alert';
+      alertBox.textContent = message;
+      document.body.appendChild(alertBox);
+      setTimeout(() => alertBox.remove(), 5000);
+    };
+
+    // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
       fetchArticleData();
-      document.getElementById('year').textContent = new Date().getFullYear();
+    });
+  </script>
+</head>
+
+<body class="bg-gray-950 text-gray-50 font-sans antialiased">
+  <!-- Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Content -->
+  <div id="content">
+    <div class="flex flex-col min-h-screen fade-in">
+      <!-- Header Section with Modern Banner -->
+      <header
+        id="header-section"
+        class="relative modern-banner h-[40vh] flex items-center justify-center"
+      >
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 text-center px-6">
+          <h1 id="article-title" class="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">Loading...</h1>
+          <p id="article-subtitle" class="text-lg md:text-xl text-gray-300/90">Please wait...</p>
+        </div>
+      </header>
+
+      <!-- Author and Meta Info -->
+      <section class="container mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+        <div class="bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-lg p-6 flex flex-wrap gap-6 items-center justify-between border border-gray-800">
+          <div class="flex items-center gap-4">
+            <img
+              id="author-photo"
+              src="https://via.placeholder.com/150"
+              alt="Author profile picture"
+              class="w-16 h-16 rounded-full object-cover border-2 border-gray-700"
+            />
+            <div>
+              <h2 id="author-name" class="text-xl font-semibold text-white">Loading...</h2>
+              <time id="publish-date" class="text-sm text-gray-400">--</time>
+            </div>
+          </div>
+          <div class="flex gap-4 items-center text-gray-300">
+            <span class="text-sm">5 min read</span>
+            <div class="flex gap-4">
+              <button class="flex items-center gap-2 text-white hover:text-primary-500">
+                <i class="fas fa-share-alt"></i>
+                Share
+              </button>
+              <button class="flex items-center gap-2 text-white hover:text-primary-500">
+                <i class="fas fa-comment"></i>
+                Comment
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Section -->
+      <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-gray-800/80 backdrop-blur-md rounded-lg shadow-lg p-8 border border-gray-700">
+          <article
+            id="article-content"
+            class="prose prose-invert lg:prose-xl max-w-none text-gray-200"
+          >
+            <p>Loading content...</p>
+          </article>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="mt-auto bg-gray-900/50 backdrop-blur-sm border-t border-gray-800">
+        <div class="container mx-auto px-4 py-6 text-center text-gray-400">
+          <p>&copy; <span id="year"></span> Modern IT Guide. All Rights Reserved.</p>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Update the year in the footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Progress bar functionality
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollTotal = document.body.scrollHeight - window.innerHeight;
+      if (scrollTotal > 0) {
+        const scrollPercentage = (window.scrollY / scrollTotal) * 100;
+        progressBar.style.width = `${scrollPercentage}%`;
+      } else {
+        progressBar.style.width = '0';
+      }
     });
   </script>
 </body>
