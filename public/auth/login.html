@@ -1,103 +1,251 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="da" class="h-full scroll-smooth">
 
 <head>
-    <!-- Font Awesome for Icons -->
-    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
-    
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI Fejlscanner - Log ind for at få adgang til din konto og få hjælp med fejlfinding ved hjælp af AI.">
-    <meta name="keywords" content="AI, Fejlscanner, Login, Teknologi, Support">
-    
-    <!-- Page Title -->
-    <title>AI Fejlscanner - Login</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    
+    <meta name="description" content="Support Pro - Log ind for at få adgang til din konto og få hjælp med fejlfinding ved hjælp af AI.">
+    <meta name="theme-color" content="#0b0b33">
+
+    <title>Support Pro - Login</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Custom JavaScript -->
-    <script defer>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#0b0b33',
+                            secondary: '#e6e6fa'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        gradient: 'gradient-move 6s infinite'
+                    },
+                    keyframes: {
+                        'gradient-move': {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' }
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        .custom-gradient {
+            background: linear-gradient(90deg, #0b0b33, #1a1a4d, #0b0b33);
+            background-size: 300% 300%;
+            animation: gradient-move 8s ease infinite;
+        }
+
+        .input-shadow:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+
+<body class="h-full font-sans antialiased custom-gradient text-gray-100">
+    <div class="min-h-screen relative flex flex-col">
+        <!-- Background Patterns -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-1/2 -right-1/2 w-full h-full opacity-30">
+                <div class="absolute w-96 h-96 rounded-full bg-blue-600/20 filter blur-3xl"></div>
+            </div>
+            <div class="absolute -bottom-1/2 -left-1/2 w-full h-full opacity-30">
+                <div class="absolute w-96 h-96 rounded-full bg-blue-600/20 filter blur-3xl"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative">
+            <div class="w-full max-w-md space-y-8 animate-fadeIn">
+                <!-- Logo and Title -->
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold tracking-tight mb-2">Support Pro</h1>
+                    <p class="text-lg text-gray-300">Log ind på din konto</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="bg-white/[0.1] backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/10">
+                    <form id="login-form" class="space-y-6" aria-labelledby="login-form-title">
+                        <!-- Email Input -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-200 mb-2">E-mail</label>
+                            <input id="email"
+                                   type="email"
+                                   class="w-full px-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white
+                                          placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2
+                                          focus:ring-blue-500/20 transition-all input-shadow"
+                                   placeholder="Indtast din e-mail"
+                                   required
+                                   aria-describedby="email-error" />
+                            <span id="email-error" class="text-red-400 text-xs mt-1 block" role="alert"></span>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-200 mb-2">Adgangskode</label>
+                            <div class="relative">
+                                <input id="password"
+                                       type="password"
+                                       class="w-full px-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white
+                                              placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2
+                                              focus:ring-blue-500/20 transition-all input-shadow"
+                                       placeholder="Indtast din adgangskode"
+                                       required
+                                       aria-describedby="password-error" />
+                                <button type="button"
+                                        id="toggle-password"
+                                        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400
+                                               hover:text-gray-200 focus:outline-none">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </div>
+                            <span id="password-error" class="text-red-400 text-xs mt-1 block" role="alert"></span>
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox"
+                                       id="remember"
+                                       class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500
+                                              focus:ring-offset-gray-800" />
+                                <label for="remember" class="ml-2 block text-sm text-gray-300">
+                                    Husk mig
+                                </label>
+                            </div>
+                            <a href="/reset-password" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                                Glemt adgangskode?
+                            </a>
+                        </div>
+
+                        <span id="general-error" class="text-red-400 text-sm text-center block" role="alert"></span>
+
+                        <!-- Login Button -->
+                        <button type="submit"
+                                id="login-button"
+                                class="w-full flex justify-center items-center px-4 py-3 bg-blue-600 text-white
+                                       rounded-xl hover:bg-blue-500 focus:outline-none focus:ring-2
+                                       focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900
+                                       transition-all duration-200 font-medium">
+                            <span>Log ind</span>
+                            <span id="spinner" class="hidden ml-2" role="status" aria-hidden="true">
+                                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-white/10"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 text-gray-400">Eller fortsæt med</span>
+                            </div>
+                        </div>
+
+                        <!-- Social Login -->
+                        <div>
+                            <button type="button"
+                                    class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/[0.05]
+                                           border border-white/10 rounded-xl hover:bg-white/[0.1] transition-colors"
+                                    aria-label="Continue with Google">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                                </svg>
+                                Continue med Google
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Sign Up Link -->
+                <p class="text-center">
+                    <span class="text-gray-300">Har du ikke en konto?</span>
+                    <a href="/auth/signup" class="ml-1 text-blue-400 hover:text-blue-300 transition-colors font-medium">
+                        Opret en konto
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Form Handling -->
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('login-form');
             const loginButton = document.getElementById('login-button');
             const spinner = document.getElementById('spinner');
-            const rememberCheckbox = document.getElementById('remember');
-            const rememberLabelIcon = document.querySelector('label[for="remember"] i');
             const emailError = document.getElementById('email-error');
             const passwordError = document.getElementById('password-error');
             const generalError = document.getElementById('general-error');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordButton = document.getElementById('toggle-password');
+            const togglePasswordIcon = togglePasswordButton.querySelector('i');
 
-            // Handle Remember Me
-            rememberCheckbox.addEventListener('change', () => {
-                const rememberState = rememberCheckbox.checked;
-                if (rememberState) {
-                    localStorage.setItem('rememberMe', 'true');
-                } else {
-                    localStorage.removeItem('rememberMe');
-                }
-
-                rememberLabelIcon.classList.toggle('fa-check-circle', !rememberState);
-                rememberLabelIcon.classList.toggle('fa-check', rememberState);
-                rememberLabelIcon.classList.toggle('text-gray-500', !rememberState);
-                rememberLabelIcon.classList.toggle('text-green-500', rememberState);
+            togglePasswordButton.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                togglePasswordIcon.classList.toggle('fa-eye');
+                togglePasswordIcon.classList.toggle('fa-eye-slash');
             });
 
-            // Pre-fill Remember Me state
-            if (localStorage.getItem('rememberMe') === 'true') {
-                rememberCheckbox.checked = true;
-                rememberLabelIcon.classList.add('fa-check');
-                rememberLabelIcon.classList.remove('fa-check-circle');
-                rememberLabelIcon.classList.add('text-green-500');
-                rememberLabelIcon.classList.remove('text-gray-500');
-            }
-
-            // Handle Form Submission
             loginForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value.trim();
-                const remember = rememberCheckbox.checked;
+                const remember = document.getElementById('remember').checked;
 
-                // Clear previous error messages
-                emailError.textContent = '';
-                passwordError.textContent = '';
-                generalError.textContent = '';
+                // Clear previous errors
+                [emailError, passwordError, generalError].forEach(el => el.textContent = '');
 
-                let hasError = false;
-
-                // Validate email
+                // Validation
                 if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    emailError.textContent = 'Indtast venligst en gyldig e-mail.';
-                    hasError = true;
+                    emailError.textContent = 'Indtast venligst en gyldig e-mail';
+                    return;
                 }
 
-                // Validate password
                 if (!password) {
-                    passwordError.textContent = 'Indtast venligst din adgangskode.';
-                    hasError = true;
+                    passwordError.textContent = 'Indtast venligst din adgangskode';
+                    return;
                 }
 
-                if (hasError) return;
-
-                // Disable button and show loading state
+                // Loading state
                 loginButton.disabled = true;
                 spinner.classList.remove('hidden');
-                loginButton.textContent = 'Logger ind...';
+                loginButton.querySelector('span:not(#spinner)').textContent = 'Logger ind...';
 
                 try {
                     const response = await fetch('/api/login', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, password, remember }),
-                        credentials: 'include',
+                        credentials: 'include'
                     });
 
                     const data = await response.json();
@@ -105,78 +253,26 @@
                     if (response.ok) {
                         window.location.href = '/dashboard';
                     } else {
-                        const errorMessage = data.error || 'Login mislykkedes. Prøv igen.';
-                        if (errorMessage.toLowerCase().includes('email')) {
-                            emailError.textContent = errorMessage;
-                        } else if (errorMessage.toLowerCase().includes('password') || errorMessage.toLowerCase().includes('credential')) {
-                            passwordError.textContent = errorMessage;
+                        const error = data.error || 'Login mislykkedes. Prøv igen.';
+                        if (error.toLowerCase().includes('email')) {
+                            emailError.textContent = error;
+                        } else if (error.toLowerCase().includes('password')) {
+                            passwordError.textContent = error;
                         } else {
-                            generalError.textContent = errorMessage;
+                            generalError.textContent = error;
                         }
                     }
                 } catch (error) {
-                    console.error('Der opstod en fejl:', error);
+                    console.error('Login error:', error);
                     generalError.textContent = 'Der opstod en fejl. Prøv venligst igen senere.';
                 } finally {
                     loginButton.disabled = false;
                     spinner.classList.add('hidden');
-                    loginButton.textContent = 'Log ind';
+                    loginButton.querySelector('span:not(#spinner)').textContent = 'Log ind';
                 }
             });
         });
     </script>
-</head>
-
-<body class="bg-gradient-to-b from-gray-900 to-blue-900 text-gray-100 font-inter min-h-screen flex items-center justify-center px-4">
-    <div class="bg-gray-800 shadow-2xl rounded-3xl w-full max-w-md p-10">
-        <h2 class="text-4xl font-bold mb-6 text-center">Log ind</h2>
-        <p class="text-gray-300 mb-6 text-center">Indtast din e-mail og adgangskode for at logge ind på din konto</p>
-        <form id="login-form">
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-gray-300 mb-2" for="email">E-mail</label>
-                <input class="w-full px-5 py-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" type="email" id="email" placeholder="Indtast din e-mail" required />
-                <span id="email-error" class="text-red-500 text-xs mt-1 block"></span>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-gray-300 mb-2" for="password">Adgangskode</label>
-                <input class="w-full px-5 py-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-4 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" type="password" id="password" placeholder="Indtast din adgangskode" required />
-                <span id="password-error" class="text-red-500 text-xs mt-1 block"></span>
-            </div>
-            <div class="mb-4">
-                <span id="general-error" class="text-red-500 text-xs block text-center"></span>
-            </div>
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember" class="hidden peer">
-                    <label for="remember" class="flex items-center gap-2 cursor-pointer text-sm text-gray-300 bg-gray-700 p-3 rounded-lg transition peer-checked:bg-blue-600 peer-checked:text-white">
-                        Husk mig
-                        <i class="fas fa-check-circle text-gray-500"></i>
-                    </label>
-                </div>
-            </div>
-            <button id="login-button" class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
-                Log ind
-                <span id="spinner" class="hidden ml-2">
-                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </span>
-            </button>
-            <p class="mt-10 text-center text-sm">
-                Har du ikke en konto? <a href="/auth/signup" class="text-blue-400 hover:underline">Opret en konto</a>
-            </p>
-        </form>
-        <div class="mt-8">
-            <p class="text-center text-sm text-gray-300 mb-6">Eller log ind med</p>
-            <div class="flex justify-center gap-4">
-                <a href="/auth/google" class="flex items-center gap-3 px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                    <i class="fab fa-google"></i>
-                    Google
-                </a>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

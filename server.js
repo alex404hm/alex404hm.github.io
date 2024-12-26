@@ -82,10 +82,7 @@ const logger = winston.createLogger({
 
 // =========================== Database Connection ========================= //
 mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGODB_URI)
   .then(() => logger.info('✅ MongoDB connected successfully'))
   .catch((error) => {
     logger.error('❌ MongoDB connection error:', error);
@@ -108,7 +105,6 @@ const userSchema = new mongoose.Schema(
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     theme: { type: String, default: 'light' },
     phoneNumber: { type: String },
-    // Removed profileSetUp as setup-profile functionality is removed
   },
   { timestamps: true }
 );
@@ -280,8 +276,7 @@ const generateSlug = (text) => {
 
 // =========================== Middleware =================================== //
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
+  const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
   if (!token) {
     logger.warn('Unauthorized access attempt.', { url: req.originalUrl });
     return res.status(401).json({ error: '❌ Unauthorized access. Please log in.' });
@@ -298,8 +293,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 const authenticateAdmin = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
+  const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
   if (!token) {
     logger.warn('Admin access denied. No token provided.', { url: req.originalUrl });
     return res.status(403).json({ error: '❌ Access denied: No token provided.' });
@@ -326,46 +320,9 @@ const io = new SocketIOServer(server, {
   },
 });
 
-// Global Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()),
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
-app.use(
-  morgan(NODE_ENV === 'production' ? 'combined' : 'dev', {
-    stream: { write: (msg) => logger.info(msg.trim()) },
-  })
-);
-app.use(compression());
-app.use(cookieParser());
-app.use(
-  express.static(path.join(__dirname, 'public'), {
-    maxAge: '1d',
-    etag: false,
-  })
-);
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: NODE_ENV === 'production',
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    },
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
+// ========================== Define Specific Routes Before Static ========================== //
 
-// =========================== OAuth Routes =============================== //
+// OAuth Routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 app.get(
   '/auth/google/callback',
@@ -388,24 +345,83 @@ app.get(
   })
 );
 
-// =========================== Static Routes ================================ //
-app.get('/login', redirectIfAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'auth', 'login.html'));
-});
-app.get('/signup', redirectIfAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'auth', 'signup.html'));
-});
-app.get('/auth', redirectIfAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'auth', 'auth.html'));
-});
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-app.get('/admin/login', redirectIfAuthenticatedAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'login.html'));
+// Static Routes for /auth/terms, /auth/privacy, /auth/support
+const authStaticPages = ['terms', 'privacy', 'support'];
+authStaticPages.forEach(page => {
+  app.get(`/auth/${page}`, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'auth', `${page}.html`));
+  });
 });
 
-// Middleware to redirect authenticated users
+// Other static public pages with redirection if authenticated
+const publicPages = [
+  { route: '/login', file: 'login.html', redirectIfAuth: true },
+  { route: '/signup', file: 'signup.html', redirectIfAuth: true },
+  { route: '/auth', file: 'auth.html', redirectIfAuth: true },
+  { route: '/', file: 'index.html' },
+  { route: '/admin/login', file: 'admin/login.html', redirectIfAuthAdmin: true },
+];
+
+publicPages.forEach(({ route, file, redirectIfAuth, redirectIfAuthAdmin }) => {
+  if (redirectIfAuth) {
+    app.get(route, redirectIfAuthenticated, (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'auth', file));
+    });
+  } else if (redirectIfAuthAdmin) {
+    app.get(route, redirectIfAuthenticatedAdmin, (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', file));
+    });
+  } else {
+    app.get(route, (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', file));
+    });
+  }
+});
+
+// =========================== Global Middleware ============================ //
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: CORS_ORIGIN.split(',').map(origin => origin.trim()),
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
+app.use(
+  morgan(NODE_ENV === 'production' ? 'combined' : 'dev', {
+    stream: { write: (msg) => logger.info(msg.trim()) },
+  })
+);
+app.use(compression());
+app.use(cookieParser());
+
+// Serve Static Files After Specific Routes
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    maxAge: '1d',
+    etag: false,
+  })
+);
+
+// Session and Passport Middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// =========================== Redirect Middleware =========================== //
 function redirectIfAuthenticated(req, res, next) {
   const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
   if (token) {
@@ -420,7 +436,6 @@ function redirectIfAuthenticated(req, res, next) {
   }
 }
 
-// Middleware to redirect authenticated admin users
 function redirectIfAuthenticatedAdmin(req, res, next) {
   const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
   if (token) {
@@ -435,69 +450,20 @@ function redirectIfAuthenticatedAdmin(req, res, next) {
   }
 }
 
-// Defined Static Routes
-const definedRoutes = [
-  {
-    route: '/auth/login',
-    file: 'auth/login.html',
-    redirectIfAuthenticated: true,
-  },
-  {
-    route: '/auth/signup',
-    file: 'auth/signup.html',
-    redirectIfAuthenticated: true,
-  },
-  {
-    route: '/auth',
-    file: 'auth/auth.html',
-    redirectIfAuthenticated: true,
-  },
-  { route: '/', file: 'index.html' },
-  {
-    route: '/admin/login',
-    file: 'admin/login.html',
-    redirectIfAuthenticated: true,
-  },
-];
-
-// Apply defined routes
-definedRoutes.forEach(({ route, file, redirectIfAuthenticated: redirectIfAuth }) => {
-  if (redirectIfAuth) {
-    app.get(route, redirectIfAuthenticated, (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', file));
-    });
-  } else {
-    app.get(route, (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', file));
-    });
-  }
-});
-
-// Dashboard Routes
+// =========================== Dashboard Routes ============================= //
 app.get('/dashboard', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html'));
 });
 
-// Admin Profile Page
-app.get('/admin/profile', authenticateAdmin, asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
-  if (!user || user.role !== 'admin') {
-    return res.status(403).send("❌ Forbidden: You are not an admin.");
-  }
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'profile.html'));
-}));
-
-app.get('/admin', authenticateAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin', 'admin.html'));
-});
-
-const adminDashboardPages = ['guides', 'users', 'dashboard']; // Removed 'logs'
+// Admin Dashboard Pages
+const adminDashboardPages = ['profile', 'admin', 'guides', 'users', 'dashboard']; // Removed 'logs'
 adminDashboardPages.forEach((page) => {
   app.get(`/admin/${page}`, authenticateAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin', `${page}.html`));
   });
 });
 
+// Platform-specific dashboard pages
 const dashboardPlatforms = ['macos', 'android', 'chromeos', 'ios', 'linux', 'windows', 'chat'];
 dashboardPlatforms.forEach((platform) => {
   app.get(`/dashboard/${platform}`, authenticateToken, (req, res) => {
@@ -947,11 +913,17 @@ app.get(
   asyncHandler(async (req, res) => {
     try {
       const { category, slug } = req.params;
+      if (!slug || slug.trim() === '') {
+        logger.warn('❌ Guide slug is undefined or empty.', { category });
+        return res.status(400).json({ error: '❌ Guide slug is undefined or empty.' });
+      }
+
       const guide = await Guide.findOne({
         category: new RegExp(`^${category}$`, 'i'),
         slug: new RegExp(`^${slug}$`, 'i'),
       });
       if (!guide) {
+        logger.warn('❌ Guide not found:', { category, slug });
         return res.status(404).json({ error: '❌ Guide not found.' });
       }
 
@@ -1180,6 +1152,11 @@ app.get(
     const { category, slug } = req.params;
 
     try {
+      if (!slug || slug.trim() === '') {
+        logger.warn('❌ Guide slug is undefined or empty.', { category });
+        return res.status(400).sendFile(path.join(__dirname, 'public', 'error', '400.html'));
+      }
+
       const guide = await Guide.findOne({
         category: new RegExp(`^${category}$`, 'i'),
         slug: new RegExp(`^${slug}$`, 'i'),
@@ -1249,7 +1226,12 @@ io.on('connection', (socket) => {
   logger.info(`🟢 User connected: ${socket.user.name} (${socket.user.email})`);
   socket.join(socket.user.id);
 
-  // Removed 'message' event handler as per instructions
+  // Example of a message event handler (optional)
+  socket.on('message', (msg) => {
+    // Broadcast the message to the user's room
+    io.to(socket.user.id).emit('message', { user: socket.user.name, text: msg });
+    logger.info(`💬 Message from ${socket.user.email}: ${msg}`);
+  });
 
   socket.on('disconnect', () => {
     logger.info(`🔴 User disconnected: ${socket.user.name} (${socket.user.email})`);

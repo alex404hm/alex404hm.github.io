@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Dark Chat UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-blue': '#0f172a',
+                        'navy': '#1e293b',
+                        'light-navy': '#334155',
+                        'accent-blue': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 h-screen flex items-end justify-end p-4">
+    <!-- Main Chat Container -->
+    <div id="chatContainer" class="w-full max-w-md bg-deep-blue rounded-2xl shadow-2xl transition-all duration-300 ease-in-out">
+        <!-- Chat Header -->
+        <div class="border-b border-light-navy p-4 rounded-t-2xl bg-navy flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <div class="h-10 w-10 rounded-full bg-accent-blue flex items-center justify-center">
+                        <span class="text-white font-semibold">AC</span>
+                    </div>
+                    <div class="absolute bottom-0 right-0 h-3 w-3 bg-green-400 rounded-full border-2 border-navy"></div>
+                </div>
+                <div>
+                    <h2 class="font-semibold text-white">AI Chat Assistant</h2>
+                    <p class="text-xs text-gray-400">Always Online</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <!-- Minimize Button -->
+                <button onclick="toggleMinimize()" class="p-2 hover:bg-light-navy rounded-lg transition text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Content -->
+        <div id="chatContent" class="transition-all duration-300">
+            <!-- Chat Messages Area -->
+            <div class="h-[400px] overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-light-navy">
+                <!-- Received Message -->
+                <div class="flex items-start space-x-2 animate-fade-in">
+                    <div class="h-8 w-8 rounded-full bg-accent-blue flex-shrink-0 flex items-center justify-center">
+                        <span class="text-white text-sm">AI</span>
+                    </div>
+                    <div class="bg-navy rounded-2xl p-3 max-w-[70%]">
+                        <p class="text-gray-200">Hello! How can I assist you today?</p>
+                        <span class="text-xs text-gray-500 mt-1 block">09:00 AM</span>
+                    </div>
+                </div>
+
+                <!-- Sent Message -->
+                <div class="flex items-start justify-end space-x-2 animate-fade-in">
+                    <div class="bg-accent-blue rounded-2xl p-3 max-w-[70%]">
+                        <p class="text-white">Hi! Just checking out the new interface!</p>
+                        <span class="text-xs text-blue-200 mt-1 block">09:01 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="border-t border-light-navy p-4 bg-navy rounded-b-2xl">
+                <div class="flex items-center space-x-2">
+                    <!-- Emoji Button -->
+                    <button class="p-2 hover:bg-light-navy rounded-lg transition text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+
+                    <!-- Attachment Button -->
+                    <button class="p-2 hover:bg-light-navy rounded-lg transition text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                    </button>
+
+                    <!-- Message Input -->
+                    <input type="text" 
+                           class="flex-1 bg-light-navy text-white rounded-xl py-2 px-4 focus:outline-none focus:ring-2 focus:ring-accent-blue placeholder-gray-400"
+                           placeholder="Type your message...">
+
+                    <!-- Send Button -->
+                    <button class="bg-accent-blue text-white rounded-lg p-2 hover:bg-blue-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMinimize() {
+            const chatContent = document.getElementById('chatContent');
+            const chatContainer = document.getElementById('chatContainer');
+            
+            if (chatContent.style.display === 'none') {
+                chatContent.style.display = 'block';
+                chatContainer.classList.remove('w-64');
+                chatContainer.classList.add('w-full');
+            } else {
+                chatContent.style.display = 'none';
+                chatContainer.classList.remove('w-full');
+                chatContainer.classList.add('w-64');
+            }
+        }
+
+        // Add animation class
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in {
+                    animation: fadeIn 0.3s ease-out forwards;
+                }
+                /* Custom Scrollbar */
+                .scrollbar-thin::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .scrollbar-thin::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .scrollbar-thin::-webkit-scrollbar-thumb {
+                    background: #334155;
+                    border-radius: 20px;
+                }
+            </style>
+        `);
+    </script>
+</body>
+</html>

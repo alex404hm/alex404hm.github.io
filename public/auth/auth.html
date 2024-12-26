@@ -1,38 +1,177 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="da" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Pro</title>
+    <meta name="description" content="Support Pro - Få professionel teknisk support hvor som helst, når som helst">
+    <meta name="theme-color" content="#0b0b33">
+    <meta property="og:title" content="Support Pro - Professionel Teknisk Support">
+    <meta property="og:description" content="Få adgang til 24/7 ekspert teknisk support med Support Pro.">
+    <meta property="og:image" content="/assets/og-image.jpg">
+    <meta property="og:url" content="https://supportpro.dk">
+    <title>Support Pro - Professionel Teknisk Support</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS configuration for additional custom styles
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#0b0b33',
+                            light: '#e6e6fa'
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 1.5s ease-in-out',
+                        typing: 'typing 4s steps(12, end), blink 0.75s step-end infinite',
+                        blink: 'blink 0.75s step-end infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 }
+                        },
+                        typing: {
+                            '0%': { width: '0%' },
+                            '100%': { width: '100%' }
+                        },
+                        blink: {
+                            '50%': { borderColor: 'transparent' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
+        .typing-effect {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid white;
+            animation: blink 0.75s step-end infinite;
         }
     </style>
 </head>
-<body class="h-screen flex">
-    <div class="flex w-full">
-        <!-- Left Section -->
-        <section class="flex-1 bg-[#0b0b33] text-[#e6e6fa] p-12 flex flex-col justify-center">
-            <h1 class="text-4xl font-bold">Support Pro</h1>
-            <p class="text-3xl mt-6 font-semibold">Få hjælp til dine tekniske udfordringer<br>med Support Pro, uanset hvor du er</p>
-        </section>
-        <!-- Right Section -->
-        <section class="flex-1 bg-black p-12 flex flex-col justify-center items-center">
-            <div class="text-center">
-                <h1 class="text-3xl font-bold mb-8 text-white">Kom i gang</h1>
-                <div class="flex space-x-4">
-                    <a href="/auth/login" class="bg-blue-600 text-white px-8 py-3 text-lg font-semibold rounded-full transition hover:bg-blue-500">Log ind</a>
-                    <a href="/auth/signup" class="bg-blue-600 text-white px-8 py-3 text-lg font-semibold rounded-full transition hover:bg-blue-500">Tilmeld dig her</a>
+
+<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-brand-primary">
+    <main class="mx-auto min-h-screen">
+        <div class="grid lg:grid-cols-2 min-h-screen">
+            <!-- Left Section: Hero -->
+            <header class="relative flex items-center px-6 py-12 lg:px-16 bg-gradient-to-b from-blue-900 via-brand-primary to-gray-900 text-brand-light">
+                <!-- Decorative gradients -->
+                <div class="absolute inset-0 opacity-30 pointer-events-none">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,#4338ca_10%,transparent_70%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,#6366f1_10%,transparent_70%)]"></div>
                 </div>
-                <div class="mt-12">
-                    <a href="#" class="text-gray-400 text-xs underline">Vilkår for brug</a> |
-                    <a href="#" class="text-gray-400 text-xs underline">Privatlivspolitik</a>
+
+                <div class="relative space-y-6 max-w-xl z-10 animate-fadeIn lg:ml-8">
+                    <!-- Hero Title with Typing Effect -->
+                    <h1 class="text-4xl lg:text-6xl font-bold tracking-tight" aria-label="Support Pro">
+                        <span class="typing-effect" data-text="Support Pro"></span>
+                    </h1>
+                    <!-- Hero Subtitle -->
+                    <p class="text-xl lg:text-2xl font-medium leading-relaxed">
+                        Få professionel teknisk support
+                        <span class="block mt-2 text-blue-300">hvor som helst, når som helst</span>
+                    </p>
+                    <!-- Feature List -->
+                    <ul class="space-y-2 text-sm text-brand-light/80">
+                        <li class="flex items-center">
+                            <i class="fas fa-headset mr-2" aria-hidden="true"></i> 24/7 Support
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-users mr-2" aria-hidden="true"></i> Ekspert Team
+                        </li>
+                    </ul>
                 </div>
-            </div>
-        </section>
-    </div>
+            </header>
+
+            <!-- Right Section: Auth -->
+            <section class="flex items-center justify-center px-6 py-12 lg:px-24">
+                <div class="w-full max-w-md space-y-8 animate-fadeIn">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+                            Kom i gang nu
+                        </h2>
+                        <p class="mt-3 text-gray-600 dark:text-gray-300">
+                            Få adgang til professionel support med det samme
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <a href="/auth/login" class="group relative flex w-full justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fas fa-sign-in-alt text-blue-400" aria-hidden="true"></i>
+                            </span>
+                            Log ind
+                        </a>
+
+                        <a href="/auth/signup" class="group relative flex w-full justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fas fa-user-plus text-blue-600" aria-hidden="true"></i>
+                            </span>
+                            Opret ny konto
+                        </a>
+                    </div>
+
+                    <footer class="pt-8 text-center">
+                        <nav class="flex justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                            <a href="/auth/terms" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Vilkår</a>
+                            <span aria-hidden="true">&bull;</span>
+                            <a href="/auth/privacy" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Privatlivspolitik</a>
+                            <span aria-hidden="true">&bull;</span>
+                            <a href="/auth/support" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Support</a>
+                        </nav>
+                    </footer>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- JavaScript for Typing Effect -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const typingEffect = document.querySelector('.typing-effect');
+            const texts = ["Support Pro", "Din IT-partner", "Altid til rådighed"];
+            let textIndex = 0;
+            let charIndex = 0;
+
+            const type = () => {
+                if (charIndex < texts[textIndex].length) {
+                    typingEffect.textContent += texts[textIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, 150);
+                } else {
+                    setTimeout(erase, 1000);
+                }
+            };
+
+            const erase = () => {
+                if (charIndex > 0) {
+                    typingEffect.textContent = texts[textIndex].substring(0, charIndex - 1);
+                    charIndex--;
+                    setTimeout(erase, 100);
+                } else {
+                    textIndex = (textIndex + 1) % texts.length;
+                    setTimeout(type, 500);
+                }
+            };
+
+            type();
+        });
+    </script>
 </body>
-</html
+
+</html>

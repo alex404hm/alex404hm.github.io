@@ -48,31 +48,8 @@
         };
     </script>
 
-    <style>
-        /* Dropdown Styles */
-        .dropdown-content {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        /* Scrollbar Styling for Search Suggestions */
-        #searchSuggestions::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #searchSuggestions::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        #searchSuggestions::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-
-        #searchSuggestions::-webkit-scrollbar-thumb:hover {
-            background: #aaa;
-        }
-    </style>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen flex flex-col justify-between text-gray-900 dark:text-white font-inter antialiased transition-colors duration-500">
@@ -91,9 +68,7 @@
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-6">
-                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">
-                    Home
-                </a>
+                <a href="/dashboard" class="nav-link px-4 py-2 rounded-md font-medium text-gray-800 dark:text-gray-200 transition duration-300 hover:bg-primaryBlue/10 hover:shadow-md hover:text-hoverBlue">Home</a>
 
                 <!-- OS Options Dropdown -->
                 <div class="relative group">
@@ -163,69 +138,70 @@
                 </button>
                 <a href="/logout" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium text-white bg-red-500 transition duration-300 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</a>
             </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main id="mainContent" class="hidden pt-36 container mx-auto px-6 mb-16">
+        <!-- Page Title -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray">Welcome to Support Pro</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mt-4">Select your operating system to continue</p>
         </header>
-
-        <!-- Main Content Section -->
-        <main id="mainContent" class="hidden pt-36 container mx-auto px-6 mb-16">
-            <!-- Page Title -->
-            <header class="text-center mb-12">
-                <h1 class="text-5xl font-extrabold text-darkBlack dark:text-secondaryGray">Welcome to Support Pro</h1>
-                <p class="text-lg text-gray-700 dark:text-gray-300 mt-4">Select your operating system to continue</p>
-            </header>
-            <!-- Grid OS Selection -->
-            <div id="os-grid" class="grid gap-10 grid-cols-1 md:grid-cols-3">
-                <!-- Windows Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="windows" class="block text-center">
-                        <img src="https://img.icons8.com/color/96/000000/windows-10.png" alt="Windows Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Windows</h2>
-                    </a>
-                </div>
-
-                <!-- macOS Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="macos" class="block text-center">
-                        <img id="macos-logo" src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
-                    </a>
-                </div>
-
-                <!-- Linux Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="linux" class="block text-center">
-                        <img src="https://img.icons8.com/color/96/000000/linux.png" alt="Linux Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Linux</h2>
-                    </a>
-                </div>
-
-                <!-- iOS/iPadOS Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="ios" class="block text-center">
-                        <img id="ios-logo" src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
-                    </a>
-                </div>
-
-                <!-- AndroidOS Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="android" class="block text-center">
-                        <img src="https://img.icons8.com/color/96/000000/android-os.png" alt="Android Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h2>
-                    </a>
-                </div>
-
-                <!-- ChromeOS Tile -->
-                <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
-                    <a href="chromeos" class="block text-center">
-                        <img src="https://img.icons8.com/color/96/000000/chrome.png" alt="ChromeOS Logo" class="mx-auto mb-4">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h2>
-                    </a>
-                </div>
+        <!-- Grid OS Selection -->
+        <div id="os-grid" class="grid gap-10 grid-cols-1 md:grid-cols-3">
+            <!-- Windows Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="windows" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/windows-10.png" alt="Windows Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Windows</h2>
+                </a>
             </div>
-        </main>
 
-    </body>
+            <!-- macOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="macos" class="block text-center">
+                    <img id="macos-logo" src="https://img.icons8.com/ios-filled/96/000000/mac-os.png" alt="macOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">macOS</h2>
+                </a>
+            </div>
 
-<script src="pages/js/dashboard.js"></script>
+            <!-- Linux Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="linux" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/linux.png" alt="Linux Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Linux</h2>
+                </a>
+            </div>
+
+            <!-- iOS/iPadOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="ios" class="block text-center">
+                    <img id="ios-logo" src="https://img.icons8.com/ios-filled/96/000000/ios-logo.png" alt="iOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">iOS/iPadOS</h2>
+                </a>
+            </div>
+
+            <!-- AndroidOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="android" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/android-os.png" alt="Android Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">AndroidOS</h2>
+                </a>
+            </div>
+
+            <!-- ChromeOS Tile -->
+            <div class="os-tile bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 transition-transform duration-300 hover:shadow-lg hover:scale-105 cursor-pointer">
+                <a href="chromeos" class="block text-center">
+                    <img src="https://img.icons8.com/color/96/000000/chrome.png" alt="ChromeOS Logo" class="mx-auto mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">ChromeOS</h2>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- External JavaScript -->
+    <script src="pages/js/dashboard.js" defer></script>
+</body>
 
 </html>

@@ -4,18 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fejl - Support Pro</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#0b0b33',
+                            secondary: '#e6e6fa'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body {
             font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center bg-red-900 text-white">
-    <h1 class="text-4xl font-bold">Noget gik galt!</h1>
-    <p class="text-lg mt-6">Vi beklager, men der skete en fejl under din login proces.</p>
-    <p class="mt-2">Prøv igen senere eller kontakt support.</p>
-    <a href="/" class="mt-8 bg-gray-600 px-6 py-3 rounded-full transition hover:bg-gray-500">Tilbage til forsiden</a>
+<body class="h-screen flex flex-col items-center justify-center bg-red-900 text-white text-center p-4">
+    <header class="mb-8">
+        <h1 class="text-4xl font-bold">Noget gik galt!</h1>
+        <p class="text-lg mt-4">Vi beklager, men der skete en fejl under din login proces.</p>
+        <p class="mt-2">Prøv igen senere eller kontakt support.</p>
+    </header>
+
+    <main>
+        <a href="/" class="inline-block mt-8 bg-gray-600 px-6 py-3 rounded-full transition hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-red-900">
+            Tilbage til forsiden
+        </a>
+    </main>
+
+    <footer class="mt-12">
+        <nav class="text-sm">
+            <a href="/auth/terms" class="hover:text-gray-300 transition-colors">Vilkår</a>
+            <span class="mx-2 text-gray-400">|</span>
+            <a href="/auth/privacy" class="hover:text-gray-300 transition-colors">Privatlivspolitik</a>
+            <span class="mx-2 text-gray-400">|</span>
+            <a href="/auth/support" class="hover:text-gray-300 transition-colors">Support</a>
+        </nav>
+    </footer>
 </body>
 </html>

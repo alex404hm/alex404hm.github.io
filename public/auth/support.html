@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="da" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Support Pro - Support">
+    <meta name="theme-color" content="#0b0b33">
+    <meta property="og:title" content="Support Pro - Support">
+    <meta property="og:description" content="Få hjælp og support fra Support Pro.">
+    <meta property="og:image" content="/assets/og-image.jpg">
+    <meta property="og:url" content="https://supportpro.dk/auth/support">
+    <title>Support Pro - Support</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a6631075be.js" crossorigin="anonymous"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS configuration for additional custom styles
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#0b0b33',
+                            light: '#e6e6fa'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-brand-primary text-gray-900 dark:text-gray-200">
+    <main class="mx-auto max-w-4xl py-12 px-6">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold mb-4">Support</h1>
+            <p class="text-lg">Vi er her for at hjælpe dig 24/7</p>
+        </header>
+
+        <section class="space-y-8">
+            <article>
+                <h2 class="text-2xl font-semibold mb-4">Kontakt os</h2>
+                <p>Hvis du har brug for hjælp eller har spørgsmål, er du velkommen til at kontakte vores supportteam:</p>
+                <ul class="list-disc list-inside ml-4">
+                    <li>Email: support@supportpro.dk</li>
+                    <li>Telefon: +45 1234 5678</li>
+                </ul>
+            </article>
+
+            <article>
+                <h2 class="text-2xl font-semibold mb-4">Ofte stillede spørgsmål (FAQ)</h2>
+                <p>Se vores <a href="/auth/faq" class="text-blue-600 hover:underline">FAQ-side</a> for at få svar på de mest almindelige spørgsmål.</p>
+            </article>
+
+            <article>
+                <h2 class="text-2xl font-semibold mb-4">Supportformular</h2>
+                <form action="/submit-support-request" method="POST" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Navn</label>
+                        <input type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                        <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Besked</label>
+                        <textarea id="message" name="message" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full flex justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Send Besked
+                        </button>
+                    </div>
+                </form>
+            </article>
+
+            <article>
+                <h2 class="text-2xl font-semibold mb-4">Supportressourcer</h2>
+                <p>Besøg vores <a href="/auth/resources" class="text-blue-600 hover:underline">supportressourcer</a> for at finde vejledninger, tutorials og andre nyttige materialer.</p>
+            </article>
+        </section>
+
+        <footer class="mt-12 text-center">
+            <nav class="flex justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                <a href="/auth/terms" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Vilkår</a>
+                <span aria-hidden="true">&bull;</span>
+                <a href="/auth/privacy" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Privatlivspolitik</a>
+                <span aria-hidden="true">&bull;</span>
+                <a href="/auth/support" class="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Support</a>
+            </nav>
+        </footer>
+    </main>
+</body>
+
+</html>
